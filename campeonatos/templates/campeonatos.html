@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Página Inicial{% endblock %}
+
+{% block content %}
+    <main>
+        <section class="campeonatos-section">
+            <h1 class="section-title">Campeonatos Disponíveis</h1>
+            {% if campeonatos %}
+                <div class="campeonatos-grid">
+                    {% for campeonato in campeonatos %}
+                        <div class="campeonato-card">
+                            <h2>{{ campeonato.nome }}</h2>
+                            <p><strong>Data de Início:</strong> {{ campeonato.data_inicio }}</p>
+                            <p><strong>Data de Fim:</strong> {{ campeonato.data_fim }}</p>
+                            <p><strong>Descrição:</strong> {{ campeonato.descricao }}</p>
+                            <p><strong>Premiação:</strong> R$ {{ campeonato.premiação }}</p>
+                            <p><strong>Participantes:</strong></p>
+                            <ul>
+                                {% for participante in campeonato.participantes.all %}
+                                    <li>{{ participante.nome }} ({{ participante.equipe }}) - {{ participante.email }}</li>
+                                {% empty %}
+                                    <li>Nenhum Participante inscrito.</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="no-campeonatos">Nenhum campeonato disponível no momento.</p>
+            {% endif %}
+        </section>
+    </main>
+{% endblock %}

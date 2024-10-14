@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Campeonatos</title>
+    <!-- Link para o CSS -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Bem-vindo ao Sistema de Campeonatos!</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/campeonatos">Campeonatos</a></li>
+            <li><a href="#">Partidas</a></li>
+            <li><a href="#">Times</a></li>
+            <li><a href="#">Contato</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Sistema de Campeonatos</p>
+    </footer>
+
+    <!-- Link para o JavaScript -->
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>
