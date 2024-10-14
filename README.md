@@ -1,5 +1,4 @@
 <h1 align="center"> Projeto Camp </h1>
-<div align="center">
 
 ### Passo a passo acesso ao projeto
 
