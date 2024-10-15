@@ -1,13 +1,23 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="form-container">
-    <h2>Deletar Campeonato</h2>
-    <p>Você tem certeza que deseja deletar o campeonato "{{ campeonato.nome }}"?</p>
-    <form method="POST">
-      {% csrf_token %}
-      <button type="submit" class="btn btn-danger">Deletar</button>
-      <a href="{% url 'campeonatos' %}" class="btn btn-secondary">Cancelar</a>
-    </form>
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card shadow-sm">
+          <div class="card-header bg-danger text-white">
+            <h2 class="card-title">Deletar Campeonato</h2>
+          </div>
+          <div class="card-body">
+            <p>Você tem certeza que deseja deletar o campeonato "<strong>{{ campeonato.nome }}</strong>"?</p>
+            <form method="POST">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">Deletar</button>
+              <a href="{% url 'campeonatos' %}" class="btn btn-secondary">Cancelar</a>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 {% endblock %}
