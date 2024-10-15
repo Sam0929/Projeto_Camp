@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="form-container">
+    <h2>Criar Novo Campeonato</h2>
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-success">Criar Campeonato</button>
+    </form>
+  </div>
+{% endblock %}

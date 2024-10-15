@@ -12,6 +12,8 @@
                 <div class="card text-center">
                     <div class="card-body">
                         <h1 class="section-title">Campeonatos Disponíveis</h1>
+                        <!-- Botão Criar Campeonato -->
+                        <a href="{% url 'criar_campeonato' %}" class="btn btn-success mt-3">Criar Campeonato</a>
                     </div>
                 </div>
             </div>
@@ -64,6 +66,10 @@
                             <div class="text-center mt-3">
                                 <a href="" class="btn btn-primary">Inscrever-se</a>
                             </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="{% url 'editar_campeonato' campeonato.pk %}" class="btn btn-warning">Editar</a>
+                            <a href="{% url 'deletar_campeonato' campeonato.pk %}" class="btn btn-danger">Deletar</a>
                         </div>
                     </div>
                 </div>

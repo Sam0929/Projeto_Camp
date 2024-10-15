@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="form-container">
+    <h2>Deletar Campeonato</h2>
+    <p>Você tem certeza que deseja deletar o campeonato "{{ campeonato.nome }}"?</p>
+    <form method="POST">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Deletar</button>
+      <a href="{% url 'campeonatos' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+  </div>
+{% endblock %}
