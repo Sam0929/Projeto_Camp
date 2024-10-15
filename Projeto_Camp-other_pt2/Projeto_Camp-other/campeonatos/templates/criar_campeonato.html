@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card shadow-sm">
+          <div class="card-header bg-success text-white">
+            <h2 class="card-title">Criar Novo Campeonato</h2>
+          </div>
+          <div class="card-body">
+            <form method="POST">
+              {% csrf_token %}
+              <div class="mb-3">
+                  <label for="id_nome" class="form-label">Nome</label>
+                  <input type="text" name="nome" class="form-control" maxlength="100" required="" id="id_nome">
+              </div>
+          
+              <div class="mb-3">
+                  <label for="id_data_inicio" class="form-label">Data Início</label>
+                  <input type="date" name="data_inicio" class="form-control" required="" id="id_data_inicio">
+              </div>
+          
+              <div class="mb-3">
+                  <label for="id_data_fim" class="form-label">Data Fim</label>
+                  <input type="date" name="data_fim" class="form-control" required="" id="id_data_fim">
+              </div>
+          
+              <div class="mb-3">
+                  <label for="id_descricao" class="form-label">Descrição</label>
+                  <textarea name="descricao" class="form-control" cols="40" rows="10" required="" id="id_descricao"></textarea>
+              </div>
+          
+              <div class="mb-3">
+                  <label for="id_premiação" class="form-label">Premiação</label>
+                  <input type="number" name="premiação" class="form-control" step="0.01" required="" id="id_premiação">
+              </div>
+          
+              <button type="submit" class="btn btn-success">Criar Campeonato</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

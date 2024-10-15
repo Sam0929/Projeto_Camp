@@ -1,0 +1,51 @@
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Ambiente Virtual
+venv/
+env/
+ENV/
+.venv/
+.virtualenv/
+
+# Banco de Dados
+db.sqlite3
+
+# Arquivos de configuração do IDE
+.vscode/
+.idea/
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
+
+# Arquivos de log
+*.log
+
+# Configurações do Django
+*.sqlite3
+*.log
+*.pot
+
+# Configurações de cache
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.egg-info/
+dist/
+build/
+
+# Arquivos de segurança
+*.env
+*.env.*
+*.secret
