@@ -3,32 +3,75 @@
 {% block title %}Página Inicial{% endblock %}
 
 {% block content %}
-    <main>
-        <section class="campeonatos-section">
-            <h1 class="section-title">Campeonatos Disponíveis</h1>
-            {% if campeonatos %}
-                <div class="campeonatos-grid">
-                    {% for campeonato in campeonatos %}
-                        <div class="campeonato-card">
-                            <h2>{{ campeonato.nome }}</h2>
-                            <p><strong>Data de Início:</strong> {{ campeonato.data_inicio }}</p>
-                            <p><strong>Data de Fim:</strong> {{ campeonato.data_fim }}</p>
-                            <p><strong>Descrição:</strong> {{ campeonato.descricao }}</p>
-                            <p><strong>Premiação:</strong> R$ {{ campeonato.premiação }}</p>
-                            <p><strong>Participantes:</strong></p>
-                            <ul>
-                                {% for participante in campeonato.participantes.all %}
-                                    <li>{{ participante.nome }} ({{ participante.equipe }}) - {{ participante.email }}</li>
-                                {% empty %}
-                                    <li>Nenhum Participante inscrito.</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    {% endfor %}
+<main class="container my-5">
+    <section class="campeonatos-section">
+        
+        <!-- Card para o Título -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h1 class="section-title">Campeonatos Disponíveis</h1>
+                    </div>
                 </div>
-            {% else %}
-                <p class="no-campeonatos">Nenhum campeonato disponível no momento.</p>
-            {% endif %}
-        </section>
-    </main>
+            </div>
+        </div>
+
+        {% if campeonatos %}
+            <div class="row">
+                {% for campeonato in campeonatos %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h2 class="card-title font-weight-bold text-primary text-center">{{ campeonato.nome }}</h2>
+                            <table class="table table-bordered mt-3">
+                                <tbody>
+                                    <tr>
+                                        <th>Data de Início</th>
+                                        <td>{{ campeonato.data_inicio }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Data de Fim</th>
+                                        <td>{{ campeonato.data_fim }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Descrição</th>
+                                        <td>
+                                            <div class="description" style="max-height: 100px; overflow-y: auto;">
+                                                {{ campeonato.descricao }}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Premiação</th>
+                                        <td>R$ {{ campeonato.premiação }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Participantes</th>
+                                        <td>
+                                            <ul class="list-group list-group-flush">
+                                                {% for participante in campeonato.participantes.all %}
+                                                    <li class="list-group-item">{{ participante.nome }} ({{ participante.equipe }}) - {{ participante.email }}</li>
+                                                {% empty %}
+                                                    <li class="list-group-item">Nenhum Participante inscrito.</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <!-- Botão Inscrever-se -->
+                            <div class="text-center mt-3">
+                                <a href="" class="btn btn-primary">Inscrever-se</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center no-campeonatos">Nenhum campeonato disponível no momento.</p>
+        {% endif %}
+    </section>
+</main>
 {% endblock %}
