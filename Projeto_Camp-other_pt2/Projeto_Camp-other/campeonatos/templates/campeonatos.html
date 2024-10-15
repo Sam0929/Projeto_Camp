@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Página Inicial{% endblock %}
+
+{% block content %}
+<main class="container my-5">
+    <section class="campeonatos-section">
+        
+        <!-- Card para o Título -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h1 class="section-title">Campeonatos Disponíveis</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if campeonatos %}
+            <div class="row">
+                {% for campeonato in campeonatos %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h2 class="card-title font-weight-bold text-primary text-center">{{ campeonato.nome }}</h2>
+                            <table class="table table-bordered mt-3">
+                                <tbody>
+                                    <tr>
+                                        <th>Data de Início</th>
+                                        <td>{{ campeonato.data_inicio }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Data de Fim</th>
+                                        <td>{{ campeonato.data_fim }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Descrição</th>
+                                        <td>
+                                            <div class="description" style="max-height: 100px; overflow-y: auto;">
+                                                {{ campeonato.descricao }}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Premiação</th>
+                                        <td>R$ {{ campeonato.premiação }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Participantes</th>
+                                        <td>
+                                            <ul class="list-group list-group-flush">
+                                                {% for inscricao in campeonato.inscricao_set.all %}
+                                                    <li class="list-group-item">{{ inscricao.nome_participante }} ({{ inscricao.equipe_participante }}) - {{ inscricao.email_participante }}</li>
+                                                {% empty %}
+                                                    <li class="list-group-item">Nenhum participante inscrito.</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <!-- Botão Inscrever-se -->
+                            <div class="text-center mt-3">
+                                <a href="{% url 'inscrever_participante' campeonato.pk %}" class="btn btn-primary">Inscrever-se</a>
+                            </div>
+                        </div>
+                        <!-- Botões de Ação (Editar e Deletar) -->
+                        <div class="card-footer d-flex justify-content-between">
+                            <a href="{% url 'editar_campeonato' campeonato.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                            <a href="{% url 'deletar_campeonato' campeonato.pk %}" class="btn btn-danger btn-sm">Deletar</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center no-campeonatos">Nenhum campeonato disponível no momento.</p>
+        {% endif %}
+    </section>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card text-center">
+                <div class="card-body">
+                    <a href="{% url 'criar_campeonato' %}" class="btn btn-success mt-3">Criar Campeonato</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
