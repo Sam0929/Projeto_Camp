@@ -3,6 +3,7 @@ from django.shortcuts import redirect
 from .models import Campeonato, Inscricao
 from .forms import CampeonatoForm, InscricaoForm
 from django.contrib import messages
+from django.utils import timezone
 
 def campeonatos(request):
 
@@ -17,13 +18,17 @@ def criar_campeonato(request):
         print("Dados recebidos:", request.POST)  # Adicione isso para verificar os dados
         form = CampeonatoForm(request.POST)
         if form.is_valid():
-            print("Formulário válido, salvando...")  # Mensagem de depuração
-            form.save()
-            messages.success(request, 'Campeonato criado com sucesso!')
-            return redirect('campeonatos')
-        else:
-            print("Formulário inválido:", form.errors)  # Mostra os erros do formulário
-            messages.error(request, 'Erro ao criar campeonato. Verifique os campos.')
+            data_inicio = form.cleaned_data['data_inicio']
+            hoje = timezone.now()  # timezone.now() retorna datetime com data e hora
+            
+            # Comparar datetime com datetime, então garantimos que 'hoje' tenha apenas a data
+            if data_inicio < hoje:
+                form.add_error('data_inicio', 'A data de início não pode ser no passado.')
+            else:
+                campeonato = form.save(commit=False)
+                campeonato.save()
+                form.save_m2m()  # Caso tenha relacionamentos ManyToMany
+                return redirect('campeonatos')  # Redireciona para a lista de campeonatos
     else:
         form = CampeonatoForm()
 
@@ -34,8 +39,18 @@ def editar_campeonato(request, pk):
     if request.method == 'POST':
         form = CampeonatoForm(request.POST, instance=campeonato)
         if form.is_valid():
-            form.save()
-            return redirect('campeonatos')  # Redireciona para a lista de campeonatos
+            data_inicio = form.cleaned_data['data_inicio']
+            data_fim = form.cleaned_data['data_fim']
+            hoje = timezone.now()
+
+            # Verifica se as datas e horas são válidas
+            if data_inicio < hoje:
+                form.add_error('data_inicio', 'A data e hora de início não podem ser no passado.')
+            elif data_fim <= data_inicio:
+                form.add_error('data_fim', 'A data de fim deve ser posterior à data de início.')
+            else:
+                form.save()
+                return redirect('campeonatos')  # Redireciona para a lista de campeonatos
     else:
         form = CampeonatoForm(instance=campeonato)
     
@@ -102,3 +117,4 @@ def editar_participante(request, pk):
         form = InscricaoForm(instance=participante)
 
     return render(request, 'editar_participante.html', {'form': form, 'participante': participante})
+

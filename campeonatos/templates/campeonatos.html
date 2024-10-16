@@ -6,7 +6,6 @@
 <main class="container my-5">
     <section class="campeonatos-section">
         
-        <!-- Card para o Título -->
         <div class="row mb-4">
             <div class="col-12">
                 <div class="card text-center">
@@ -27,12 +26,12 @@
                             <table class="table table-bordered mt-3">
                                 <tbody>
                                     <tr>
-                                        <th>Data de Início</th>
-                                        <td>{{ campeonato.data_inicio }}</td>
+                                        <th>Data e Hora de Início</th>
+                                        <td>{{ campeonato.data_inicio|date:"d/m/Y H:i" }}</td>  <!-- Exibe data e hora -->
                                     </tr>
                                     <tr>
-                                        <th>Data de Fim</th>
-                                        <td>{{ campeonato.data_fim }}</td>
+                                        <th>Data e Hora de Fim</th>
+                                        <td>{{ campeonato.data_fim|date:"d/m/Y H:i" }}</td>  <!-- Exibe data e hora -->
                                     </tr>
                                     <tr>
                                         <th>Descrição</th>
@@ -49,13 +48,10 @@
                                     <tr>
                                         <th>Participantes</th>
                                         <td>
-                                            <ul class="list-group list-group-flush">
-                                                {% for inscricao in campeonato.inscricao_set.all %}
-                                                    <li class="list-group-item">{{ inscricao.nome_participante }} ({{ inscricao.equipe_participante }}) - {{ inscricao.email_participante }}</li>
-                                                {% empty %}
-                                                    <li class="list-group-item">Nenhum participante inscrito.</li>
-                                                {% endfor %}
-                                            </ul>
+                                            <!-- Botão para abrir o modal de participantes -->
+                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalParticipantes{{ campeonato.pk }}">
+                                                Visualizar Participantes
+                                            </button>
                                         </td>
                                     </tr>
                                     <tr>
@@ -66,19 +62,42 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <!-- Botão Inscrever-se -->
                             <div class="text-center mt-3">
                                 <a href="{% url 'inscrever_participante' campeonato.pk %}" class="btn btn-primary">Inscrever-se</a>
                             </div>
                         </div>
-                        <!-- Botões de Ação (Editar e Deletar) -->
                         <div class="card-footer d-flex justify-content-between">
                             <a href="{% url 'editar_campeonato' campeonato.pk %}" class="btn btn-warning btn-sm">Editar  <i class="bi bi-pencil-square"></i>  </a>
-                            
                             <a href="{% url 'deletar_campeonato' campeonato.pk %}" class="btn btn-danger btn-sm">Deletar  <i class="bi bi-trash3"></i> </a>
                         </div>
                     </div>
                 </div>
+
+                <!-- Modal de Participantes -->
+                <div class="modal fade" id="modalParticipantes{{ campeonato.pk }}" tabindex="-1" aria-labelledby="modalParticipantesLabel{{ campeonato.pk }}" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalParticipantesLabel{{ campeonato.pk }}">Participantes do Campeonato {{ campeonato.nome }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <ul class="list-group" style="max-height: 300px; overflow-y: auto;">
+                                    {% for inscricao in campeonato.inscricao_set.all %}
+                                        <li class="list-group-item">{{ inscricao.nome_participante }} ({{ inscricao.equipe_participante }}) - {{ inscricao.email_participante }}</li>
+                                    {% empty %}
+                                        <li class="list-group-item">Nenhum participante inscrito.</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Fim do Modal -->
+
                 {% endfor %}
             </div>
         {% else %}

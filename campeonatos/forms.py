@@ -6,9 +6,9 @@ class CampeonatoForm(forms.ModelForm):
         model = Campeonato
         fields = ['nome', 'data_inicio', 'data_fim', 'descricao', 'premiação', 'numero_maximo_participantes']
         widgets = {
-            'data_inicio': forms.DateInput(attrs={'type': 'date'}),
-            'data_fim': forms.DateInput(attrs={'type': 'date'}),
-            'premiacao': forms.NumberInput(attrs={'step': '0.01'}),  # Adiciona o widget de número para premiacao
+            'data_inicio': forms.DateTimeInput(attrs={'type': 'datetime-local'}),  # Alterado para datetime-local
+            'data_fim': forms.DateTimeInput(attrs={'type': 'datetime-local'}),  # Alterado para datetime-local
+            'premiacao': forms.NumberInput(attrs={'step': '0.01'}),
         }
         
 from .models import Inscricao

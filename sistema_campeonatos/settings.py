@@ -125,3 +125,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+TIME_ZONE = 'America/Sao_Paulo'  # Ajuste de acordo com a sua localização
+USE_TZ = True

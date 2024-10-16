@@ -19,12 +19,14 @@
           
               <div class="mb-3">
                 <label for="id_data_inicio" class="form-label">Data Início</label>
-                <input type="date" name="data_inicio" class="form-control" required="" id="id_data_inicio" value="{{ form.data_inicio.value|date:'Y-m-d' }}">
+                <input type="datetime-local" name="data_inicio" class="form-control" required="" id="id_data_inicio" 
+                       value="{{ form.data_inicio.value|date:'Y-m-d\\TH:i' }}">
               </div>
-          
+              
               <div class="mb-3">
                 <label for="id_data_fim" class="form-label">Data Fim</label>
-                <input type="date" name="data_fim" class="form-control" required="" id="id_data_fim" value="{{ form.data_fim.value|date:'Y-m-d' }}">
+                <input type="datetime-local" name="data_fim" class="form-control" required="" id="id_data_fim" 
+                       value="{{ form.data_fim.value|date:'Y-m-d\\TH:i' }}">
               </div>
           
               <div class="mb-3">
@@ -81,4 +83,30 @@
       </div>
     </div>
   </div>
+  
+  <!-- Aqui vem o script para a validação das datas -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.querySelector('form');
+      const dataInicioInput = document.getElementById('id_data_inicio');
+      const dataFimInput = document.getElementById('id_data_fim');
+  
+      form.addEventListener('submit', function(event) {
+          const dataInicio = new Date(dataInicioInput.value);
+          const dataFim = new Date(dataFimInput.value);
+          const agora = new Date();
+  
+          if (dataInicio < agora) {
+              alert('A data e hora de início devem ser maiores ou iguais ao momento atual.');
+              event.preventDefault();
+              return;
+          }
+  
+          if (dataFim < dataInicio) {
+              alert('A data e hora de fim devem ser maiores ou iguais à data e hora de início.');
+              event.preventDefault();
+          }
+      });
+  });
+    </script>
 {% endblock %}
