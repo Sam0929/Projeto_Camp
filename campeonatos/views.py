@@ -4,14 +4,22 @@ from .models import Campeonato, Inscricao
 from .forms import CampeonatoForm, InscricaoForm
 from django.contrib import messages
 from django.utils import timezone
+from collections import defaultdict
 
 def campeonatos(request):
-
     campeonatos = Campeonato.objects.all()
+    
+    # Para cada campeonato, agrupamos os participantes por equipe
+    for campeonato in campeonatos:
+        # Cria um dicionário onde a chave será a equipe e o valor será uma lista de participantes
+        equipes_participantes = defaultdict(list)
+        for inscricao in campeonato.inscricao_set.all():
+            equipes_participantes[inscricao.equipe_participante].append(inscricao)
+        
+        # Anexa o dicionário ao objeto campeonato para ser usado no template
+        campeonato.equipes_participantes = equipes_participantes
 
     return render(request, 'campeonatos.html', {'campeonatos': campeonatos})
-
-from django.contrib import messages
 
 def criar_campeonato(request):
     if request.method == 'POST':

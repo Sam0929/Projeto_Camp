@@ -82,13 +82,26 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <ul class="list-group" style="max-height: 300px; overflow-y: auto;">
-                                    {% for inscricao in campeonato.inscricao_set.all %}
-                                        <li class="list-group-item">{{ inscricao.nome_participante }} ({{ inscricao.equipe_participante }}) - {{ inscricao.email_participante }}</li>
-                                    {% empty %}
-                                        <li class="list-group-item">Nenhum participante inscrito.</li>
-                                    {% endfor %}
-                                </ul>
+                                {% if campeonato.inscricao_set.all %}
+                                    <!-- Agrupar participantes por equipe -->
+                                    {% regroup campeonato.inscricao_set.all by equipe_participante as equipes_grupo %}
+                                    
+                                    <ul class="list-group" style="max-height: 300px; overflow-y: auto;">
+                                        {% for equipe in equipes_grupo %}
+                                            <li class="list-group-item active">
+                                                <strong>Equipe: {{ equipe.grouper }}</strong>
+                                            </li>
+                                            <!-- Listar os participantes da equipe -->
+                                            <ul class="list-group">
+                                                {% for inscricao in equipe.list %}
+                                                    <li class="list-group-item">{{ inscricao.nome_participante }} - {{ inscricao.email_participante }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p>Nenhum participante inscrito.</p>
+                                {% endif %}
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
