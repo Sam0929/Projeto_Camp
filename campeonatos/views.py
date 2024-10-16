@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.shortcuts import redirect
 from .models import Campeonato, Inscricao
 from .forms import CampeonatoForm, InscricaoForm
@@ -56,23 +56,31 @@ def deletar_campeonato(request, pk):
 
     return render(request, 'deletar_campeonato.html', {'campeonato': campeonato})
 
-def inscrever_participante(request, pk):
-    campeonato = get_object_or_404(Campeonato, pk=pk)
+def inscrever_participante(request, campeonato_id):
+    campeonato = get_object_or_404(Campeonato, id=campeonato_id)
+
+    # Verificar se o campeonato já atingiu o número máximo de participantes
+    if campeonato.inscricao_set.count() >= campeonato.numero_maximo_participantes:
+        # Renderiza o template com a mensagem de lotação
+        return render(request, 'campeonato_lotado.html', {'campeonato': campeonato})
     
     if request.method == 'POST':
-        form = InscricaoForm(request.POST)
-        if form.is_valid():
-            inscricao = form.save(commit=False)
-            inscricao.campeonato = campeonato  # Liga a inscrição ao campeonato específico
-            inscricao.save()
-            messages.success(request, 'Inscrição realizada com sucesso!')
-            return redirect('campeonatos')  # Redireciona para a lista de campeonatos
-        else:
-            messages.error(request, 'Erro na inscrição. Verifique os dados fornecidos.')
-    else:
-        form = InscricaoForm()
+        nome_participante = request.POST['nome_participante']
+        email_participante = request.POST['email_participante']
+        equipe_participante = request.POST['equipe_participante']
+        
+        # Criar a inscrição
+        Inscricao.objects.create(
+            campeonato=campeonato,
+            nome_participante=nome_participante,
+            email_participante=email_participante,
+            equipe_participante=equipe_participante
+        )
+        
+        # Redirecionar de volta à página do campeonato ou de inscrição
+        return redirect('campeonatos')
 
-    return render(request, 'inscricao.html', {'form': form, 'campeonato': campeonato})
+    return render(request, 'inscricao.html', {'campeonato': campeonato})
 
 def excluir_participante(request, pk):
     participante = get_object_or_404(Inscricao, pk=pk)

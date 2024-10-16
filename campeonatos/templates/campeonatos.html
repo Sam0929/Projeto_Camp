@@ -38,7 +38,7 @@
                                         <th>Descrição</th>
                                         <td>
                                             <div class="description" style="max-height: 200px; overflow-y: auto;">
-                                                <p class = "text-break"> {{ campeonato.descricao }} </p>
+                                                <p class="text-break">{{ campeonato.descricao }}</p>
                                             </div>
                                         </td>
                                     </tr>
@@ -58,6 +58,12 @@
                                             </ul>
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <th>Participantes Inscritos</th>
+                                        <td>
+                                            {{ campeonato.inscricao_set.count }} / {{ campeonato.numero_maximo_participantes }}
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                             <!-- Botão Inscrever-se -->
@@ -70,7 +76,6 @@
                             <a href="{% url 'editar_campeonato' campeonato.pk %}" class="btn btn-warning btn-sm">Editar  <i class="bi bi-pencil-square"></i>  </a>
                             
                             <a href="{% url 'deletar_campeonato' campeonato.pk %}" class="btn btn-danger btn-sm">Deletar  <i class="bi bi-trash3"></i> </a>
-                            
                         </div>
                     </div>
                 </div>

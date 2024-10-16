@@ -4,7 +4,7 @@ from .models import Campeonato
 class CampeonatoForm(forms.ModelForm):
     class Meta:
         model = Campeonato
-        fields = ['nome', 'data_inicio', 'data_fim', 'descricao', 'premiação']  # Verifique o nome aqui
+        fields = ['nome', 'data_inicio', 'data_fim', 'descricao', 'premiação', 'numero_maximo_participantes']
         widgets = {
             'data_inicio': forms.DateInput(attrs={'type': 'date'}),
             'data_fim': forms.DateInput(attrs={'type': 'date'}),

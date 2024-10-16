@@ -9,4 +9,5 @@ urlpatterns = [
     path('participante/<int:pk>/excluir/', views.excluir_participante, name='excluir_participante'),
     path('deletar_campeonato/<int:pk>/', views.deletar_campeonato, name='deletar_campeonato'),  # Rota para deletar campeonato
     path('inscricao/<int:pk>/', views.inscrever_participante, name='inscrever_participante'),
+    path('campeonato/<int:campeonato_id>/inscrever/', views.inscrever_participante, name='inscrever_participante'),
 ]

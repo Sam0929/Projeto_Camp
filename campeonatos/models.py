@@ -7,6 +7,8 @@ class Campeonato(models.Model):
     descricao = models.TextField()
     participantes = models.ManyToManyField('Participante', related_name='campeonatos')
     premiação = models.DecimalField(max_digits=10, decimal_places=2)
+    numero_maximo_participantes = models.PositiveIntegerField(default=10)  
+    
     def __str__(self):
         return self.nome
 

@@ -37,6 +37,12 @@
                 <input type="number" name="premiação" class="form-control" step="0.01" required="" id="id_premiação" value="{{ form.premiação.value }}">
               </div>
               
+              <!-- Campo para o número máximo de participantes -->
+              <div class="mb-3">
+                <label for="id_numero_maximo_participantes" class="form-label">Número Máximo de Participantes</label>
+                <input type="number" name="numero_maximo_participantes" class="form-control" required="" id="id_numero_maximo_participantes" value="{{ form.numero_maximo_participantes.value }}">
+              </div>
+              
               <button type="submit" class="btn btn-success">Salvar Alterações</button>
             </form>
           </div>
