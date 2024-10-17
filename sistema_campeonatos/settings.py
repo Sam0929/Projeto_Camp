@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'pagina_principal',
-    'campeonatos',                 
+    'campeonatos', 
+    'gerenciamento_campeonatos',                
 ]
 
 MIDDLEWARE = [
