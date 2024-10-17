@@ -83,13 +83,14 @@
                             </div>
                             <div class="modal-body">
                                 {% if campeonato.inscricao_set.all %}
-                                    <!-- Agrupar participantes por equipe -->
-                                    {% regroup campeonato.inscricao_set.all by equipe_participante as equipes_grupo %}
+                                    <!-- Agrupar participantes por equipe (normalizando o nome da equipe para case-insensitive) -->
+                                    {% regroup campeonato.inscricao_set.all|dictsort:"equipe_participante"|default_if_none:"" by equipe_participante|lower as equipes_grupo %}
                                     
                                     <ul class="list-group" style="max-height: 300px; overflow-y: auto;">
                                         {% for equipe in equipes_grupo %}
+                                            <!-- Exibir o nome original da equipe com Title Case -->
                                             <li class="list-group-item active">
-                                                <strong>Equipe: {{ equipe.grouper }}</strong>
+                                                <strong>Equipe: {{ equipe.list.0.equipe_participante|title }}</strong>
                                             </li>
                                             <!-- Listar os participantes da equipe -->
                                             <ul class="list-group">
