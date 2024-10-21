@@ -7,9 +7,10 @@ Clone Repositório criado a partir do template, entre na pasta e execute os coma
 Crie um ambiente virtual e ative-o:
 ```sh
 python -m venv venv
+```
+```sh
 venv\Scripts\activate
 ```
-
 Instale o Django:
 ```sh
 pip install Django
