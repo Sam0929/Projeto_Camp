@@ -13,7 +13,7 @@
             {% for jogo in rodada.jogos.all %}
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     <div>
-                        {{ jogo.time_casa.nome }} vs {{ jogo.time_fora.nome }} 
+                        {{ jogo.time_casa.equipe_participante }} vs {{ jogo.time_fora.equipe_participante }}  
                         <small>({{ jogo.data_horario|date:"d/m/Y H:i" }})</small>
                     </div>
                     <div>
@@ -41,27 +41,27 @@
             </tr>
         </thead>
         <tbody>
-            {% for time, stats in pontuacao.items %}
+            {% for equipe, stats in pontuacao.items %}
             <tr>
-                <td>{{ time }}</td>
-                <td>{{ stats.pontos }}</td>
-                <td>{{ stats.vitorias }}</td>
-                <td>{{ stats.empates }}</td>
-                <td>{{ stats.derrotas }}</td>
+                <td>{{ equipe.equipe_participante }}</td>
+                <td>{{ stats.pontos|default:"0" }}</td>
+                <td>{{ stats.vitorias|default:"0" }}</td>
+                <td>{{ stats.empates|default:"0" }}</td>
+                <td>{{ stats.derrotas|default:"0" }}</td>
             </tr>
             {% endfor %}
-        </tbody>
+        </tbody>        
     </table>
 
     <!-- Exibição dos participantes por equipe -->
     <h2 class="text-center mt-5">Equipes Participantes</h2>
     <div class="row">
-        {% for equipe in participantes %}
+        {% for equipe, participantes in equipes_participantes.items %}
         <div class="col-md-4">
             <div class="card mb-4">
                 <div class="card-body">
-                    <h5 class="card-title">{{ equipe.nome }}</h5>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEquipe{{ equipe.id }}">
+                    <h5 class="card-title">{{ equipe }}</h5> <!-- Nome da equipe -->
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEquipe{{ forloop.counter }}">
                         Visualizar Participantes
                     </button>
                 </div>
@@ -69,17 +69,17 @@
         </div>
 
         <!-- Modal para cada equipe -->
-        <div class="modal fade" id="modalEquipe{{ equipe.id }}" tabindex="-1" aria-labelledby="modalLabel{{ equipe.id }}" aria-hidden="true">
+        <div class="modal fade" id="modalEquipe{{ forloop.counter }}" tabindex="-1" aria-labelledby="modalLabel{{ forloop.counter }}" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modalLabel{{ equipe.id }}">Participantes de {{ equipe.nome }}</h5>
+                        <h5 class="modal-title" id="modalLabel{{ forloop.counter }}">Participantes da equipe {{ equipe }}</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <ul class="list-group">
-                            {% for participante in equipe.participantes.all %}
-                                <li class="list-group-item">{{ participante.nome }}</li>
+                            {% for participante in participantes %}
+                                <li class="list-group-item">{{ participante.nome_participante }}</li>
                             {% empty %}
                                 <li class="list-group-item">Nenhum participante cadastrado.</li>
                             {% endfor %}

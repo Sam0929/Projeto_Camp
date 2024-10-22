@@ -1,9 +1,13 @@
 import itertools
 from datetime import timedelta
 from .models import Rodada, Jogo
+from campeonatos.models import Inscricao  # Importar o modelo de Inscrição
 
 def gerar_jogos(campeonato):
-    participantes = list(campeonato.participantes.all())
+    # Resgata todos os participantes inscritos no campeonato através da tabela de inscrição
+    inscricoes = Inscricao.objects.filter(campeonato=campeonato)
+    participantes = [inscricao.participante for inscricao in inscricoes]
+    
     print(f"Participantes: {participantes}")  # Para verificar a lista de participantes no terminal
     numero_participantes = len(participantes)
 

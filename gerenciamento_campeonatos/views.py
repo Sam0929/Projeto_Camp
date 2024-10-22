@@ -1,11 +1,22 @@
 from django.shortcuts import render, get_object_or_404
 from campeonatos.models import Campeonato
 from .utils import gerar_jogos
+from campeonatos.models import Inscricao  # Importar o modelo de Inscrição
+
 
 def index(request):
-    # Buscando todos os campeonatos da aplicação 'campeonatos'
-    campeonatos = Campeonato.objects.all()  
-    return render(request, 'gerenciamento_campeonato.html', {'campeonatos': campeonatos})
+    campeonatos = Campeonato.objects.all()
+
+    # Adiciona um campo para verificar se a tabela já foi gerada
+    campeonatos_com_estado = []
+    for campeonato in campeonatos:
+        tabela_gerada = campeonato.rodadas.exists()  # Verifica se o campeonato tem rodadas
+        campeonatos_com_estado.append({
+            'campeonato': campeonato,
+            'tabela_gerada': tabela_gerada
+        })
+    
+    return render(request, 'gerenciamento_campeonato.html', {'campeonatos_com_estado': campeonatos_com_estado})
 
 
 def gerar_tabela(request, campeonato_id):
@@ -17,39 +28,55 @@ def gerar_tabela(request, campeonato_id):
 def visualizar_tabela(request, campeonato_id):
     campeonato = get_object_or_404(Campeonato, id=campeonato_id)
     pontuacao = calcular_pontuacao(campeonato)
-    participantes = campeonato.participantes.all()
+
+    # Resgatar os participantes através das inscrições
+    inscricoes = Inscricao.objects.filter(campeonato=campeonato)
+    
+    # Agrupar participantes por equipe
+    equipes_participantes = {}
+    for inscricao in inscricoes:
+        equipe = inscricao.participante.equipe_participante
+        if equipe not in equipes_participantes:
+            equipes_participantes[equipe] = []
+        equipes_participantes[equipe].append(inscricao.participante)
     
     return render(request, 'tabela_campeonato.html', {
         'campeonato': campeonato,
         'pontuacao': pontuacao,
-        'participantes': participantes,  # Passando participantes para o template
+        'equipes_participantes': equipes_participantes,  # Passando equipes com seus respectivos participantes
     })
+
 
 
 def calcular_pontuacao(campeonato):
     pontuacao = {}
 
-    # Inicializa a pontuação de todos os participantes
-    for participante in campeonato.participantes.all():
-        pontuacao[participante.nome] = {'pontos': 0, 'vitorias': 0, 'empates': 0, 'derrotas': 0}
+    # Inicializa a pontuação de todos os participantes a partir das inscrições
+    inscricoes = Inscricao.objects.filter(campeonato=campeonato)
+    participantes = [inscricao.participante for inscricao in inscricoes]
+
+    # Inicializa a pontuação para cada equipe participante
+    for participante in participantes:
+        pontuacao[participante] = {'pontos': 0, 'vitorias': 0, 'empates': 0, 'derrotas': 0}
 
     # Percorre todos os jogos do campeonato
     for rodada in campeonato.rodadas.all():
         for jogo in rodada.jogos.all():
-            if jogo.resultado_jogo:
-                # Calcula pontos baseados nos resultados
+            # Verifica se o jogo tem um resultado associado
+            if hasattr(jogo, 'resultado_jogo') and jogo.resultado_jogo:
                 if jogo.resultado_jogo.gols_time_casa > jogo.resultado_jogo.gols_time_fora:
-                    pontuacao[jogo.time_casa.nome]['pontos'] += 3
-                    pontuacao[jogo.time_casa.nome]['vitorias'] += 1
-                    pontuacao[jogo.time_fora.nome]['derrotas'] += 1
+                    pontuacao[jogo.time_casa]['pontos'] += 3
+                    pontuacao[jogo.time_casa]['vitorias'] += 1
+                    pontuacao[jogo.time_fora]['derrotas'] += 1
                 elif jogo.resultado_jogo.gols_time_casa < jogo.resultado_jogo.gols_time_fora:
-                    pontuacao[jogo.time_fora.nome]['pontos'] += 3
-                    pontuacao[jogo.time_fora.nome]['vitorias'] += 1
-                    pontuacao[jogo.time_casa.nome]['derrotas'] += 1
+                    pontuacao[jogo.time_fora]['pontos'] += 3
+                    pontuacao[jogo.time_fora]['vitorias'] += 1
+                    pontuacao[jogo.time_casa]['derrotas'] += 1
                 else:
-                    pontuacao[jogo.time_casa.nome]['pontos'] += 1
-                    pontuacao[jogo.time_fora.nome]['pontos'] += 1
-                    pontuacao[jogo.time_casa.nome]['empates'] += 1
-                    pontuacao[jogo.time_fora.nome]['empates'] += 1
+                    pontuacao[jogo.time_casa]['pontos'] += 1
+                    pontuacao[jogo.time_fora]['pontos'] += 1
+                    pontuacao[jogo.time_casa]['empates'] += 1
+                    pontuacao[jogo.time_fora]['empates'] += 1
 
     return pontuacao
+
