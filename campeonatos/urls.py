@@ -10,4 +10,5 @@ urlpatterns = [
     path('deletar_campeonato/<int:pk>/', views.deletar_campeonato, name='deletar_campeonato'),  # Rota para deletar campeonato
     path('inscricao/<int:pk>/', views.inscrever_participante, name='inscrever_participante'),
     path('campeonato/<int:campeonato_id>/inscrever/', views.inscrever_participante, name='inscrever_participante'),
+    path('campeonatos/campeonato/<int:campeonato_id>/novo_participante/', views.novo_participante, name='novo_participante'),
 ]

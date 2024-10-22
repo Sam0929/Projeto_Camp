@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Tabela Gerada{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="text-center">
+        <h1 class="display-4">Tabela de Jogos</h1>
+        <p class="lead">{{ mensagem }}</p>
+        <hr class="my-4">
+        <p>Campeonato: {{ campeonato.nome }}</p>
+        <p>Data de início: {{ campeonato.data_inicio|date:"d/m/Y" }}</p>
+        <p>Data de fim: {{ campeonato.data_fim|date:"d/m/Y" }}</p>
+    </div>
+
+    <!-- Adicione aqui outras informações da tabela, como os jogos gerados -->
+
+    <div class="mt-4 text-center">
+        <a href="{% url 'visualizar_tabela' campeonato.id %}" class="btn btn-success">Visualizar Tabela Completa</a>
+    </div>
+</div>
+{% endblock %}

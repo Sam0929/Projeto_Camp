@@ -13,21 +13,20 @@ class Campeonato(models.Model):
         return self.nome
 
 class Participante(models.Model):
-    nome = models.CharField(max_length=100)
-    email = models.EmailField()
-    equipe = models.CharField(max_length=100)
+    nome_participante = models.CharField(max_length=100)
+    email_participante = models.EmailField()
+    equipe_participante = models.CharField(max_length=100)
+    campeonato = models.ForeignKey(Campeonato, on_delete=models.CASCADE, related_name='participante_set')  # Alteração aqui
     
 
     
     def __str__(self):
-        return self.nome
+        return self.nome_participante  # Corrija para usar o nome correto do campo
 
 
 class Inscricao(models.Model):
     campeonato = models.ForeignKey(Campeonato, on_delete=models.CASCADE, related_name='inscricao_set')
-    nome_participante = models.CharField(max_length=100)
-    email_participante = models.EmailField()
-    equipe_participante = models.CharField(max_length=100)
+    participante = models.ForeignKey(Participante, on_delete=models.CASCADE)  # Alterado para referenciar Participante
 
     def __str__(self):
-        return f'{self.nome_participante} - {self.campeonato}'
+        return f'{self.participante.nome} - {self.campeonato}'

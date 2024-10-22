@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Tabela de Jogos e Pontuação{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Tabela de Jogos - {{ campeonato.nome }}</h1>
+
+    <!-- Exibição dos jogos por rodada -->
+    {% for rodada in campeonato.rodadas.all %}
+        <h3 class="mt-4">Rodada {{ rodada.numero }} - {{ rodada.data|date:"d/m/Y" }}</h3>
+        <ul class="list-group mb-3">
+            {% for jogo in rodada.jogos.all %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        {{ jogo.time_casa.nome }} vs {{ jogo.time_fora.nome }} 
+                        <small>({{ jogo.data_horario|date:"d/m/Y H:i" }})</small>
+                    </div>
+                    <div>
+                        {% if jogo.resultado_jogo %}
+                            <span class="badge bg-success rounded-pill">Resultado: {{ jogo.resultado_jogo.gols_time_casa }} - {{ jogo.resultado_jogo.gols_time_fora }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary rounded-pill">Resultado: Não disponível</span>
+                        {% endif %}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
+
+    <!-- Exibição da tabela de pontuação -->
+    <h2 class="text-center mt-5">Tabela de Pontuação</h2>
+    <table class="table table-striped table-bordered mt-3">
+        <thead class="thead-dark">
+            <tr>
+                <th>Time</th>
+                <th>Pontos</th>
+                <th>Vitórias</th>
+                <th>Empates</th>
+                <th>Derrotas</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for time, stats in pontuacao.items %}
+            <tr>
+                <td>{{ time }}</td>
+                <td>{{ stats.pontos }}</td>
+                <td>{{ stats.vitorias }}</td>
+                <td>{{ stats.empates }}</td>
+                <td>{{ stats.derrotas }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Exibição dos participantes por equipe -->
+    <h2 class="text-center mt-5">Equipes Participantes</h2>
+    <div class="row">
+        {% for equipe in participantes %}
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">{{ equipe.nome }}</h5>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEquipe{{ equipe.id }}">
+                        Visualizar Participantes
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para cada equipe -->
+        <div class="modal fade" id="modalEquipe{{ equipe.id }}" tabindex="-1" aria-labelledby="modalLabel{{ equipe.id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalLabel{{ equipe.id }}">Participantes de {{ equipe.nome }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="list-group">
+                            {% for participante in equipe.participantes.all %}
+                                <li class="list-group-item">{{ participante.nome }}</li>
+                            {% empty %}
+                                <li class="list-group-item">Nenhum participante cadastrado.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

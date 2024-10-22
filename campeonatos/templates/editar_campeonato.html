@@ -11,40 +11,40 @@
           <div class="card-body">
             <form method="POST">
               {% csrf_token %}
-              
+
+              <!-- Campos do formulário -->
               <div class="mb-3">
                 <label for="id_nome" class="form-label">Nome</label>
                 <input type="text" name="nome" class="form-control" maxlength="100" required="" id="id_nome" value="{{ form.nome.value }}">
               </div>
-          
+
               <div class="mb-3">
                 <label for="id_data_inicio" class="form-label">Data Início</label>
                 <input type="datetime-local" name="data_inicio" class="form-control" required="" id="id_data_inicio" 
                        value="{{ form.data_inicio.value|date:'Y-m-d\\TH:i' }}">
               </div>
-              
+
               <div class="mb-3">
                 <label for="id_data_fim" class="form-label">Data Fim</label>
                 <input type="datetime-local" name="data_fim" class="form-control" required="" id="id_data_fim" 
                        value="{{ form.data_fim.value|date:'Y-m-d\\TH:i' }}">
               </div>
-          
+
               <div class="mb-3">
                 <label for="id_descricao" class="form-label">Descrição</label>
                 <textarea name="descricao" class="form-control" cols="40" rows="10" required="" id="id_descricao">{{ form.descricao.value }}</textarea>
               </div>
-          
+
               <div class="mb-3">
                 <label for="id_premiação" class="form-label">Premiação</label>
                 <input type="number" name="premiação" class="form-control" step="0.01" required="" id="id_premiação" value="{{ form.premiação.value }}">
               </div>
-              
-              <!-- Campo para o número máximo de participantes -->
+
               <div class="mb-3">
                 <label for="id_numero_maximo_participantes" class="form-label">Número Máximo de Participantes</label>
                 <input type="number" name="numero_maximo_participantes" class="form-control" required="" id="id_numero_maximo_participantes" value="{{ form.numero_maximo_participantes.value }}">
               </div>
-              
+
               <button type="submit" class="btn btn-success">Salvar Alterações</button>
             </form>
           </div>
@@ -57,16 +57,16 @@
           </div>
           <div class="card-body">
             <ul class="list-group">
-              {% for participante in participantes %}
+              {% for inscricao in inscricoes %}
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                  {{ participante.nome_participante }} ({{ participante.equipe_participante }}) - {{ participante.email_participante }}
+                  {{ forloop.counter }}. {{ inscricao.participante.nome_participante }} ({{ inscricao.participante.equipe_participante }}) - {{ inscricao.participante.email_participante }}
                   <div>
                     <!-- Ícone de Edição -->
-                    <a href="{% url 'editar_participante' participante.pk %}" class="btn btn-warning btn-sm me-2">
+                    <a href="{% url 'editar_participante' inscricao.pk %}" class="btn btn-warning btn-sm me-2">
                       <i class="bi bi-pencil-square"></i>
                     </a>
                     <!-- Ícone de Exclusão -->
-                    <form method="POST" action="{% url 'excluir_participante' participante.pk %}" class="d-inline">
+                    <form method="POST" action="{% url 'excluir_participante' inscricao.pk %}" class="d-inline">
                       {% csrf_token %}
                       <button type="submit" class="btn btn-danger btn-sm">
                         <i class="bi bi-trash3"></i>
@@ -83,30 +83,30 @@
       </div>
     </div>
   </div>
-  
-  <!-- Aqui vem o script para a validação das datas -->
+
+  <!-- Script para validação das datas -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const form = document.querySelector('form');
       const dataInicioInput = document.getElementById('id_data_inicio');
       const dataFimInput = document.getElementById('id_data_fim');
-  
+
       form.addEventListener('submit', function(event) {
           const dataInicio = new Date(dataInicioInput.value);
           const dataFim = new Date(dataFimInput.value);
           const agora = new Date();
-  
+
           if (dataInicio < agora) {
               alert('A data e hora de início devem ser maiores ou iguais ao momento atual.');
               event.preventDefault();
               return;
           }
-  
+
           if (dataFim < dataInicio) {
               alert('A data e hora de fim devem ser maiores ou iguais à data e hora de início.');
               event.preventDefault();
           }
       });
-  });
-    </script>
+    });
+  </script>
 {% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card shadow-sm">
+          <div class="card-header bg-primary text-white">
+            <h2 class="card-title">Inscrição de Novo Participante</h2>
+          </div>
+          <div class="card-body">
+            <form method="POST">
+              {% csrf_token %}
+              
+              <!-- Campo para nome do participante -->
+              <div class="mb-3">
+                <label for="id_nome_participante" class="form-label">Nome do Participante</label>
+                <input type="text" name="nome_participante" class="form-control" maxlength="100" required id="id_nome_participante">
+              </div>                                                                                                                      
+          
+              <!-- Campo para email do participante -->
+              <div class="mb-3">
+                <label for="id_email_participante" class="form-label">Email do Participante</label>
+                <input type="email" name="email_participante" class="form-control" maxlength="100" required id="id_email_participante">
+              </div>
+          
+              <!-- Campo para equipe do participante -->
+              <div class="mb-3">
+                <label for="id_equipe_participante" class="form-label">Equipe do Participante</label>
+                <input type="text" name="equipe_participante" class="form-control" maxlength="100" required id="id_equipe_participante">
+              </div>
+
+              <!-- Botão de submissão -->
+              <button type="submit" class="btn btn-primary">Confirmar Inscrição</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

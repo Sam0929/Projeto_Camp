@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="container mt-5 ">
+  <div class="container mt-5">
     <div class="row justify-content-center">
       <div class="col-md-6">
-        <div class="card shadow-sm ">
+        <div class="card shadow-sm">
           <div class="card-header bg-success text-white">
             <h2 class="card-title">Editar Participante</h2>
           </div>
@@ -13,18 +13,18 @@
               {% csrf_token %}
                                                             
               <div class="mb-3">
-                <label for="id_nome" class="form-label">Nome do Participante</label>
-                <input type="text" name="nome_participante" class="form-control" maxlength="100" required="" id="id_nome" value="{{ form.nome_participante.value }}">
+                <label for="id_nome_participante" class="form-label">Nome do Participante</label>
+                <input type="text" name="nome_participante" class="form-control" maxlength="100" required="" id="id_nome_participante" value="{{ form.nome_participante.value }}">
               </div>
           
               <div class="mb-3">
-                <label for="id_email" class="form-label">Email do Participante</label>
-                <input type="email" name="email_participante" class="form-control" required="" id="id_email" value="{{ form.email_participante.value }}">
+                <label for="id_email_participante" class="form-label">Email do Participante</label>
+                <input type="email" name="email_participante" class="form-control" required="" id="id_email_participante" value="{{ form.email_participante.value }}">
               </div>
           
               <div class="mb-3">
-                <label for="id_equipe" class="form-label">Equipe do Participante</label>
-                <input type="text" name="equipe_participante" class="form-control" maxlength="100" required="" id="id_equipe" value="{{ form.equipe_participante.value }}">
+                <label for="id_equipe_participante" class="form-label">Equipe do Participante</label>
+                <input type="text" name="equipe_participante" class="form-control" maxlength="100" required="" id="id_equipe_participante" value="{{ form.equipe_participante.value }}">
               </div>
               
               <button type="submit" class="btn btn-success">Salvar Alterações</button>

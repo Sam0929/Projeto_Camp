@@ -1,5 +1,6 @@
 from django import forms
 from .models import Campeonato
+from .models import Inscricao, Participante
 
 class CampeonatoForm(forms.ModelForm):
     class Meta:
@@ -11,9 +12,17 @@ class CampeonatoForm(forms.ModelForm):
             'premiacao': forms.NumberInput(attrs={'step': '0.01'}),
         }
         
-from .models import Inscricao
+
 
 class InscricaoForm(forms.ModelForm):
+    participante = forms.ModelChoiceField(queryset=Participante.objects.all(), label='Participante')
+
     class Meta:
         model = Inscricao
+        fields = ['participante']
+        
+
+class ParticipanteForm(forms.ModelForm):
+    class Meta:
+        model = Participante
         fields = ['nome_participante', 'email_participante', 'equipe_participante']

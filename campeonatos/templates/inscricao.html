@@ -9,26 +9,32 @@
             <h2 class="card-title">Inscrição no Campeonato</h2>
           </div>
           <div class="card-body">
+            {% if messages %}
+              <div class="alert alert-light border border-danger text-danger" style="font-size: 0.9em; background-color: #f8d7da;">
+                {% for message in messages %}
+                  {{ message }}
+                {% endfor %}
+              </div>
+            {% endif %}
+            
             <form method="POST">
               {% csrf_token %}
               
+              <!-- Renderiza o campo de seleção de participantes -->
               <div class="mb-3">
-                <label for="id_nome_participante" class="form-label">Nome do Participante</label>
-                <input type="text" name="nome_participante" class="form-control" maxlength="100" required="" id="id_nome_participante">
-              </div>                                                                                                                      
-          
-              <div class="mb-3">
-                <label for="id_email_participante" class="form-label">Email do Participante</label>
-                <input type="email" name="email_participante" class="form-control" maxlength="100" required="" id="id_email_participante">
+                <label for="id_participante" class="form-label">Selecione um Participante</label>
+                {{ form.participante }} <!-- O campo participante será renderizado aqui -->
               </div>
-          
-              <div class="mb-3">
-                <label for="id_equipe_participante" class="form-label">Equipe do Participante</label>
-                <input type="text" name="equipe_participante" class="form-control" maxlength="100" required="" id="id_equipe_participante">
-              </div>
-
+              
               <button type="submit" class="btn btn-primary">Confirmar Inscrição</button>
             </form>
+
+            <hr>
+
+            <!-- Botão para redirecionar à página de inscrição de novo participante -->
+            <div class="text-center mt-3">
+              <a href="{% url 'novo_participante' campeonato.id %}" class="btn btn-secondary">Inscrever Novo Participante</a>
+            </div>
           </div>
         </div>
       </div>
