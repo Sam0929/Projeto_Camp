@@ -23,7 +23,7 @@ def gerar_jogos(
 
     # Agrupar participantes por times
     for inscricao in inscricoes:
-        equipe = inscricao.participante.equipe_participante
+        equipe = inscricao.participante.equipe
         if equipe not in times:
             times[equipe] = []
         times[equipe].append(inscricao.participante)

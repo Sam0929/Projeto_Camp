@@ -25,4 +25,4 @@ class InscricaoForm(forms.ModelForm):
 class ParticipanteForm(forms.ModelForm):
     class Meta:
         model = Participante
-        fields = ['nome_participante', 'email_participante', 'equipe_participante']
+        fields = ['nome', 'email', 'equipe']

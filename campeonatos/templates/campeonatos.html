@@ -84,18 +84,18 @@
                             <div class="modal-body">
                                 {% if campeonato.inscricao_set.all %}
                                     <!-- Agrupar participantes por equipe (normalizando o nome da equipe para case-insensitive) -->
-                                    {% regroup campeonato.inscricao_set.all|dictsort:"participante.equipe_participante"|default_if_none:"" by participante.equipe_participante|lower as equipes_grupo %}
+                                    {% regroup campeonato.inscricao_set.all|dictsort:"participante.equipe"|default_if_none:"" by participante.equipe|lower as equipes_grupo %}
                                     
                                     <ul class="list-group" style="max-height: 300px; overflow-y: auto;">
                                         {% for equipe in equipes_grupo %}
                                             <!-- Exibir o nome original da equipe com Title Case -->
                                             <li class="list-group-item active">
-                                                <strong>Equipe: {{ equipe.list.0.participante.equipe_participante|title }}</strong>
+                                                <strong>Equipe: {{ equipe.list.0.participante.equipe|title }}</strong>
                                             </li>
                                             <!-- Listar os participantes da equipe -->
                                             <ul class="list-group">
                                                 {% for inscricao in equipe.list %}
-                                                    <li class="list-group-item">{{ inscricao.participante.nome_participante }} - {{ inscricao.participante.email_participante }}</li>
+                                                    <li class="list-group-item">{{ inscricao.participante.nome }} - {{ inscricao.participante.email }}</li>
                                                 {% endfor %}
                                             </ul>
                                         {% endfor %}

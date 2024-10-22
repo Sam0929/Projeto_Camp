@@ -71,7 +71,7 @@ def visualizar_tabela(request, campeonato_id):
     # Agrupar participantes por equipe
     equipes_participantes = {}
     for inscricao in inscricoes:
-        equipe = inscricao.participante.equipe_participante
+        equipe = inscricao.participante.equipe  # Substituído "equipe_participante" por "equipe"
         if equipe not in equipes_participantes:
             equipes_participantes[equipe] = []
         equipes_participantes[equipe].append(inscricao.participante)
@@ -83,29 +83,24 @@ def visualizar_tabela(request, campeonato_id):
     })
 
 
-
 def calcular_pontuacao(campeonato):
     pontuacao = {}
 
     # Inicializa a pontuação de todos os times a partir das inscrições
     inscricoes = Inscricao.objects.filter(campeonato=campeonato)
-    times = {}
     
-    # Inicializar o dicionário para equipes, agrupando participantes por equipe
     for inscricao in inscricoes:
-        equipe = inscricao.participante.equipe_participante
+        equipe = inscricao.participante.equipe
         if equipe not in pontuacao:
             pontuacao[equipe] = {'pontos': 0, 'vitorias': 0, 'empates': 0, 'derrotas': 0}
 
     # Percorre todos os jogos do campeonato
     for rodada in campeonato.rodadas.all():
         for jogo in rodada.jogos.all():
-            # Verifica se o jogo tem um resultado associado
             if hasattr(jogo, 'resultado_jogo') and jogo.resultado_jogo:
-                equipe_casa = jogo.time_casa.equipe_participante
-                equipe_fora = jogo.time_fora.equipe_participante
+                equipe_casa = jogo.time_casa.equipe
+                equipe_fora = jogo.time_fora.equipe
 
-                # Atualiza a pontuação das equipes, e não dos participantes
                 if jogo.resultado_jogo.gols_time_casa > jogo.resultado_jogo.gols_time_fora:
                     pontuacao[equipe_casa]['pontos'] += 3
                     pontuacao[equipe_casa]['vitorias'] += 1
@@ -120,7 +115,12 @@ def calcular_pontuacao(campeonato):
                     pontuacao[equipe_casa]['empates'] += 1
                     pontuacao[equipe_fora]['empates'] += 1
 
-    return pontuacao
+    # Ordenar por pontos (do maior para o menor)
+    pontuacao_ordenada = dict(sorted(pontuacao.items(), key=lambda item: item[1]['pontos'], reverse=True))
+
+    return pontuacao_ordenada
+
+
 
 def registrar_resultados(request, campeonato_id):
     campeonato = get_object_or_404(Campeonato, id=campeonato_id)

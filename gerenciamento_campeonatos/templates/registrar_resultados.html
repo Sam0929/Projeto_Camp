@@ -24,11 +24,11 @@
                     {% for jogo in jogos %}
                     <tr>
                         <td>Rodada {{ jogo.rodada.numero }}</td>
-                        <td>{{ jogo.time_casa.equipe_participante }}</td>
+                        <td>{{ jogo.time_casa.equipe }}</td>
                         <td>
                             <input type="number" class="form-control" name="gols_time_casa_{{ jogo.id }}" value="{{ jogo.resultado_jogo.gols_time_casa|default_if_none:0 }}" required>
                         </td>
-                        <td>{{ jogo.time_fora.equipe_participante }}</td>
+                        <td>{{ jogo.time_fora.equipe }}</td>
                         <td>
                             <input type="number" class="form-control" name="gols_time_fora_{{ jogo.id }}" value="{{ jogo.resultado_jogo.gols_time_fora|default_if_none:0 }}" required>
                         </td>
