@@ -97,7 +97,6 @@ def inscrever_participante(request, campeonato_id):
                 messages.error(request, 'Este participante já está inscrito no campeonato.')
             else:
                 Inscricao.objects.create(campeonato=campeonato, participante=participante)
-                messages.success(request, 'Inscrição realizada com sucesso!')
                 return redirect('campeonatos')  # Redireciona após a inscrição
 
     else:

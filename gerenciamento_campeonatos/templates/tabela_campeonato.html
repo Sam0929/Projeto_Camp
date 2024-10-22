@@ -43,7 +43,8 @@
         <tbody>
             {% for equipe, stats in pontuacao.items %}
             <tr>
-                <td>{{ equipe.equipe_participante }}</td>
+                <!-- Use apenas 'equipe' para o nome do time -->
+                <td>{{ equipe }}</td>
                 <td>{{ stats.pontos|default:"0" }}</td>
                 <td>{{ stats.vitorias|default:"0" }}</td>
                 <td>{{ stats.empates|default:"0" }}</td>
