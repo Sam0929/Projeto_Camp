@@ -1,9 +1,10 @@
-import itertools
 from datetime import timedelta
+import random
 from .models import Rodada, Jogo
-from campeonatos.models import Inscricao  # Importar o modelo de Inscrição
+from campeonatos.models import Inscricao
 
-def gerar_jogos(campeonato):
+
+def gerar_jogos(campeonato, numero_rodadas, intervalo_dias):
     # Resgata todas as inscrições e agrupa os participantes por times
     inscricoes = Inscricao.objects.filter(campeonato=campeonato)
     times = {}
@@ -12,42 +13,66 @@ def gerar_jogos(campeonato):
     for inscricao in inscricoes:
         equipe = inscricao.participante.equipe_participante
         if equipe not in times:
-            times[equipe] = []  # Inicializa uma lista para o time se ainda não existir
+            times[equipe] = []
         times[equipe].append(inscricao.participante)
 
     equipes = list(times.keys())
     numero_equipes = len(equipes)
 
-    print(f"Times: {equipes}")  # Para verificar a lista de equipes no terminal
-
     if numero_equipes < 2:
         return "Não há equipes suficientes para gerar jogos."
 
-    # Gera todas as combinações de jogos entre as equipes
-    combinacoes = list(itertools.combinations(equipes, 2))
+    # Adicionar uma equipe fantasma caso o número de equipes seja ímpar
+    if numero_equipes % 2 != 0:
+        equipes.append(None)  # 'None' representará a equipe que "descansa"
+
+    numero_equipes = len(equipes)
+    combinacoes_rodadas = []
+
+    # Round-robin para gerar todas as rodadas
+    for rodada_numero in range(numero_rodadas):
+        rodada_atual = []
+        equipes_disponiveis = equipes[:]
+
+        # Embaralhar para garantir a aleatoriedade nas rodadas
+        random.shuffle(equipes_disponiveis)
+
+        while equipes_disponiveis:
+            equipe_casa = equipes_disponiveis.pop(0)
+            equipe_fora = equipes_disponiveis.pop(0)
+
+            # Adicionar apenas se não for a equipe fantasma
+            if equipe_casa and equipe_fora:
+                rodada_atual.append((equipe_casa, equipe_fora))
+
+        combinacoes_rodadas.append(rodada_atual)
+
     data_inicial = campeonato.data_inicio
 
-    for i, (equipe_casa, equipe_fora) in enumerate(combinacoes):
-        rodada_numero = i // (numero_equipes // 2) + 1
-        data_jogo = data_inicial + timedelta(days=rodada_numero * 7)  # Uma rodada por semana
+    # Criar jogos por rodada
+    for rodada_numero, jogos in enumerate(combinacoes_rodadas):
+        data_rodada = data_inicial + timedelta(days=rodada_numero * intervalo_dias)
 
-        # Seleciona um participante de cada equipe para o jogo (aqui usamos o primeiro participante de cada equipe)
-        time_casa = times[equipe_casa][0]  # Primeiro participante do time da casa
-        time_fora = times[equipe_fora][0]  # Primeiro participante do time visitante
+        # Verifica se a data da rodada ultrapassa a data de fim do campeonato
+        if data_rodada > campeonato.data_fim:
+            return "Não é possível gerar rodadas além da data de fim do campeonato."
 
-        # Cria ou recupera a rodada
         rodada, created = Rodada.objects.get_or_create(
             campeonato=campeonato,
-            numero=rodada_numero,
-            defaults={'data': data_jogo}
+            numero=rodada_numero + 1,
+            defaults={'data': data_rodada}
         )
 
-        # Cria o jogo na rodada
-        Jogo.objects.create(
-            rodada=rodada,
-            time_casa=time_casa,
-            time_fora=time_fora,
-            data_horario=data_jogo
-        )
+        # Criar os jogos da rodada
+        for equipe_casa, equipe_fora in jogos:
+            time_casa = times[equipe_casa][0]  # Primeiro participante do time da casa
+            time_fora = times[equipe_fora][0]  # Primeiro participante do time visitante
+
+            Jogo.objects.create(
+                rodada=rodada,
+                time_casa=time_casa,
+                time_fora=time_fora,
+                data_horario=data_rodada
+            )
 
     return "Jogos gerados com sucesso!"

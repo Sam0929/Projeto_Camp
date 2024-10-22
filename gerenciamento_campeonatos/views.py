@@ -5,6 +5,7 @@ from campeonatos.models import Inscricao  # Importar o modelo de Inscrição
 from django.urls import reverse
 from campeonatos.models import Campeonato
 from gerenciamento_campeonatos.models import Jogo, Resultado
+from datetime import timedelta
 
 
 def index(request):
@@ -24,8 +25,19 @@ def index(request):
 
 def gerar_tabela(request, campeonato_id):
     campeonato = get_object_or_404(Campeonato, id=campeonato_id)
-    mensagem = gerar_jogos(campeonato)
-    return render(request, 'tabela_gerada.html', {'mensagem': mensagem, 'campeonato': campeonato})
+
+    if request.method == 'POST':
+        # Pegando os dados do formulário
+        numero_rodadas = int(request.POST.get('numero_rodadas'))
+        intervalo_dias = int(request.POST.get('intervalo_dias'))
+
+        # Gera os jogos com base nas opções do usuário
+        mensagem = gerar_jogos(campeonato, numero_rodadas, intervalo_dias)
+
+        # Redireciona para visualizar a tabela após gerar os jogos
+        return redirect(reverse('visualizar_tabela', args=[campeonato_id]))
+
+    return render(request, 'gerar_tabela.html', {'campeonato': campeonato})
 
 
 def visualizar_tabela(request, campeonato_id):

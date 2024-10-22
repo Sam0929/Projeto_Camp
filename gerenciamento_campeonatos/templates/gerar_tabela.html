@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Gerar Tabela{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Gerar Tabela para {{ campeonato.nome }}</h1>
+
+    <form method="POST" action="{% url 'gerar_tabela' campeonato.id %}">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="numero_rodadas">Número de Rodadas</label>
+            <input type="number" class="form-control" id="numero_rodadas" name="numero_rodadas" min="1" required>
+        </div>
+
+        <div class="form-group">
+            <label for="intervalo_dias">Intervalo entre Rodadas (dias)</label>
+            <input type="number" class="form-control" id="intervalo_dias" name="intervalo_dias" min="1" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Gerar Tabela</button>
+    </form>
+</div>
+{% endblock %}
