@@ -19,6 +19,41 @@
             <input type="number" class="form-control" id="intervalo_dias" name="intervalo_dias" min="1" required>
         </div>
 
+        <div class="form-group">
+            <label for="horario_inicio">Horário de Início (apenas horas)</label>
+            <input type="time" class="form-control" id="horario_inicio" name="horario_inicio" required>
+        </div>
+
+        <div class="form-group">
+            <label for="horario_final">Horário Final (apenas horas)</label>
+            <input type="time" class="form-control" id="horario_final" name="horario_final" required>
+        </div>
+
+        <div class="form-group">
+            <label for="duracao_partida">Duração de Cada Partida (minutos)</label>
+            <input type="number" class="form-control" id="duracao_partida" name="duracao_partida" min="1" required>
+        </div>
+
+        <div class="form-group">
+            <label for="intervalo_jogos">Intervalo entre Jogos (minutos)</label>
+            <input type="number" class="form-control" id="intervalo_jogos" name="intervalo_jogos" min="1" required>
+        </div>
+
+        <div class="form-group">
+            <label for="dias_preferencia">Dias de Preferência</label>
+            <select multiple class="form-control" id="dias_preferencia" name="dias_preferencia">
+                <option value="0">Domingo</option>
+                <option value="1">Segunda-feira</option>
+                <option value="2">Terça-feira</option>
+                <option value="3">Quarta-feira</option>
+                <option value="4">Quinta-feira</option>
+                <option value="5">Sexta-feira</option>
+                <option value="6">Sábado</option>
+                <option value="nenhuma" selected>Sem preferência</option>
+            </select>
+            <small class="form-text text-muted">Segure Ctrl (ou Cmd no Mac) para selecionar vários dias</small>
+        </div>
+
         <button type="submit" class="btn btn-primary mt-3">Gerar Tabela</button>
     </form>
 </div>

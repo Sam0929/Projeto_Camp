@@ -30,12 +30,33 @@ def gerar_tabela(request, campeonato_id):
         # Pegando os dados do formulário
         numero_rodadas = int(request.POST.get('numero_rodadas'))
         intervalo_dias = int(request.POST.get('intervalo_dias'))
+        horario_inicio = request.POST.get('horario_inicio')
+        horario_final = request.POST.get('horario_final')
+        duracao_partida = int(request.POST.get('duracao_partida'))
+        intervalo_jogos = int(request.POST.get('intervalo_jogos'))
+        dias_preferencia = request.POST.getlist('dias_preferencia')  # Lista com os dias preferenciais
 
         # Gera os jogos com base nas opções do usuário
-        mensagem = gerar_jogos(campeonato, numero_rodadas, intervalo_dias)
+        mensagem = gerar_jogos(
+            campeonato,
+            numero_rodadas,
+            intervalo_dias,
+            horario_inicio,
+            horario_final,
+            duracao_partida,
+            intervalo_jogos,
+            dias_preferencia
+        )
 
-        # Redireciona para visualizar a tabela após gerar os jogos
-        return redirect(reverse('visualizar_tabela', args=[campeonato_id]))
+        if "sucesso" in mensagem.lower():  # Verifica se a geração dos jogos foi bem-sucedida
+            # Redireciona para visualizar a tabela após gerar os jogos
+            return redirect(reverse('visualizar_tabela', args=[campeonato_id]))
+        else:
+            # Caso haja uma mensagem de erro na geração dos jogos
+            return render(request, 'tabela_gerada.html', {
+                'campeonato': campeonato,
+                'mensagem': mensagem,
+            })
 
     return render(request, 'gerar_tabela.html', {'campeonato': campeonato})
 
