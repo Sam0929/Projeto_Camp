@@ -13,7 +13,7 @@
         {% for jogo in rodada.jogos.all %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 <div>
-                    {{ jogo.time_casa.equipe_participante }} vs {{ jogo.time_fora.equipe_participante }}  
+                    {{ jogo.time_casa.equipe}} vs {{ jogo.time_fora.equipe }}  
                     <small>({{ jogo.data_horario|date:"d/m/Y H:i" }})</small>
                 </div>
                 <div>
@@ -80,7 +80,7 @@
                     <div class="modal-body">
                         <ul class="list-group">
                             {% for participante in participantes %}
-                                <li class="list-group-item">{{ participante.nome_participante }}</li>
+                                <li class="list-group-item">{{ participante.nome }}</li>
                             {% empty %}
                                 <li class="list-group-item">Nenhum participante cadastrado.</li>
                             {% endfor %}

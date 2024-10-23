@@ -59,7 +59,7 @@
             <ul class="list-group">
               {% for inscricao in inscricoes %}
                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                  {{ forloop.counter }}. {{ inscricao.participante.nome_participante }} ({{ inscricao.participante.equipe_participante }}) - {{ inscricao.participante.email_participante }}
+                  {{ forloop.counter }}. {{ inscricao.participante.nome }} ({{ inscricao.participante.equipe }}) - {{ inscricao.participante.email }}
                   <div>
                     <!-- Ícone de Edição -->
                     <a href="{% url 'editar_participante' inscricao.pk %}" class="btn btn-warning btn-sm me-2">

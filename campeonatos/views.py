@@ -17,7 +17,7 @@ def campeonatos(request):
         equipes_participantes = defaultdict(list)
         for inscricao in campeonato.inscricao_set.all():
             # Normaliza o nome da equipe (sem espaços extras e com letras minúsculas)
-            equipe_normalizada = inscricao.participante.equipe_participante.strip().lower()
+            equipe_normalizada = inscricao.participante.equipe.strip().lower()
             equipes_participantes[equipe_normalizada].append(inscricao)
         
         # Anexa o dicionário ao objeto campeonato para ser usado no template

@@ -3,6 +3,7 @@
 *.pyo
 *.pyd
 __pycache__/
+*/migrations/0001_initial.py
 
 # Ambiente Virtual
 venv/

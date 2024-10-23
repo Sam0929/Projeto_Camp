@@ -31,8 +31,8 @@
                             <label for="id_participante" class="form-label">Selecione um Participante</label>
                             <select id="id_participante" name="participante" class="form-select">
                                 <option value="" disabled selected>----------</option> <!-- Opção nula -->
-                                {% for participante in form.participante.field.queryset|dictsort:"nome_participante" %}
-                                <option value="{{ participante.pk }}">{{ participante.nome_participante }}</option>
+                                {% for participante in form.participante.field.queryset|dictsort:"nome" %}
+                                <option value="{{ participante.pk }}">{{ participante.nome }}</option>
                                 {% endfor %}
                             </select>
                         </div>

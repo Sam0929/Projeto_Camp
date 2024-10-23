@@ -13,8 +13,8 @@
             <select id="jogo_selecionado" name="jogo_selecionado" class="form-select" required onchange="atualizarPontos()">
                 <option value="">Escolha um jogo...</option>
                 {% for jogo in jogos %}
-                    <option value="{{ jogo.id }}" data-equipe-casa="{{ jogo.time_casa.equipe_participante }}" data-equipe-fora="{{ jogo.time_fora.equipe_participante }}">
-                        Rodada {{ jogo.rodada.numero }}: {{ jogo.time_casa.equipe_participante }} vs {{ jogo.time_fora.equipe_participante }} ({{ jogo.data_horario|date:"d/m/Y H:i" }})
+                    <option value="{{ jogo.id }}" data-equipe-casa="{{ jogo.time_casa.equipe }}" data-equipe-fora="{{ jogo.time_fora.equipe }}">
+                        Rodada {{ jogo.rodada.numero }}: {{ jogo.time_casa.equipe }} vs {{ jogo.time_fora.equipe }} ({{ jogo.data_horario|date:"d/m/Y H:i" }})
                     </option>
                 {% endfor %}
             </select>
