@@ -1,43 +1,71 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="container mt-5">
+<div class="container mt-5">
     <div class="row justify-content-center">
-      <div class="col-md-6">
-        <div class="card shadow-sm">
-          <div class="card-header bg-primary text-white">
-            <h2 class="card-title">Inscrição no Campeonato</h2>
-          </div>
-          <div class="card-body">
-            {% if messages %}
-              <div class="alert alert-light border border-danger text-danger" style="font-size: 0.9em; background-color: #f8d7da;">
-                {% for message in messages %}
-                  {{ message }}
-                {% endfor %}
-              </div>
-            {% endif %}
-            
-            <form method="POST">
-              {% csrf_token %}
-              
-              <!-- Renderiza o campo de seleção de participantes -->
-              <div class="mb-3">
-                <label for="id_participante" class="form-label">Selecione um Participante</label>
-                {{ form.participante }} <!-- O campo participante será renderizado aqui -->
-              </div>
-              
-              <button type="submit" class="btn btn-primary">Confirmar Inscrição</button>
-            </form>
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="card-title">Inscrição no Campeonato</h2>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                    <div class="alert alert-light border border-danger text-danger" style="font-size: 0.9em; background-color: #f8d7da;">
+                        {% for message in messages %}
+                        {{ message }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <!-- Campo de pesquisa -->
+                        <div class="mb-3">
+                            <label for="search" class="form-label">Pesquisar Participante</label>
+                            <input type="text" id="search" class="form-control" placeholder="Digite o nome do participante" onkeyup="filterParticipants()">
+                        </div>
 
-            <hr>
+                        <!-- Renderiza o campo de seleção de participantes -->
+                        <div class="mb-3">
+                            <label for="id_participante" class="form-label">Selecione um Participante</label>
+                            <select id="id_participante" name="participante" class="form-select">
+                                <option value="" disabled selected>----------</option> <!-- Opção nula -->
+                                {% for participante in form.participante.field.queryset|dictsort:"nome_participante" %}
+                                <option value="{{ participante.pk }}">{{ participante.nome_participante }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Confirmar Inscrição</button>
+                    </form>
 
-            <!-- Botão para redirecionar à página de inscrição de novo participante -->
-            <div class="text-center mt-3">
-              <a href="{% url 'novo_participante' campeonato.id %}" class="btn btn-secondary">Inscrever Novo Participante</a>
+                    <hr>
+
+                    <!-- Botão para redirecionar à página de inscrição de novo participante -->
+                    <div class="text-center mt-3">
+                        <a href="{% url 'novo_participante' campeonato.id %}" class="btn btn-secondary">Inscrever Novo Participante</a>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>
+
+<script>
+    function filterParticipants() {
+        const input = document.getElementById('search').value.toLowerCase();
+        const select = document.getElementById('id_participante');
+        const options = select.getElementsByTagName('option');
+
+        for (let i = 0; i < options.length; i++) {
+            const option = options[i];
+            if (option.innerText.toLowerCase().includes(input)) {
+                option.style.display = '';
+            } else {
+                option.style.display = 'none';
+            }
+        }
+    }
+</script>
 {% endblock %}

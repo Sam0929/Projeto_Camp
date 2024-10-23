@@ -24,8 +24,8 @@ class Jogo(models.Model):
 
 class Resultado(models.Model):
     jogo = models.OneToOneField(Jogo, on_delete=models.CASCADE, related_name='resultado_jogo')
-    gols_time_casa = models.PositiveIntegerField(default=0)
-    gols_time_fora = models.PositiveIntegerField(default=0)
+    gols_time_casa = models.PositiveIntegerField(null=True, blank=True)  # Permitir nulos
+    gols_time_fora = models.PositiveIntegerField(null=True, blank=True)  # Permitir nulos
 
     def __str__(self):
-        return f'Resultado: {self.gols_time_casa} - {self.gols_time_fora} ({self.jogo.time_casa.nome} vs {self.jogo.time_fora.nome})'
+        return f'Resultado: {self.gols_time_casa or "N/A"} - {self.gols_time_fora or "N/A"} ({self.jogo.time_casa.nome} vs {self.jogo.time_fora.nome})'

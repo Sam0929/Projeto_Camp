@@ -6,6 +6,16 @@
 <div class="container mt-5">
     <h1 class="text-center">Gerar Tabela para {{ campeonato.nome }}</h1>
 
+    <!-- Informações sobre o campeonato -->
+    <div class="alert alert-info">
+        <p><strong>Data de Início do Campeonato:</strong> {{ campeonato.data_inicio|date:"d/m/Y" }}</p>
+        <p><strong>Data de Fim do Campeonato:</strong> {{ campeonato.data_fim|date:"d/m/Y" }}</p>
+        <p><strong>Horário de Início do Campeonato:</strong> {{ campeonato.data_inicio|time:"H:i" }}</p> <!-- Acessa a hora -->
+        <p><strong>Horário de Fim do Campeonato:</strong> {{ campeonato.data_fim|time:"H:i" }}</p> <!-- Acessa a hora -->
+        <p><strong>Duração do Campeonato:</strong> {{ duracao_campeonato }} dias</p>
+        <p><strong>Recomendação de Rodadas:</strong> <span id="recomendacao-rodadas" style="color: lightcoral;"> Digite um intervalo entre rodadas!</span></p>
+    </div>
+
     <form method="POST" action="{% url 'gerar_tabela' campeonato.id %}">
         {% csrf_token %}
         
@@ -16,7 +26,7 @@
 
         <div class="form-group">
             <label for="intervalo_dias">Intervalo entre Rodadas (dias)</label>
-            <input type="number" class="form-control" id="intervalo_dias" name="intervalo_dias" min="1" required>
+            <input type="number" class="form-control" id="intervalo_dias" name="intervalo_dias" min="1" required oninput="atualizarRodadasRecomendadas()">
         </div>
 
         <div class="form-group">
@@ -57,4 +67,18 @@
         <button type="submit" class="btn btn-primary mt-3">Gerar Tabela</button>
     </form>
 </div>
+
+<script>
+    function atualizarRodadasRecomendadas() {
+        const duracaoCampeonato = {{ duracao_campeonato }}; // Duração do campeonato em dias
+        const intervaloDias = document.getElementById('intervalo_dias').value; // Valor do intervalo entre rodadas
+        if (intervaloDias) {
+            // Calcula o número recomendado de rodadas
+            const recomendacaoRodadas = Math.floor(duracaoCampeonato / intervaloDias);
+            document.getElementById('recomendacao-rodadas').innerText = Math.max(recomendacaoRodadas, 1); // Não permitir menos de 1 rodada
+        } else {
+            document.getElementById('recomendacao-rodadas').innerText = "digite um intervalo entre rodadas"; // Mensagem padrão
+        }
+    }
+</script>
 {% endblock %}
