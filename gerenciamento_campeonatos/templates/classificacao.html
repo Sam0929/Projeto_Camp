@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Classificação - {{ campeonato.nome }}</h2>
+    
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Posição</th>
+                <th>Equipe</th>
+                <th>Pontos</th>
+                <th>Vitórias</th>
+                <th>Empates</th>
+                <th>Derrotas</th>
+                <th>Pontos Marcados</th>
+                <th>Pontos Sofridos</th>
+                <th>Saldo de Pontos</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for equipe, stats in classificados %}
+            <tr style="background-color: {% if forloop.counter <= num_classificados %} #d4f8d4 {% else %} #f8d4d4 {% endif %};">
+                <td>
+                    <span style="display: inline-block; width: 10px; height: 10px; background-color: {% if forloop.counter <= num_classificados %} #4CAF50 {% else %} #FF6B6B {% endif %}; margin-right: 8px;"></span>
+                    {{ forloop.counter }}
+                </td>
+                <td>{{ equipe }}</td>
+                <td>{{ stats.pontos }}</td>
+                <td>{{ stats.vitorias }}</td>
+                <td>{{ stats.empates }}</td>
+                <td>{{ stats.derrotas }}</td>
+                <td>{{ stats.gols_marcados }}</td>
+                <td>{{ stats.gols_sofridos }}</td>
+                <td>{{ stats.saldo_gols }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Exibe as listas de classificados e desclassificados -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h4>Classificados</h4>
+            <ul class="list-group">
+                {% for equipe, stats in equipes_classificadas %}
+                <li class="list-group-item" style="background-color: #d4f8d4;">{{ equipe }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <h4>Desclassificados</h4>
+            <ul class="list-group">
+                {% for equipe, stats in equipes_desclassificadas %}
+                <li class="list-group-item" style="background-color: #f8d4d4;">{{ equipe }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

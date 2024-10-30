@@ -1,3 +1,4 @@
+from pyexpat.errors import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from campeonatos.models import Campeonato
 from .utils import gerar_jogos
@@ -105,17 +106,18 @@ def visualizar_tabela(request, campeonato_id):
     })
 
 
+from django.db.models import Q
+
 def calcular_pontuacao(campeonato):
     pontuacao = {}
 
     # Inicializa a pontuação de todos os times a partir das inscrições
     inscricoes = Inscricao.objects.filter(campeonato=campeonato)
 
-    # Inicializar o dicionário para equipes, agrupando participantes por equipe
     for inscricao in inscricoes:
         equipe = inscricao.participante.equipe
         if equipe not in pontuacao:
-            pontuacao[equipe] = {'pontos': 0, 'vitorias': 0, 'empates': 0, 'derrotas': 0}
+            pontuacao[equipe] = {'pontos': 0, 'vitorias': 0, 'empates': 0, 'derrotas': 0, 'gols_marcados': 0, 'gols_sofridos': 0, 'saldo_gols': 0, 'confrontos_diretos': {}}
 
     # Percorre todos os jogos do campeonato
     for rodada in campeonato.rodadas.all():
@@ -123,27 +125,57 @@ def calcular_pontuacao(campeonato):
             if hasattr(jogo, 'resultado_jogo') and jogo.resultado_jogo:
                 gols_time_casa = jogo.resultado_jogo.gols_time_casa
                 gols_time_fora = jogo.resultado_jogo.gols_time_fora
-                
-                # Atualiza a pontuação das equipes, e não dos participantes
+
+                equipe_casa = jogo.time_casa.equipe
+                equipe_fora = jogo.time_fora.equipe
+
                 if gols_time_casa is not None and gols_time_fora is not None:
+                    # Atualizar gols marcados, sofridos e saldo de gols
+                    pontuacao[equipe_casa]['gols_marcados'] += gols_time_casa
+                    pontuacao[equipe_casa]['gols_sofridos'] += gols_time_fora
+                    pontuacao[equipe_fora]['gols_marcados'] += gols_time_fora
+                    pontuacao[equipe_fora]['gols_sofridos'] += gols_time_casa
+
+                    pontuacao[equipe_casa]['saldo_gols'] = pontuacao[equipe_casa]['gols_marcados'] - pontuacao[equipe_casa]['gols_sofridos']
+                    pontuacao[equipe_fora]['saldo_gols'] = pontuacao[equipe_fora]['gols_marcados'] - pontuacao[equipe_fora]['gols_sofridos']
+
+                    # Atualiza pontos e resultados (vitória, empate, derrota)
                     if gols_time_casa > gols_time_fora:
-                        pontuacao[jogo.time_casa.equipe]['pontos'] += 3
-                        pontuacao[jogo.time_casa.equipe]['vitorias'] += 1
-                        pontuacao[jogo.time_fora.equipe]['derrotas'] += 1
+                        pontuacao[equipe_casa]['pontos'] += 3
+                        pontuacao[equipe_casa]['vitorias'] += 1
+                        pontuacao[equipe_fora]['derrotas'] += 1
                     elif gols_time_casa < gols_time_fora:
-                        pontuacao[jogo.time_fora.equipe]['pontos'] += 3
-                        pontuacao[jogo.time_fora.equipe]['vitorias'] += 1
-                        pontuacao[jogo.time_casa.equipe]['derrotas'] += 1
+                        pontuacao[equipe_fora]['pontos'] += 3
+                        pontuacao[equipe_fora]['vitorias'] += 1
+                        pontuacao[equipe_casa]['derrotas'] += 1
                     else:
-                        pontuacao[jogo.time_casa.equipe]['pontos'] += 1
-                        pontuacao[jogo.time_fora.equipe]['pontos'] += 1
-                        pontuacao[jogo.time_casa.equipe]['empates'] += 1
-                        pontuacao[jogo.time_fora.equipe]['empates'] += 1
+                        pontuacao[equipe_casa]['pontos'] += 1
+                        pontuacao[equipe_fora]['pontos'] += 1
+                        pontuacao[equipe_casa]['empates'] += 1
+                        pontuacao[equipe_fora]['empates'] += 1
 
-    # Ordenar por pontos (do maior para o menor)
-    pontuacao_ordenada = dict(sorted(pontuacao.items(), key=lambda item: item[1]['pontos'], reverse=True))
+                    # Atualiza confrontos diretos
+                    if equipe_fora not in pontuacao[equipe_casa]['confrontos_diretos']:
+                        pontuacao[equipe_casa]['confrontos_diretos'][equipe_fora] = 0
+                    if equipe_casa not in pontuacao[equipe_fora]['confrontos_diretos']:
+                        pontuacao[equipe_fora]['confrontos_diretos'][equipe_casa] = 0
 
-    return pontuacao_ordenada
+                    # Confronto direto: +1 para vitória, -1 para derrota
+                    if gols_time_casa > gols_time_fora:
+                        pontuacao[equipe_casa]['confrontos_diretos'][equipe_fora] += 1
+                        pontuacao[equipe_fora]['confrontos_diretos'][equipe_casa] -= 1
+                    elif gols_time_casa < gols_time_fora:
+                        pontuacao[equipe_fora]['confrontos_diretos'][equipe_casa] += 1
+                        pontuacao[equipe_casa]['confrontos_diretos'][equipe_fora] -= 1
+
+    # Ordenar por pontos, saldo de gols, gols marcados e confrontos diretos
+    pontuacao_ordenada = sorted(
+        pontuacao.items(),
+        key=lambda item: (item[1]['pontos'], item[1]['saldo_gols'], item[1]['gols_marcados']),
+        reverse=True
+    )
+
+    return dict(pontuacao_ordenada)
 
 
 
@@ -187,4 +219,68 @@ def registrar_resultados(request, campeonato_id):
     return render(request, 'registrar_resultados.html', {
         'campeonato': campeonato,
         'jogos': jogos,
+    })
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
+from .models import Campeonato, Jogo  # Certifique-se de que o modelo Jogo está importado
+
+def confirmar_classificacao(request, campeonato_id):
+    campeonato = get_object_or_404(Campeonato, id=campeonato_id)
+
+    # Verificar se todos os jogos possuem resultados
+    jogos_sem_resultado = Jogo.objects.filter(
+        rodada__campeonato=campeonato,
+        resultado_jogo__isnull=True
+    ).exists()
+
+    if request.method == 'POST':
+        # Se o botão confirmar foi clicado
+        if 'confirmar' in request.POST:
+            # Redireciona para gerar_classificacao independentemente de jogos sem resultado
+            return redirect(reverse('gerar_classificacao', args=[campeonato_id]))
+        
+        # Se o botão cancelar foi clicado
+        elif 'cancelar' in request.POST:
+            return redirect(reverse('visualizar_tabela', args=[campeonato_id]))
+
+    # Renderiza a página de confirmação inicialmente
+    return render(request, 'confirmar_classificacao.html', {'campeonato': campeonato, 'jogos_sem_resultado': jogos_sem_resultado})
+
+def gerar_classificacao(request, campeonato_id):
+    campeonato = get_object_or_404(Campeonato, id=campeonato_id)
+
+    if request.method == 'POST':
+        # Obtém o número de classificados enviado pelo formulário
+        num_classificados = int(request.POST.get('num_classificados', 4))
+        request.session['num_classificados'] = num_classificados  # Armazena na sessão
+
+        return redirect(reverse('visualizar_classificacao', args=[campeonato_id]))
+
+    # Renderiza o formulário para inserir o número de classificados
+    return render(request, 'gerar_classificacao.html', {'campeonato': campeonato})
+
+def visualizar_classificacao(request, campeonato_id):
+    campeonato = get_object_or_404(Campeonato, id=campeonato_id)
+    pontuacao = calcular_pontuacao(campeonato)
+
+    # Ordena os times de acordo com pontuação
+    classificados = sorted(
+        pontuacao.items(),
+        key=lambda item: (item[1]['pontos'], item[1]['saldo_gols'], item[1]['gols_marcados']),
+        reverse=True
+    )
+
+    # Número de classificados (carregado da sessão)
+    num_classificados = int(request.session.get('num_classificados', 4))  # valor padrão se não estiver na sessão
+    equipes_classificadas = classificados[:num_classificados]
+    equipes_desclassificadas = classificados[num_classificados:]
+
+    return render(request, 'classificacao.html', {
+        'campeonato': campeonato,
+        'classificados': classificados,
+        'equipes_classificadas': equipes_classificadas,
+        'equipes_desclassificadas': equipes_desclassificadas,
+        'num_classificados': num_classificados
     })
