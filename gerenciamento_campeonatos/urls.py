@@ -9,4 +9,5 @@ urlpatterns = [
     path('gerar_classificacao/<int:campeonato_id>/', views.gerar_classificacao, name='gerar_classificacao'),
     path('visualizar_classificacao/<int:campeonato_id>/', views.visualizar_classificacao, name='visualizar_classificacao'),
     path('confirmar_classificacao/<int:campeonato_id>/', views.confirmar_classificacao, name='confirmar_classificacao'),
+    path('editar_classificacao/<int:campeonato_id>/', views.editar_classificacao, name='editar_classificacao'),
 ]

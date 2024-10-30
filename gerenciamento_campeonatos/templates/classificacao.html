@@ -38,6 +38,13 @@
         </tbody>
     </table>
 
+    <!-- Botão para editar a classificação -->
+        <div class="mt-4">
+            <a href="{% url 'editar_classificacao' campeonato.id %}" class="btn btn-secondary">
+                Editar Classificação
+            </a>
+        </div>
+
     <!-- Exibe as listas de classificados e desclassificados -->
     <div class="row mt-4">
         <div class="col-md-6">
@@ -57,5 +64,7 @@
             </ul>
         </div>
     </div>
+
+    
 </div>
 {% endblock %}

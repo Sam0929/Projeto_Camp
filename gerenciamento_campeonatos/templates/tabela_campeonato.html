@@ -73,22 +73,29 @@
         </div>
         {% endfor %}
     </div>
-
+    
     <!-- Botões centrais para visualização de tabela e geração de classificação -->
     <div class="text-center mt-4 d-flex justify-content-center gap-3">
-        <!-- Botão para visualizar a tabela de jogos -->
-        <button id="toggleTabelaJogos" class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#tabelaJogos" aria-expanded="false" aria-controls="tabelaJogos">
+        <!-- Botão para visualizar a tabela de jogos com tamanho fixo -->
+        <button id="toggleTabelaJogos" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#tabelaJogos" aria-expanded="false" aria-controls="tabelaJogos" style="width: 200px;">
             Visualizar Tabela de Jogos
         </button>
 
-       <!-- Botão para gerar classificação -->
-        <form id="gerarClassificacaoForm" action="{% url 'confirmar_classificacao' campeonato.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-success">
-                Gerar Classificação
-            </button>
-        </form>
-
+        {% if request.session.classificacao_gerada %}
+            <!-- Botão para Visualizar Classificação -->
+            <a href="{% url 'visualizar_classificacao' campeonato.id %}" class="btn btn-secondary" style="width: 200px;">
+                Visualizar Classificação
+            </a>
+        {% else %}
+            <!-- Botão para Gerar Classificação -->
+            <form id="gerarClassificacaoForm" action="{% url 'confirmar_classificacao' campeonato.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-secondary" style="width: 200px;">
+                    Gerar Classificação
+                </button>
+            </form>
+        {% endif %}
+    </div>
 
     <!-- Seção de Jogos por Rodada (colapsável) -->
     <div class="collapse mt-3" id="tabelaJogos">
@@ -115,21 +122,21 @@
     </div>
 </div>
 
-<!-- JavaScript para alterar o texto e estilo do botão -->
-<script>
-    document.getElementById("toggleTabelaJogos").addEventListener("click", function () {
-        const tabelaJogos = document.getElementById("tabelaJogos");
-        const button = this;
+    <!-- JavaScript para alterar o texto e estilo do botão -->
+    <script>
+        document.getElementById("toggleTabelaJogos").addEventListener("click", function () {
+            const tabelaJogos = document.getElementById("tabelaJogos");
+            const button = this;
 
-        tabelaJogos.addEventListener("shown.bs.collapse", function () {
-            button.textContent = "Ocultar Tabela de Jogos";
-            button.classList.replace("btn-primary", "btn-danger");
-        });
+            tabelaJogos.addEventListener("shown.bs.collapse", function () {
+                button.textContent = "Ocultar Tabela de Jogos";
+                button.classList.replace("btn-secondary", "btn-light");  // Cor mais clara ao expandir
+            });
 
-        tabelaJogos.addEventListener("hidden.bs.collapse", function () {
-            button.textContent = "Visualizar Tabela de Jogos";
-            button.classList.replace("btn-danger", "btn-primary");
+            tabelaJogos.addEventListener("hidden.bs.collapse", function () {
+                button.textContent = "Visualizar Tabela de Jogos";
+                button.classList.replace("btn-light", "btn-secondary");  // Retorna à cor cinza original
+            });
         });
-    });
-</script>
+    </script>
 {% endblock %}

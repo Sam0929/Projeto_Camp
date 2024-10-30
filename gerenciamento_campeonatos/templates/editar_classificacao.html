@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Classificação{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Editar Número de Equipes Classificadas</h2>
+    <form method="post" action="{% url 'editar_classificacao' campeonato.id %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="num_classificados">Número de equipes classificadas:</label>
+            <input type="number" name="num_classificados" id="num_classificados" class="form-control" min="1" required>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Salvar</button>
+    </form>
+</div>
+{% endblock %}

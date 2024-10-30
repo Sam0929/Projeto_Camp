@@ -255,11 +255,13 @@ def gerar_classificacao(request, campeonato_id):
         # Obtém o número de classificados enviado pelo formulário
         num_classificados = int(request.POST.get('num_classificados', 4))
         request.session['num_classificados'] = num_classificados  # Armazena na sessão
+        request.session['classificacao_gerada'] = True  # Marca a classificação como gerada
 
         return redirect(reverse('visualizar_classificacao', args=[campeonato_id]))
 
     # Renderiza o formulário para inserir o número de classificados
     return render(request, 'gerar_classificacao.html', {'campeonato': campeonato})
+
 
 def visualizar_classificacao(request, campeonato_id):
     campeonato = get_object_or_404(Campeonato, id=campeonato_id)
@@ -284,3 +286,17 @@ def visualizar_classificacao(request, campeonato_id):
         'equipes_desclassificadas': equipes_desclassificadas,
         'num_classificados': num_classificados
     })
+
+def editar_classificacao(request, campeonato_id):
+    campeonato = get_object_or_404(Campeonato, id=campeonato_id)
+
+    if request.method == 'POST':
+        # Atualiza o número de classificados com o novo valor
+        num_classificados = int(request.POST.get('num_classificados', 4))
+        request.session['num_classificados'] = num_classificados
+
+        # Redireciona para a visualização da classificação atualizada
+        return redirect(reverse('visualizar_classificacao', args=[campeonato_id]))
+
+    # Renderiza o formulário de edição de classificação
+    return render(request, 'editar_classificacao.html', {'campeonato': campeonato})
