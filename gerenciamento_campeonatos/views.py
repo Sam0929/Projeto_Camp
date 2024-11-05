@@ -255,8 +255,12 @@ def gerar_classificacao(request, campeonato_id):
         # Obtém o número de classificados enviado pelo formulário
         num_classificados = int(request.POST.get('num_classificados', 4))
         request.session['num_classificados'] = num_classificados  # Armazena na sessão
-        request.session['classificacao_gerada'] = True  # Marca a classificação como gerada
 
+        # Marca a classificação como gerada no modelo e salva
+        campeonato.classificacao_gerada = True
+        campeonato.save()
+
+        # Redireciona para a visualização da classificação
         return redirect(reverse('visualizar_classificacao', args=[campeonato_id]))
 
     # Renderiza o formulário para inserir o número de classificados
