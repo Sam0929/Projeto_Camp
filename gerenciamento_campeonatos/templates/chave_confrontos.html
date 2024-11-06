@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Chave de Confrontos{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="text-center">
+        <h1 class="display-4">Chave de Confrontos</h1>
+        <p class="lead">Confira os jogos das fases eliminatórias do campeonato!</p>
+        <hr class="my-4">
+        <p>Campeonato: {{ campeonato.nome }}</p>
+        <p>Data de início: {{ campeonato.data_inicio|date:"d/m/Y" }}</p>
+        <p>Data de fim: {{ campeonato.data_fim|date:"d/m/Y" }}</p>
+    </div>
+
+    <!-- Exibição dos confrontos por fase -->
+    <div class="mt-4">
+        {% for fase, jogos in jogos_por_rodada.items %}
+            <h3 class="mt-4 text-center text-primary">{{ fase|title }}</h3>
+            <ul class="list-group mb-3">
+                {% for jogo in jogos %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            {{ jogo.time_casa.equipe }} vs {{ jogo.time_fora.equipe }}  
+                            <small class="text-muted">({{ jogo.data_horario|date:"d/m/Y H:i" }})</small>
+                        </div>
+                        <div>
+                            {% if jogo.resultado %}
+                                <span class="badge bg-success rounded-pill">Resultado: {{ jogo.resultado }}</span>
+                            {% else %}
+                                <span class="badge bg-secondary rounded-pill">Resultado: Pendente</span>
+                            {% endif %}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    </div>
+
+    <div class="mt-4 text-center">
+        <a href="{% url 'visualizar_tabela' campeonato.id %}" class="btn btn-success">Visualizar Tabela Completa</a>
+    </div>
+</div>
+{% endblock %}

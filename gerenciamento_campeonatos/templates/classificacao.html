@@ -39,11 +39,18 @@
     </table>
 
     <!-- Botão para editar a classificação -->
-        <div class="mt-4">
-            <a href="{% url 'editar_classificacao' campeonato.id %}" class="btn btn-secondary">
-                Editar Classificação
-            </a>
-        </div>
+    <div class="mt-4">
+        <a href="{% url 'editar_classificacao' campeonato.id %}" class="btn btn-secondary">
+            Editar Classificação
+        </a>
+    </div>
+
+    <!-- Botão para gerar eliminatórias -->
+    <div class="mt-4">
+        <a href="{% url 'configurar_eliminatorias' campeonato.id %}" class="btn btn-primary">
+            Gerar Eliminatórias
+        </a>
+    </div>
 
     <!-- Exibe as listas de classificados e desclassificados -->
     <div class="row mt-4">
@@ -64,7 +71,5 @@
             </ul>
         </div>
     </div>
-
-    
 </div>
 {% endblock %}

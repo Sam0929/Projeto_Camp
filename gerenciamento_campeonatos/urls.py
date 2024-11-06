@@ -10,4 +10,7 @@ urlpatterns = [
     path('visualizar_classificacao/<int:campeonato_id>/', views.visualizar_classificacao, name='visualizar_classificacao'),
     path('confirmar_classificacao/<int:campeonato_id>/', views.confirmar_classificacao, name='confirmar_classificacao'),
     path('editar_classificacao/<int:campeonato_id>/', views.editar_classificacao, name='editar_classificacao'),
+    path('configurar_eliminatorias/<int:campeonato_id>/', views.configurar_eliminatorias, name='configurar_eliminatorias'),
+    path('chave_confrontos/<int:campeonato_id>/', views.visualizar_chave_confrontos, name='visualizar_chave_confrontos'),
+    path('visualizar_ganhador/<int:campeonato_id>/', views.visualizar_ganhador_unico, name='visualizar_ganhador_unico'),
 ]

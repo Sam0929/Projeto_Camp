@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Configurar Fases Eliminatórias - {{ campeonato.nome }}</h2>
+
+    <!-- Observações: Data do último jogo e número de classificados -->
+    <p><strong>Observação:</strong> Data do último jogo da última rodada: {{ data_ultimo_jogo|date:"d/m/Y" }}</p>
+    <p><strong>Número de Classificados:</strong> {{ num_classificados }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Seleção do Tipo de Eliminatória -->
+        <div class="form-group">
+            <label for="tipo_eliminatoria">Escolha o tipo de eliminatória:</label>
+            <select id="id_tipo_eliminatoria" name="tipo_eliminatoria" class="form-control">
+                <option value="ganhador_unico">Ganhador Único</option>
+                <option value="oitavas_de_final">Oitavas de Final</option>
+                <option value="quartas_de_final">Quartas de Final</option>
+                <option value="semi_finais">Semi-finais</option>
+                <option value="final">Final</option>
+            </select>
+        </div>
+
+        <!-- Seleção das Datas das Rodadas para cada Fase -->
+        <div id="data-oitavas" class="form-group mt-3" style="display: none;">
+            <label for="data_oitavas">Data - Oitavas de Final:</label>
+            <input type="date" id="data_oitavas" name="data_oitavas" class="form-control">
+        </div>
+
+        <div id="data-quartas" class="form-group mt-3" style="display: none;">
+            <label for="data_quartas">Data - Quartas de Final:</label>
+            <input type="date" id="data_quartas" name="data_quartas" class="form-control">
+        </div>
+
+        <div id="data-semi" class="form-group mt-3" style="display: none;">
+            <label for="data_semi">Data - Semi-finais:</label>
+            <input type="date" id="data_semi" name="data_semi" class="form-control">
+        </div>
+
+        <div id="data-final" class="form-group mt-3" style="display: none;">
+            <label for="data_final">Data - Final:</label>
+            <input type="date" id="data_final" name="data_final" class="form-control">
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Gerar Eliminatórias</button>
+    </form>
+</div>
+
+<script>
+document.getElementById('id_tipo_eliminatoria').addEventListener('change', function () {
+    const selected = this.value;
+    document.getElementById('data-oitavas').style.display = selected === 'oitavas_de_final' ? 'block' : 'none';
+    document.getElementById('data-quartas').style.display = ['oitavas_de_final', 'quartas_de_final'].includes(selected) ? 'block' : 'none';
+    document.getElementById('data-semi').style.display = ['oitavas_de_final', 'quartas_de_final', 'semi_finais'].includes(selected) ? 'block' : 'none';
+    document.getElementById('data-final').style.display = selected !== 'ganhador_unico' ? 'block' : 'none';
+});
+</script>
+{% endblock %}

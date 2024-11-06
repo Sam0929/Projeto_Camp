@@ -1,11 +1,13 @@
+import datetime
 from pyexpat.errors import messages
 from django.shortcuts import render, get_object_or_404, redirect
-from campeonatos.models import Campeonato
+from .forms import EliminatoriasForm
+from campeonatos.models import Campeonato, Participante
 from .utils import gerar_jogos
 from campeonatos.models import Inscricao  # Importar o modelo de Inscrição
 from django.urls import reverse
 from campeonatos.models import Campeonato
-from gerenciamento_campeonatos.models import Jogo, Resultado
+from gerenciamento_campeonatos.models import Jogo, Resultado, Rodada
 from datetime import timedelta
 from collections import defaultdict
 
@@ -224,7 +226,7 @@ def registrar_resultados(request, campeonato_id):
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from .models import Campeonato, Jogo  # Certifique-se de que o modelo Jogo está importado
+from .models import Campeonato, Jogo, JogoEliminatorio, RodadaEliminatoria  # Certifique-se de que o modelo Jogo está importado
 
 def confirmar_classificacao(request, campeonato_id):
     campeonato = get_object_or_404(Campeonato, id=campeonato_id)
@@ -304,3 +306,112 @@ def editar_classificacao(request, campeonato_id):
 
     # Renderiza o formulário de edição de classificação
     return render(request, 'editar_classificacao.html', {'campeonato': campeonato})
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Campeonato, RodadasClassificatorias, Rodada, Jogo
+from .forms import EliminatoriasForm
+
+def configurar_eliminatorias(request, campeonato_id):
+    campeonato = get_object_or_404(Campeonato, id=campeonato_id)
+    ultima_rodada = campeonato.rodadas.order_by('-data').first()
+    data_ultimo_jogo = ultima_rodada.data if ultima_rodada else None
+
+    num_classificados = int(request.session.get('num_classificados', 4))
+    if 'num_classificados' not in request.session:
+        pontuacao = calcular_pontuacao(campeonato)
+        num_classificados = len(pontuacao)
+        request.session['num_classificados'] = num_classificados
+
+    if request.method == 'POST':
+        form = EliminatoriasForm(request.POST)
+        if form.is_valid():
+            tipo = form.cleaned_data['tipo_eliminatoria']
+            if tipo != 'ganhador_unico':
+                gerar_fases_eliminatorias(campeonato, tipo)  # Gera confrontos eliminatórios
+
+            return redirect('visualizar_chave_confrontos', campeonato_id=campeonato.id)
+    else:
+        form = EliminatoriasForm()
+
+    context = {
+        'form': form,
+        'campeonato': campeonato,
+        'data_ultimo_jogo': data_ultimo_jogo,
+        'num_classificados': num_classificados,
+    }
+    return render(request, 'configurar_eliminatorias.html', context)
+
+
+def gerar_fases_eliminatorias(campeonato, tipo_eliminatoria):
+    # Calcula e ordena a pontuação das equipes
+    pontuacao = calcular_pontuacao(campeonato)
+
+    # Ordena as equipes pela pontuação
+    classificados = [
+        equipe for equipe, dados in sorted(
+            pontuacao.items(),
+            key=lambda item: (item[1]['pontos'], item[1]['saldo_gols'], item[1]['gols_marcados']),
+            reverse=True
+        )[:16]
+    ]
+
+    min_classificados = {
+        'oitavas_de_final': 16,
+        'quartas_de_final': 8,
+        'semi_finais': 4,
+        'final': 2,
+    }
+
+    if len(classificados) < min_classificados.get(tipo_eliminatoria, 2):
+        raise ValueError(f"Número insuficiente de participantes para {tipo_eliminatoria}. Necessário: {min_classificados[tipo_eliminatoria]}")
+
+    num_confrontos = min_classificados[tipo_eliminatoria] // 2
+    rodada_eliminatoria = RodadaEliminatoria.objects.create(campeonato=campeonato, fase=tipo_eliminatoria)
+    
+    for i in range(num_confrontos):
+        time_casa_nome = classificados[i * 2]
+        time_fora_nome = classificados[i * 2 + 1]
+
+        # Usar filter() para evitar problemas de múltiplos resultados
+        time_casa = Participante.objects.filter(equipe=time_casa_nome).first()  # Retorna o primeiro ou None
+        time_fora = Participante.objects.filter(equipe=time_fora_nome).first()  # Retorna o primeiro ou None
+
+        if not time_casa or not time_fora:
+            raise ValueError(f"Participante não encontrado para {time_casa_nome} ou {time_fora_nome}")
+        
+        JogoEliminatorio.objects.create(
+            rodada=rodada_eliminatoria,
+            time_casa=time_casa,
+            time_fora=time_fora
+        )
+
+
+
+
+
+def visualizar_chave_confrontos(request, campeonato_id):
+    campeonato = get_object_or_404(Campeonato, id=campeonato_id)
+    rodadas_eliminatorias = RodadaEliminatoria.objects.filter(campeonato=campeonato).order_by('fase')  # Ordene por fase
+
+    jogos_por_rodada = {}
+    for rodada in rodadas_eliminatorias:
+        jogos = JogoEliminatorio.objects.filter(rodada=rodada)
+        jogos_por_rodada[rodada.get_fase_display()] = jogos  # Agora deve exibir o nome legível da fase
+
+    return render(request, 'chave_confrontos.html', {
+        'campeonato': campeonato,
+        'jogos_por_rodada': jogos_por_rodada,
+    })
+
+
+def visualizar_ganhador_unico(request, campeonato_id):
+    campeonato = get_object_or_404(Campeonato, id=campeonato_id)
+    pontuacao = calcular_pontuacao(campeonato)
+    
+    vencedor = sorted(
+        pontuacao.items(),
+        key=lambda item: (item[1]['pontos'], item[1]['saldo_gols'], item[1]['gols_marcados']),
+        reverse=True
+    )[0][0]  # Seleciona o primeiro colocado
+    
+    return render(request, 'ganhador_unico.html', {'vencedor': vencedor, 'campeonato': campeonato})
