@@ -418,18 +418,31 @@ def visualizar_chave_confrontos(request, campeonato_id):
     # Define a ordem das fases
     ordem_fases = ['oitavas_de_final', 'quartas_de_final', 'semi_finais', 'final']
     jogos_por_rodada = {}
+    vencedor_final = None
 
     for fase in ordem_fases:
-        # Seleciona apenas as rodadas da fase específica, ordenando-as na ordem correta
         rodada = rodadas_eliminatorias.filter(fase=fase).first()
         if rodada:
             jogos = JogoEliminatorio.objects.filter(rodada=rodada)
-            jogos_por_rodada[rodada.get_fase_display()] = jogos  # Usa o nome legível da fase
+            jogos_por_rodada[rodada.get_fase_display()] = jogos
+            
+            # Verifica o vencedor da final
+            if fase == 'final' and jogos.exists():
+                jogo_final = jogos.first()
+                # Checa se o resultado_eliminatorio existe
+                if hasattr(jogo_final, 'resultado_eliminatorio') and jogo_final.resultado_eliminatorio:
+                    if jogo_final.resultado_eliminatorio.gols_time_casa > jogo_final.resultado_eliminatorio.gols_time_fora:
+                        vencedor_final = jogo_final.time_casa.equipe
+                    elif jogo_final.resultado_eliminatorio.gols_time_fora > jogo_final.resultado_eliminatorio.gols_time_casa:
+                        vencedor_final = jogo_final.time_fora.equipe
 
     return render(request, 'chave_confrontos.html', {
         'campeonato': campeonato,
         'jogos_por_rodada': jogos_por_rodada,
+        'vencedor_final': vencedor_final,
     })
+
+
 
 
 def visualizar_ganhador_unico(request, campeonato_id):

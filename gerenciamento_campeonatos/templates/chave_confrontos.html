@@ -13,6 +13,15 @@
         <p>Data de fim: {{ campeonato.data_fim|date:"d/m/Y" }}</p>
     </div>
 
+    <!-- Exibir equipe vencedora da final -->
+    {% if vencedor_final %}
+        <div class="mt-5 p-4 bg-success text-white text-center rounded">
+            <h2 class="display-6">Equipe Vencedora</h2>
+            <p class="h4">{{ vencedor_final }}</p>
+            <span class="badge bg-light text-success p-2 mt-2">🏆 Parabéns aos campeões! 🏆</span>
+        </div>
+    {% endif %}
+
     <!-- Exibição dos confrontos por fase -->
     <div class="mt-4">
         {% for fase, jogos in jogos_por_rodada.items %}
