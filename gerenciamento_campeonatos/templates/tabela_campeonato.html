@@ -87,13 +87,10 @@
                 Visualizar Classificação
             </a>
         {% else %}
-            <!-- Botão para Gerar Classificação -->
-            <form id="gerarClassificacaoForm" action="{% url 'gerar_classificacao' campeonato.id %}" method="post">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-secondary" style="width: 200px;">
-                    Gerar Classificação
-                </button>
-            </form>
+            <!-- Botão para Confirmar Classificação -->
+            <a href="{% url 'confirmar_classificacao' campeonato.id %}" class="btn btn-secondary" style="width: 200px;">
+                Gerar Classificação
+            </a>
         {% endif %}
     </div>
 
