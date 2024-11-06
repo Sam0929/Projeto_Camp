@@ -13,13 +13,14 @@
         <p>Data de fim: {{ campeonato.data_fim|date:"d/m/Y" }}</p>
     </div>
 
-    <!-- Exibir equipe vencedora da final -->
+    <!-- Exibir equipe vencedora da final com o prêmio -->
     {% if vencedor_final %}
-        <div class="mt-5 p-4 bg-success text-white text-center rounded">
-            <h2 class="display-6">Equipe Vencedora</h2>
-            <p class="h4">{{ vencedor_final }}</p>
-            <span class="badge bg-light text-success p-2 mt-2">🏆 Parabéns aos campeões! 🏆</span>
-        </div>
+    <div class="mt-5 p-4 bg-success text-white text-center rounded">
+        <h2 class="display-6">Equipe Vencedora</h2>
+        <p class="h4">{{ vencedor_final }}</p>
+        <p class="h5">Prêmio: R$ {{ premiacao }}</p> <!-- Exibe o valor do prêmio -->
+        <span class="badge bg-light text-success p-2 mt-2">🏆 Parabéns aos campeões! 🏆</span>
+    </div>
     {% endif %}
 
     <!-- Exibição dos confrontos por fase -->

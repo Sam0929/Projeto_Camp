@@ -429,7 +429,6 @@ def visualizar_chave_confrontos(request, campeonato_id):
             # Verifica o vencedor da final
             if fase == 'final' and jogos.exists():
                 jogo_final = jogos.first()
-                # Checa se o resultado_eliminatorio existe
                 if hasattr(jogo_final, 'resultado_eliminatorio') and jogo_final.resultado_eliminatorio:
                     if jogo_final.resultado_eliminatorio.gols_time_casa > jogo_final.resultado_eliminatorio.gols_time_fora:
                         vencedor_final = jogo_final.time_casa.equipe
@@ -440,7 +439,9 @@ def visualizar_chave_confrontos(request, campeonato_id):
         'campeonato': campeonato,
         'jogos_por_rodada': jogos_por_rodada,
         'vencedor_final': vencedor_final,
+        'premiacao': campeonato.premiação,
     })
+
 
 
 
