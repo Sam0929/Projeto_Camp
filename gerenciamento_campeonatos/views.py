@@ -413,12 +413,18 @@ def gerar_fases_eliminatorias(campeonato, tipo_eliminatoria, datas_horas_fases):
 
 def visualizar_chave_confrontos(request, campeonato_id):
     campeonato = get_object_or_404(Campeonato, id=campeonato_id)
-    rodadas_eliminatorias = RodadaEliminatoria.objects.filter(campeonato=campeonato).order_by('fase')  # Ordene por fase
-
+    rodadas_eliminatorias = RodadaEliminatoria.objects.filter(campeonato=campeonato).order_by('fase')
+    
+    # Define a ordem das fases
+    ordem_fases = ['oitavas_de_final', 'quartas_de_final', 'semi_finais', 'final']
     jogos_por_rodada = {}
-    for rodada in rodadas_eliminatorias:
-        jogos = JogoEliminatorio.objects.filter(rodada=rodada)
-        jogos_por_rodada[rodada.get_fase_display()] = jogos  # Agora deve exibir o nome legível da fase
+
+    for fase in ordem_fases:
+        # Seleciona apenas as rodadas da fase específica, ordenando-as na ordem correta
+        rodada = rodadas_eliminatorias.filter(fase=fase).first()
+        if rodada:
+            jogos = JogoEliminatorio.objects.filter(rodada=rodada)
+            jogos_por_rodada[rodada.get_fase_display()] = jogos  # Usa o nome legível da fase
 
     return render(request, 'chave_confrontos.html', {
         'campeonato': campeonato,
