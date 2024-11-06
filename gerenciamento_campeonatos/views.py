@@ -440,10 +440,7 @@ def visualizar_ganhador_unico(request, campeonato_id):
 
 
 def registrar_resultados_eliminatorias(request, campeonato_id):
-    # Obter o campeonato ou retornar 404
     campeonato = get_object_or_404(Campeonato, id=campeonato_id)
-    
-    # Filtrar jogos eliminatórios do campeonato
     jogos = JogoEliminatorio.objects.filter(rodada__campeonato=campeonato)
 
     if request.method == 'POST':
@@ -451,30 +448,59 @@ def registrar_resultados_eliminatorias(request, campeonato_id):
         gols_time_casa = request.POST.get('gols_time_casa')
         gols_time_fora = request.POST.get('gols_time_fora')
 
-        # Verificar se um jogo foi selecionado
         if jogo_id:
             jogo = get_object_or_404(JogoEliminatorio, id=jogo_id)
-
-            # Verificar se os gols são válidos
-            if gols_time_casa.isdigit():
+            if gols_time_casa.isdigit() and gols_time_fora.isdigit():
                 gols_time_casa = int(gols_time_casa)
-            else:
-                gols_time_casa = None
-            
-            if gols_time_fora.isdigit():
                 gols_time_fora = int(gols_time_fora)
-            else:
-                gols_time_fora = None
 
-            # Verificar se o resultado já existe ou criar um novo
-            resultado, created = ResultadoEliminatorio.objects.get_or_create(jogo=jogo)
-            resultado.gols_time_casa = gols_time_casa
-            resultado.gols_time_fora = gols_time_fora
-            resultado.save()
+                # Salva o resultado
+                resultado, created = ResultadoEliminatorio.objects.get_or_create(jogo=jogo)
+                resultado.gols_time_casa = gols_time_casa
+                resultado.gols_time_fora = gols_time_fora
+                resultado.save()
 
-            return redirect(reverse('visualizar_chave_confrontos', args=[campeonato_id]))
+                # Determina o vencedor e passa para a próxima fase
+                if gols_time_casa > gols_time_fora:
+                    vencedor = jogo.time_casa
+                elif gols_time_fora > gols_time_casa:
+                    vencedor = jogo.time_fora
+                else:
+                    vencedor = None  # Empates podem ser tratados de acordo com regras do campeonato
+
+                if vencedor:
+                    proxima_fase = definir_proxima_fase(jogo.rodada.fase)
+                    if proxima_fase:
+                        alocar_vencedor_para_proxima_fase(campeonato, proxima_fase, vencedor)
+
+                return redirect(reverse('visualizar_chave_confrontos', args=[campeonato_id]))
 
     return render(request, 'registrar_resultados_eliminatorias.html', {
         'campeonato': campeonato,
         'jogos': jogos,
     })
+
+
+def definir_proxima_fase(fase_atual):
+    fases_ordenadas = ['oitavas_de_final', 'quartas_de_final', 'semi_finais', 'final']
+    try:
+        indice_fase = fases_ordenadas.index(fase_atual)
+        return fases_ordenadas[indice_fase + 1] if indice_fase + 1 < len(fases_ordenadas) else None
+    except ValueError:
+        return None
+
+def alocar_vencedor_para_proxima_fase(campeonato, fase, vencedor):
+    rodada_proxima_fase, created = RodadaEliminatoria.objects.get_or_create(
+        campeonato=campeonato,
+        fase=fase,
+    )
+    # Busca um jogo vazio (sem participantes) na próxima fase para alocar o vencedor
+    jogo = JogoEliminatorio.objects.filter(rodada=rodada_proxima_fase, time_casa__isnull=True).first()
+    if jogo:
+        jogo.time_casa = vencedor
+    else:
+        jogo = JogoEliminatorio.objects.filter(rodada=rodada_proxima_fase, time_fora__isnull=True).first()
+        if jogo:
+            jogo.time_fora = vencedor
+    jogo.save()
+
