@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Registrar Resultados Eliminatórias{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Registrar Resultados para {{ campeonato.nome }}</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-4">
+            <label for="jogo_selecionado" class="form-label">Selecione um Jogo:</label>
+            <select id="jogo_selecionado" name="jogo_selecionado" class="form-select" required onchange="atualizarPontos()">
+                <option value="">Escolha um jogo...</option>
+                {% for jogo in jogos %}
+                    <option value="{{ jogo.id }}" data-equipe-casa="{{ jogo.time_casa.equipe }}" data-equipe-fora="{{ jogo.time_fora.equipe }}">
+                        Fase {{ jogo.rodada.fase }}: {{ jogo.time_casa.equipe }} vs {{ jogo.time_fora.equipe }} ({{ jogo.rodada.data|date:"d/m/Y" }} {{ jogo.rodada.data|time:"H:i" }})
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label id="label_gols_time_casa" for="gols_time_casa" class="form-label">Pontos Equipe de Casa:</label>
+            <input type="number" class="form-control" id="gols_time_casa" name="gols_time_casa" required>
+        </div>
+
+        <div class="mb-3">
+            <label id="label_gols_time_fora" for="gols_time_fora" class="form-label">Pontos Equipe de Fora:</label>
+            <input type="number" class="form-control" id="gols_time_fora" name="gols_time_fora" required>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-success">Salvar Resultado</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function atualizarPontos() {
+        const select = document.getElementById('jogo_selecionado');
+        const labelCasa = document.getElementById('label_gols_time_casa');
+        const labelFora = document.getElementById('label_gols_time_fora');
+        const optionSelecionada = select.options[select.selectedIndex];
+
+        // Verifica se uma opção válida foi selecionada
+        if (optionSelecionada.value) {
+            const equipeCasa = optionSelecionada.getAttribute('data-equipe-casa');
+            const equipeFora = optionSelecionada.getAttribute('data-equipe-fora');
+
+            labelCasa.textContent = `Pontos Equipe de Casa (${equipeCasa}):`;
+            labelFora.textContent = `Pontos Equipe de Fora (${equipeFora}):`;
+        } else {
+            labelCasa.textContent = 'Pontos Equipe de Casa:';
+            labelFora.textContent = 'Pontos Equipe de Fora:';
+        }
+    }
+</script>
+
+{% endblock %}

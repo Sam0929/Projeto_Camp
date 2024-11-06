@@ -24,15 +24,17 @@
                             {% if jogo.time_casa and jogo.time_fora %}
                                 {{ jogo.time_casa.equipe }} vs {{ jogo.time_fora.equipe }}
                             {% else %}
-                                <h7 class ="text-primary">{% if not jogo.time_casa %}À definir{% endif %}</h7>
+                                <span class="text-primary">{% if not jogo.time_casa %}À definir{% endif %}</span>
                                 vs 
-                                <h7 class ="text-primary">{% if not jogo.time_fora %}À definir{% endif %}</h7>
+                                <span class="text-primary">{% if not jogo.time_fora %}À definir{% endif %}</span>
                             {% endif %}
                             <small class="text-muted">({{ jogo.rodada.data|date:"d/m/Y" }} {{ jogo.rodada.data|time:"H:i" }})</small>
                         </div>
                         <div>
-                            {% if jogo.resultado %}
-                                <span class="badge bg-success rounded-pill">Resultado: {{ jogo.resultado }}</span>
+                            {% if jogo.resultado_eliminatorio %}
+                                <span class="badge bg-success rounded-pill">
+                                    Resultado: {{ jogo.resultado_eliminatorio.gols_time_casa }} - {{ jogo.resultado_eliminatorio.gols_time_fora }}
+                                </span>
                             {% else %}
                                 <span class="badge bg-secondary rounded-pill">Resultado: Pendente</span>
                             {% endif %}
@@ -44,7 +46,8 @@
     </div>
 
     <div class="mt-4 text-center">
-        <a href="{% url 'visualizar_tabela' campeonato.id %}" class="btn btn-success">Visualizar Tabela Completa</a>
+        <!-- Botão para registrar resultados das eliminatórias -->
+        <a href="{% url 'registrar_resultados_eliminatorias' campeonato_id=campeonato.id %}" class="btn btn-warning w-100 mt-2">Registrar Resultados Eliminatórias</a>
     </div>
 </div>
 {% endblock %}

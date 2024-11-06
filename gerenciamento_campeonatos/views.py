@@ -226,7 +226,7 @@ def registrar_resultados(request, campeonato_id):
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from .models import Campeonato, Jogo, JogoEliminatorio, RodadaEliminatoria  # Certifique-se de que o modelo Jogo está importado
+from .models import Campeonato, Jogo, JogoEliminatorio, ResultadoEliminatorio, RodadaEliminatoria  # Certifique-se de que o modelo Jogo está importado
 
 def confirmar_classificacao(request, campeonato_id):
     campeonato = get_object_or_404(Campeonato, id=campeonato_id)
@@ -313,9 +313,17 @@ from .forms import EliminatoriasForm
 
 def configurar_eliminatorias(request, campeonato_id):
     campeonato = get_object_or_404(Campeonato, id=campeonato_id)
+    
+    # Verifica se as eliminatórias já foram geradas
+    if campeonato.eliminatorias_geradas:
+        # Se já foram geradas, redireciona para visualizar as eliminatórias
+        return redirect('visualizar_chave_confrontos', campeonato_id=campeonato.id)
+
+    # Obtém a última rodada para definir a data do último jogo
     ultima_rodada = campeonato.rodadas.order_by('-data').first()
     data_ultimo_jogo = ultima_rodada.data if ultima_rodada else None
 
+    # Determina o número de classificados para as eliminatórias
     num_classificados = int(request.session.get('num_classificados', 4))
     if 'num_classificados' not in request.session:
         pontuacao = calcular_pontuacao(campeonato)
@@ -323,6 +331,7 @@ def configurar_eliminatorias(request, campeonato_id):
         request.session['num_classificados'] = num_classificados
 
     if request.method == 'POST':
+        # Gera as eliminatórias apenas se elas ainda não foram geradas
         tipo = request.POST.get('tipo_eliminatoria')
         datas_horas_fases = {
             'oitavas_de_final': f"{request.POST.get('data_oitavas')} {request.POST.get('hora_oitavas')}",
@@ -331,6 +340,11 @@ def configurar_eliminatorias(request, campeonato_id):
             'final': f"{request.POST.get('data_final')} {request.POST.get('hora_final')}",
         }
         gerar_fases_eliminatorias(campeonato, tipo, datas_horas_fases)
+        
+        # Marca as eliminatórias como geradas
+        campeonato.eliminatorias_geradas = True
+        campeonato.save()
+
         return redirect('visualizar_chave_confrontos', campeonato_id=campeonato.id)
 
     context = {
@@ -339,6 +353,7 @@ def configurar_eliminatorias(request, campeonato_id):
         'num_classificados': num_classificados,
     }
     return render(request, 'configurar_eliminatorias.html', context)
+
 
 
 
@@ -422,3 +437,44 @@ def visualizar_ganhador_unico(request, campeonato_id):
     )[0][0]  # Seleciona o primeiro colocado
     
     return render(request, 'ganhador_unico.html', {'vencedor': vencedor, 'campeonato': campeonato})
+
+
+def registrar_resultados_eliminatorias(request, campeonato_id):
+    # Obter o campeonato ou retornar 404
+    campeonato = get_object_or_404(Campeonato, id=campeonato_id)
+    
+    # Filtrar jogos eliminatórios do campeonato
+    jogos = JogoEliminatorio.objects.filter(rodada__campeonato=campeonato)
+
+    if request.method == 'POST':
+        jogo_id = request.POST.get('jogo_selecionado')
+        gols_time_casa = request.POST.get('gols_time_casa')
+        gols_time_fora = request.POST.get('gols_time_fora')
+
+        # Verificar se um jogo foi selecionado
+        if jogo_id:
+            jogo = get_object_or_404(JogoEliminatorio, id=jogo_id)
+
+            # Verificar se os gols são válidos
+            if gols_time_casa.isdigit():
+                gols_time_casa = int(gols_time_casa)
+            else:
+                gols_time_casa = None
+            
+            if gols_time_fora.isdigit():
+                gols_time_fora = int(gols_time_fora)
+            else:
+                gols_time_fora = None
+
+            # Verificar se o resultado já existe ou criar um novo
+            resultado, created = ResultadoEliminatorio.objects.get_or_create(jogo=jogo)
+            resultado.gols_time_casa = gols_time_casa
+            resultado.gols_time_fora = gols_time_fora
+            resultado.save()
+
+            return redirect(reverse('visualizar_chave_confrontos', args=[campeonato_id]))
+
+    return render(request, 'registrar_resultados_eliminatorias.html', {
+        'campeonato': campeonato,
+        'jogos': jogos,
+    })

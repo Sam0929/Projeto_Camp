@@ -63,3 +63,11 @@ class JogoEliminatorio(models.Model):
 
     def __str__(self):
         return f'{self.time_casa.nome if self.time_casa else "TBD"} vs {self.time_fora.nome if self.time_fora else "TBD"} - {self.rodada.fase}'
+
+class ResultadoEliminatorio(models.Model):
+    jogo = models.OneToOneField('JogoEliminatorio', on_delete=models.CASCADE, related_name='resultado_eliminatorio')
+    gols_time_casa = models.PositiveIntegerField(null=True, blank=True)  # Permitir nulos
+    gols_time_fora = models.PositiveIntegerField(null=True, blank=True)  # Permitir nulos
+
+    def __str__(self):
+        return f'Resultado: {self.gols_time_casa or "N/A"} - {self.gols_time_fora or "N/A"} ({self.jogo.time_casa.nome if self.jogo.time_casa else "TBD"} vs {self.jogo.time_fora.nome if self.jogo.time_fora else "TBD"})'

@@ -45,11 +45,17 @@
         </a>
     </div>
 
-    <!-- Botão para gerar eliminatórias -->
+    <!-- Botão para gerar ou visualizar eliminatórias -->
     <div class="mt-4">
-        <a href="{% url 'configurar_eliminatorias' campeonato.id %}" class="btn btn-primary">
-            Gerar Eliminatórias
-        </a>
+        {% if campeonato.eliminatorias_geradas %}
+            <a href="{% url 'visualizar_chave_confrontos' campeonato.id %}" class="btn btn-success">
+                Visualizar Eliminatórias
+            </a>
+        {% else %}
+            <a href="{% url 'configurar_eliminatorias' campeonato.id %}" class="btn btn-primary">
+                Gerar Eliminatórias
+            </a>
+        {% endif %}
     </div>
 
     <!-- Exibe as listas de classificados e desclassificados -->

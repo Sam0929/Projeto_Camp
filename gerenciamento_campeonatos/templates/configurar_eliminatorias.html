@@ -12,7 +12,7 @@
 
     <form method="post">
         {% csrf_token %}
-    
+
         <!-- Seleção do Tipo de Eliminatória -->
         <div class="form-group">
             <label for="tipo_eliminatoria">Escolha o tipo de eliminatória:</label>
@@ -24,56 +24,43 @@
                 <option value="final">Final</option>
             </select>
         </div>
-    
+
         <!-- Seleção das Datas das Rodadas para cada Fase -->
         <div id="data-oitavas" class="form-group mt-3" style="display: none;">
             <label for="data_oitavas">Data e Hora - Oitavas de Final:</label>
-            <input type="date" id="data_oitavas" name="data_oitavas" class="form-control" onchange="combineDateTime('oitavas')">
-            <input type="time" id="hora_oitavas" name="hora_oitavas" class="form-control mt-1" onchange="combineDateTime('oitavas')">
-            <input type="hidden" id="datetime_oitavas" name="datetime_oitavas">
+                <input type="date" id="data_oitavas" name="data_oitavas" class="form-control">
+                <input type="time" id="hora_oitavas" name="hora_oitavas" class="form-control mt-1">
         </div>
-    
+        
         <div id="data-quartas" class="form-group mt-3" style="display: none;">
             <label for="data_quartas">Data e Hora - Quartas de Final:</label>
-            <input type="date" id="data_quartas" name="data_quartas" class="form-control" onchange="combineDateTime('quartas')">
-            <input type="time" id="hora_quartas" name="hora_quartas" class="form-control mt-1" onchange="combineDateTime('quartas')">
-            <input type="hidden" id="datetime_quartas" name="datetime_quartas">
+                <input type="date" id="data_quartas" name="data_quartas" class="form-control">
+                <input type="time" id="hora_quartas" name="hora_quartas" class="form-control mt-1">
         </div>
-    
+        
         <div id="data-semi" class="form-group mt-3" style="display: none;">
             <label for="data_semi">Data e Hora - Semi-finais:</label>
-            <input type="date" id="data_semi" name="data_semi" class="form-control" onchange="combineDateTime('semi')">
-            <input type="time" id="hora_semi" name="hora_semi" class="form-control mt-1" onchange="combineDateTime('semi')">
-            <input type="hidden" id="datetime_semi" name="datetime_semi">
+                <input type="date" id="data_semi" name="data_semi" class="form-control">
+                <input type="time" id="hora_semi" name="hora_semi" class="form-control mt-1">
         </div>
-    
+        
         <div id="data-final" class="form-group mt-3" style="display: none;">
             <label for="data_final">Data e Hora - Final:</label>
-            <input type="date" id="data_final" name="data_final" class="form-control" onchange="combineDateTime('final')">
-            <input type="time" id="hora_final" name="hora_final" class="form-control mt-1" onchange="combineDateTime('final')">
-            <input type="hidden" id="datetime_final" name="datetime_final">
+                <input type="date" id="data_final" name="data_final" class="form-control">
+                <input type="time" id="hora_final" name="hora_final" class="form-control mt-1">
         </div>
-    
+
         <button type="submit" class="btn btn-primary mt-3">Gerar Eliminatórias</button>
     </form>
-    
-    <script>
-    function combineDateTime(fase) {
-        const date = document.getElementById(`data_${fase}`).value;
-        const time = document.getElementById(`hora_${fase}`).value;
-        const dateTimeField = document.getElementById(`datetime_${fase}`);
-        
-        if (date && time) {
-            dateTimeField.value = `${date} ${time}`;
-        }
-    }
-    
-    document.getElementById('id_tipo_eliminatoria').addEventListener('change', function () {
-        const selected = this.value;
-        document.getElementById('data-oitavas').style.display = selected === 'oitavas_de_final' ? 'block' : 'none';
-        document.getElementById('data-quartas').style.display = ['oitavas_de_final', 'quartas_de_final'].includes(selected) ? 'block' : 'none';
-        document.getElementById('data-semi').style.display = ['oitavas_de_final', 'quartas_de_final', 'semi_finais'].includes(selected) ? 'block' : 'none';
-        document.getElementById('data-final').style.display = selected !== 'ganhador_unico' ? 'block' : 'none';
-    });
-    </script>
-    
+</div>
+
+<script>
+document.getElementById('id_tipo_eliminatoria').addEventListener('change', function () {
+    const selected = this.value;
+    document.getElementById('data-oitavas').style.display = selected === 'oitavas_de_final' ? 'block' : 'none';
+    document.getElementById('data-quartas').style.display = ['oitavas_de_final', 'quartas_de_final'].includes(selected) ? 'block' : 'none';
+    document.getElementById('data-semi').style.display = ['oitavas_de_final', 'quartas_de_final', 'semi_finais'].includes(selected) ? 'block' : 'none';
+    document.getElementById('data-final').style.display = selected !== 'ganhador_unico' ? 'block' : 'none';
+});
+</script>
+{% endblock %}
