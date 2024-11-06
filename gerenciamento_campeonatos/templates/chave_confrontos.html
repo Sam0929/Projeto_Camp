@@ -21,8 +21,14 @@
                 {% for jogo in jogos %}
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <div>
-                            {{ jogo.time_casa.equipe }} vs {{ jogo.time_fora.equipe }}  
-                            <small class="text-muted">({{ jogo.data_horario|date:"d/m/Y H:i" }})</small>
+                            {% if jogo.time_casa and jogo.time_fora %}
+                                {{ jogo.time_casa.equipe }} vs {{ jogo.time_fora.equipe }}
+                            {% else %}
+                                <h7 class ="text-primary">{% if not jogo.time_casa %}À definir{% endif %}</h7>
+                                vs 
+                                <h7 class ="text-primary">{% if not jogo.time_fora %}À definir{% endif %}</h7>
+                            {% endif %}
+                            <small class="text-muted">({{ jogo.rodada.data|date:"d/m/Y" }} {{ jogo.rodada.data|time:"H:i" }})</small>
                         </div>
                         <div>
                             {% if jogo.resultado %}

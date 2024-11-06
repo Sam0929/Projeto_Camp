@@ -55,10 +55,11 @@ class RodadaEliminatoria(models.Model):
 
 class JogoEliminatorio(models.Model):
     rodada = models.ForeignKey(RodadaEliminatoria, on_delete=models.CASCADE, related_name='jogos')
-    time_casa = models.ForeignKey(Participante, on_delete=models.CASCADE, related_name='eliminatorias_como_casa')
-    time_fora = models.ForeignKey(Participante, on_delete=models.CASCADE, related_name='eliminatorias_como_fora')
+    time_casa = models.ForeignKey(Participante, on_delete=models.CASCADE, related_name='eliminatorias_como_casa', null=True, blank=True)
+    time_fora = models.ForeignKey(Participante, on_delete=models.CASCADE, related_name='eliminatorias_como_fora', null=True, blank=True)
     data_horario = models.DateTimeField(null=True, blank=True)
     resultado = models.CharField(max_length=50, blank=True, null=True)  # Exemplo: "2-1"
+    placeholder = models.BooleanField(default=False)  # Novo campo placeholder
 
     def __str__(self):
-        return f'{self.time_casa.nome} vs {self.time_fora.nome} - {self.rodada.fase}'
+        return f'{self.time_casa.nome if self.time_casa else "TBD"} vs {self.time_fora.nome if self.time_fora else "TBD"} - {self.rodada.fase}'

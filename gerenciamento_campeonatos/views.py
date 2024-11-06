@@ -323,18 +323,17 @@ def configurar_eliminatorias(request, campeonato_id):
         request.session['num_classificados'] = num_classificados
 
     if request.method == 'POST':
-        form = EliminatoriasForm(request.POST)
-        if form.is_valid():
-            tipo = form.cleaned_data['tipo_eliminatoria']
-            if tipo != 'ganhador_unico':
-                gerar_fases_eliminatorias(campeonato, tipo)  # Gera confrontos eliminatórios
-
-            return redirect('visualizar_chave_confrontos', campeonato_id=campeonato.id)
-    else:
-        form = EliminatoriasForm()
+        tipo = request.POST.get('tipo_eliminatoria')
+        datas_horas_fases = {
+            'oitavas_de_final': f"{request.POST.get('data_oitavas')} {request.POST.get('hora_oitavas')}",
+            'quartas_de_final': f"{request.POST.get('data_quartas')} {request.POST.get('hora_quartas')}",
+            'semi_finais': f"{request.POST.get('data_semi')} {request.POST.get('hora_semi')}",
+            'final': f"{request.POST.get('data_final')} {request.POST.get('hora_final')}",
+        }
+        gerar_fases_eliminatorias(campeonato, tipo, datas_horas_fases)
+        return redirect('visualizar_chave_confrontos', campeonato_id=campeonato.id)
 
     context = {
-        'form': form,
         'campeonato': campeonato,
         'data_ultimo_jogo': data_ultimo_jogo,
         'num_classificados': num_classificados,
@@ -342,11 +341,9 @@ def configurar_eliminatorias(request, campeonato_id):
     return render(request, 'configurar_eliminatorias.html', context)
 
 
-def gerar_fases_eliminatorias(campeonato, tipo_eliminatoria):
-    # Calcula e ordena a pontuação das equipes
-    pontuacao = calcular_pontuacao(campeonato)
 
-    # Ordena as equipes pela pontuação
+def gerar_fases_eliminatorias(campeonato, tipo_eliminatoria, datas_horas_fases):
+    pontuacao = calcular_pontuacao(campeonato)
     classificados = [
         equipe for equipe, dados in sorted(
             pontuacao.items(),
@@ -365,25 +362,35 @@ def gerar_fases_eliminatorias(campeonato, tipo_eliminatoria):
     if len(classificados) < min_classificados.get(tipo_eliminatoria, 2):
         raise ValueError(f"Número insuficiente de participantes para {tipo_eliminatoria}. Necessário: {min_classificados[tipo_eliminatoria]}")
 
-    num_confrontos = min_classificados[tipo_eliminatoria] // 2
-    rodada_eliminatoria = RodadaEliminatoria.objects.create(campeonato=campeonato, fase=tipo_eliminatoria)
-    
-    for i in range(num_confrontos):
-        time_casa_nome = classificados[i * 2]
-        time_fora_nome = classificados[i * 2 + 1]
+    for fase, num_classificados in min_classificados.items():
+        if min_classificados[tipo_eliminatoria] >= num_classificados:
+            data = datas_horas_fases.get(fase)  # Usando 'data' para o campo correto
+            if data:
+                rodada_eliminatoria = RodadaEliminatoria.objects.create(
+                    campeonato=campeonato,
+                    fase=fase,
+                    data=data  # Atualizado para usar o nome correto do campo
+                )
 
-        # Usar filter() para evitar problemas de múltiplos resultados
-        time_casa = Participante.objects.filter(equipe=time_casa_nome).first()  # Retorna o primeiro ou None
-        time_fora = Participante.objects.filter(equipe=time_fora_nome).first()  # Retorna o primeiro ou None
+                num_confrontos = num_classificados // 2
+                for i in range(num_confrontos):
+                    if fase == tipo_eliminatoria:
+                        time_casa = Participante.objects.filter(equipe=classificados[i * 2]).first()
+                        time_fora = Participante.objects.filter(equipe=classificados[i * 2 + 1]).first()
+                    else:
+                        time_casa = None
+                        time_fora = None
 
-        if not time_casa or not time_fora:
-            raise ValueError(f"Participante não encontrado para {time_casa_nome} ou {time_fora_nome}")
-        
-        JogoEliminatorio.objects.create(
-            rodada=rodada_eliminatoria,
-            time_casa=time_casa,
-            time_fora=time_fora
-        )
+                    JogoEliminatorio.objects.create(
+                        rodada=rodada_eliminatoria,
+                        time_casa=time_casa,
+                        time_fora=time_fora,
+                        placeholder=True if not time_casa or not time_fora else False
+                    )
+
+
+
+
 
 
 
