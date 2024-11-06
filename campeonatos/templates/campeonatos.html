@@ -3,7 +3,7 @@
 {% block title %}Página Inicial{% endblock %}
 
 {% block content %}
-<main class="container my-5">
+<main class="container my-7" style="max-width: 75%;">
     <section class="campeonatos-section">
         
         <div class="row mb-4">
@@ -22,25 +22,23 @@
             <div class="row">
                 {% for campeonato in campeonatos %}
                 <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body">
+                    <div class="card h-100 d-flex flex-column">
+                        <div class="card-body flex-grow-1 d-flex flex-column">
                             <h2 class="card-title font-weight-bold text-primary text-center">{{ campeonato.nome }}</h2>
                             <table class="table table-bordered mt-3">
                                 <tbody>
                                     <tr>
                                         <th>Data e Hora de Início</th>
-                                        <td>{{ campeonato.data_inicio|date:"d/m/Y H:i" }}</td>  <!-- Exibe data e hora -->
+                                        <td>{{ campeonato.data_inicio|date:"d/m/Y H:i" }}</td>
                                     </tr>
                                     <tr>
                                         <th>Data e Hora de Fim</th>
-                                        <td>{{ campeonato.data_fim|date:"d/m/Y H:i" }}</td>  <!-- Exibe data e hora -->
+                                        <td>{{ campeonato.data_fim|date:"d/m/Y H:i" }}</td>
                                     </tr>
                                     <tr>
                                         <th>Descrição</th>
-                                        <td>
-                                            <div class="description" style="max-height: 200px; overflow-y: auto;">
-                                                <p class="text-break">{{ campeonato.descricao }}</p>
-                                            </div>
+                                        <td class="description">
+                                            <p class="text-break">{{ campeonato.descricao }}</p>
                                         </td>
                                     </tr>
                                     <tr>
@@ -50,30 +48,30 @@
                                     <tr>
                                         <th>Participantes</th>
                                         <td>
-                                            <!-- Botão para abrir o modal de participantes -->
-                                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalParticipantes{{ campeonato.pk }}">
+                                            <button type="button" class="btn btn-primary btn-sm w-100" data-bs-toggle="modal" data-bs-target="#modalParticipantes{{ campeonato.pk }}">
                                                 Visualizar Participantes
                                             </button>
                                         </td>
                                     </tr>
                                     <tr>
                                         <th>Participantes Inscritos</th>
-                                        <td>
-                                            {{ campeonato.inscricao_set.count }} / {{ campeonato.numero_maximo_participantes }}
-                                        </td>
+                                        <td>{{ campeonato.inscricao_set.count }} / {{ campeonato.numero_maximo_participantes }}</td>
                                     </tr>
                                 </tbody>
                             </table>
-                            <div class="text-center mt-3">
+                            <div class="text-center mt-auto d-grid gap-2">
                                 <a href="{% url 'inscrever_participante' campeonato.pk %}" class="btn btn-primary">Inscrever-se</a>
+                                
                             </div>
                         </div>
                         <div class="card-footer d-flex justify-content-between">
-                            <a href="{% url 'editar_campeonato' campeonato.pk %}" class="btn btn-warning btn-sm">Editar  <i class="bi bi-pencil-square"></i>  </a>
-                            <a href="{% url 'deletar_campeonato' campeonato.pk %}" class="btn btn-danger btn-sm">Deletar  <i class="bi bi-trash3"></i> </a>
+                            <a href="{% url 'editar_campeonato' campeonato.pk %}" class="btn btn-warning btn-sm w-45">Editar <i class="bi bi-pencil-square"></i></a>
+                            <a href="{% url 'deletar_campeonato' campeonato.pk %}" class="btn btn-danger btn-sm w-45">Deletar <i class="bi bi-trash3"></i></a>
                         </div>
                     </div>
                 </div>
+                
+                
 
                 <!-- Modal de Participantes -->
                 <div class="modal fade" id="modalParticipantes{{ campeonato.pk }}" tabindex="-1" aria-labelledby="modalParticipantesLabel{{ campeonato.pk }}" aria-hidden="true">
