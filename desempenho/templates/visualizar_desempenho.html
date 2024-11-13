@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Desempenho da Equipe{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Desempenho de Equipe no Campeonato: {{ campeonato.nome }}</h1>
+    
+    <form method="get" class="my-4">
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Visualizar Desempenho</button>
+    </form>
+    
+    {% if desempenho_dados %}
+        <div class="mt-5">
+            <canvas id="desempenhoGrafico"></canvas>
+        </div>
+        
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            const ctx = document.getElementById('desempenhoGrafico').getContext('2d');
+            const data = {
+                labels: {{ rodadas|safe }},
+                datasets: [
+                    {
+                        label: 'Gols Pró',
+                        data: {{ gols_pro|safe }},
+                        borderColor: 'green',
+                        fill: false,
+                    },
+                    {
+                        label: 'Gols Contra',
+                        data: {{ gols_contra|safe }},
+                        borderColor: 'red',
+                        fill: false,
+                    }
+                ]
+            };
+            const config = {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { title: { display: true, text: 'Rodadas' } },
+                        y: { title: { display: true, text: 'Gols' } }
+                    }
+                }
+            };
+            new Chart(ctx, config);
+        </script>
+
+    {% elif equipe_selecionada %}
+        <div class="alert alert-info text-center">Nenhum desempenho registrado para esta equipe.</div>
+    {% endif %}
+</div>
+{% endblock %}

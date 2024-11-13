@@ -7,4 +7,5 @@ urlpatterns = [
     path('home/', include ('pagina_principal.urls')),
     path('campeonatos/', include('campeonatos.urls')),
     path('gerenciamento/', include('gerenciamento_campeonatos.urls')), 
+    path('desempenho/', include('desempenho.urls')),  # Rota para desempenho
 ]

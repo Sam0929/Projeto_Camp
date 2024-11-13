@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'pagina_principal',
     'campeonatos', 
-    'gerenciamento_campeonatos',                
+    'gerenciamento_campeonatos',  
+    'desempenho',  # Novo app desempenho para gráficos              
 ]
 
 MIDDLEWARE = [

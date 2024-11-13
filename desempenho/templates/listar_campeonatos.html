@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Gerenciamento de Campeonatos{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="text-center">
+        <h1 class="display-4 fw-bold" style="color: #333; text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);">
+            Desempenho em Campeonatos
+        </h1>
+        <p class="lead text-muted">Escolha um campeonato para visualizar o gráfico de desempenho.</p>
+        <hr class="my-4">
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <h2 class="text-center mb-4">Campeonatos Disponíveis</h2>
+            
+            {% if campeonatos_com_estado %}
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for item in campeonatos_com_estado %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title text-center">{{ item.campeonato.nome }}</h5>
+                            <p class="card-text text-center">Data de Início: {{ item.campeonato.data_inicio|date:"d/m/Y H:i" }}<br>
+                            Data de Fim: {{ item.campeonato.data_fim|date:"d/m/Y H:i" }}</p>
+                            <p class="card-text text-center">Número de participantes inscritos: {{ item.campeonato.inscricao_set.count }}</p>
+                            
+                            <div class="mt-auto text-center">
+                                <a href="{% url 'visualizar_desempenho' item.campeonato.id %}" class="btn btn-primary w-100">
+                                    Visualizar Gráfico de Desempenho
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="alert alert-warning text-center mt-5">
+                Nenhum campeonato disponível no momento.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
