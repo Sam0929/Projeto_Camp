@@ -29,15 +29,20 @@
                             <p class="card-text text-center">Número de participantes inscritos: {{ item.campeonato.inscricao_set.count }}</p>
                             
                             <div class="mt-auto text-center">
-                                {% if item.tabela_gerada %}
-                                    <!-- Se a tabela já foi gerada, mostrar o botão de visualizar -->
-                                    <a href="{% url 'visualizar_tabela' item.campeonato.id %}" class="btn btn-success w-100">Visualizar Tabela</a>
-                                    <!-- Botão para registrar resultados -->
-                                    <a href="{% url 'registrar_resultados' item.campeonato.id %}" class="btn btn-warning w-100 mt-2">Registrar Resultados</a>
-                                {% else %}
-                                    <!-- Se a tabela não foi gerada, mostrar o botão de gerar -->
-                                    <a href="{% url 'gerar_tabela' item.campeonato.id %}" class="btn btn-primary w-100">Gerar Tabela</a>
-                                {% endif %}
+                                <div class="mt-auto text-center">
+                                    {% if item.tabela_gerada %}
+                                        <!-- Botão para visualizar tabela -->
+                                        <a href="{% url 'visualizar_tabela' item.campeonato.id %}" class="btn btn-success w-100">Visualizar Tabela</a>
+                                        <!-- Botão para registrar resultados -->
+                                        <a href="{% url 'registrar_resultados' item.campeonato.id %}" class="btn btn-warning w-100 mt-2">Registrar Resultados</a>
+                                        <!-- Botão para registrar penalidade -->
+                                        <a href="{% url 'registrar_penalidade' item.campeonato.id %}" class="btn btn-danger w-100 mt-2">Registrar Penalidade</a>
+                                    {% else %}
+                                        <!-- Botão para gerar tabela -->
+                                        <a href="{% url 'gerar_tabela' item.campeonato.id %}" class="btn btn-primary w-100">Gerar Tabela</a>
+                                    {% endif %}
+                                </div>
+                                
                             </div>
                         </div>
                     </div>

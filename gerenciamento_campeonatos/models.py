@@ -71,3 +71,40 @@ class ResultadoEliminatorio(models.Model):
 
     def __str__(self):
         return f'Resultado: {self.gols_time_casa or "N/A"} - {self.gols_time_fora or "N/A"} ({self.jogo.time_casa.nome if self.jogo.time_casa else "TBD"} vs {self.jogo.time_fora.nome if self.jogo.time_fora else "TBD"})'
+
+
+class Penalidade(models.Model):
+    TIPO_PENALIDADE_CHOICES = [
+        ('amarelo', 'Cartão Amarelo'),
+        ('vermelho', 'Cartão Vermelho'),
+        ('expulsao', 'Expulsão'),
+        ('outro', 'Outro'),
+        ('participante', 'Por Participante'),
+        ('equipe', 'Por Equipe')
+    ]
+
+    jogo = models.ForeignKey('Jogo', on_delete=models.CASCADE, related_name='penalidades')
+    participante = models.ForeignKey('campeonatos.Participante', on_delete=models.CASCADE, related_name='penalidades', null=True, blank=True)
+    tipo_penalidade = models.CharField(max_length=50, choices=TIPO_PENALIDADE_CHOICES, null=True, blank=True)
+    motivo = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.tipo_penalidade or "N/A"} - {self.participante.nome if self.participante else "N/A"} ({self.jogo})'
+
+class PenalidadeEliminatoria(models.Model):
+    TIPO_PENALIDADE_CHOICES = [
+        ('amarelo', 'Cartão Amarelo'),
+        ('vermelho', 'Cartão Vermelho'),
+        ('expulsao', 'Expulsão'),
+        ('outro', 'Outro'),
+        ('participante', 'Por Participante'),
+        ('equipe', 'Por Equipe')
+    ]
+
+    jogo = models.ForeignKey('JogoEliminatorio', on_delete=models.CASCADE, related_name='penalidades_eliminatorias')
+    participante = models.ForeignKey('campeonatos.Participante', on_delete=models.CASCADE, related_name='penalidades_eliminatorias', null=True, blank=True)
+    tipo_penalidade = models.CharField(max_length=50, choices=TIPO_PENALIDADE_CHOICES, null=True, blank=True)
+    motivo = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.tipo_penalidade or "N/A"} - {self.participante.nome if self.participante else "N/A"} ({self.jogo})'

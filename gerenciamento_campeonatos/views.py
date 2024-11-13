@@ -224,6 +224,44 @@ def registrar_resultados(request, campeonato_id):
     })
 
 
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
+from .models import Campeonato, Jogo, Penalidade, Participante
+
+def registrar_penalidades(request, campeonato_id):
+    campeonato = get_object_or_404(Campeonato, id=campeonato_id)
+    jogos = Jogo.objects.filter(rodada__campeonato=campeonato)
+    participantes = Participante.objects.filter(campeonato=campeonato)
+
+    if request.method == 'POST':
+        jogo_id = request.POST.get('jogo_id')
+        tipo_penalidade = request.POST.get('tipo_cartao')
+        alvo_penalidade = request.POST.get('tipo_penalidade')
+        participante_id = request.POST.get('participante_id') if alvo_penalidade == 'participante' else None
+        motivo = request.POST.get('motivo')  # Novo campo para o motivo
+
+        jogo = get_object_or_404(Jogo, id=jogo_id)
+        participante = get_object_or_404(Participante, id=participante_id) if participante_id else None
+
+        # Criar nova penalidade
+        penalidade = Penalidade(
+            jogo=jogo,
+            tipo_penalidade=tipo_penalidade,
+            participante=participante,
+            motivo=motivo  # Salva o motivo da penalidade
+        )
+        penalidade.save()
+
+        return redirect(reverse('visualizar_tabela', args=[campeonato_id]))
+
+    return render(request, 'registrar_penalidades.html', {
+        'campeonato': campeonato,
+        'jogos': jogos,
+        'participantes': participantes,
+    })
+
+
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from .models import Campeonato, Jogo, JogoEliminatorio, ResultadoEliminatorio, RodadaEliminatoria  # Certifique-se de que o modelo Jogo está importado
@@ -523,4 +561,40 @@ def alocar_vencedor_para_proxima_fase(campeonato, fase, vencedor):
         if jogo:
             jogo.time_fora = vencedor
     jogo.save()
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
+from .models import Campeonato, JogoEliminatorio, PenalidadeEliminatoria, Participante
+
+def registrar_penalidades_eliminatorias(request, campeonato_id):
+    campeonato = get_object_or_404(Campeonato, id=campeonato_id)
+    jogos = JogoEliminatorio.objects.filter(rodada__campeonato=campeonato)
+    participantes = Participante.objects.filter(campeonato=campeonato)
+
+    if request.method == 'POST':
+        jogo_id = request.POST.get('jogo_id')
+        tipo_penalidade = request.POST.get('tipo_cartao')
+        alvo_penalidade = request.POST.get('tipo_penalidade')
+        participante_id = request.POST.get('participante_id') if alvo_penalidade == 'participante' else None
+        motivo = request.POST.get('motivo')  # Recebe o motivo da penalidade
+
+        jogo = get_object_or_404(JogoEliminatorio, id=jogo_id)
+        participante = get_object_or_404(Participante, id=participante_id) if participante_id else None
+
+        # Criar nova penalidade eliminatória
+        penalidade_eliminatoria = PenalidadeEliminatoria(
+            jogo=jogo,
+            tipo_penalidade=tipo_penalidade,
+            participante=participante,
+            motivo=motivo  # Salva o motivo da penalidade
+        )
+        penalidade_eliminatoria.save()
+
+        return redirect(reverse('visualizar_chave_confrontos', args=[campeonato_id]))
+
+    return render(request, 'registrar_penalidades_eliminatorias.html', {
+        'campeonato': campeonato,
+        'jogos': jogos,
+        'participantes': participantes,
+    })
 

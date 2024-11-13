@@ -14,4 +14,6 @@ urlpatterns = [
     path('chave_confrontos/<int:campeonato_id>/', views.visualizar_chave_confrontos, name='visualizar_chave_confrontos'),
     path('visualizar_ganhador/<int:campeonato_id>/', views.visualizar_ganhador_unico, name='visualizar_ganhador_unico'),
     path('registrar_resultados_eliminatorias/<int:campeonato_id>/', views.registrar_resultados_eliminatorias, name='registrar_resultados_eliminatorias'),
+    path('registrar_penalidades/<int:campeonato_id>/', views.registrar_penalidades, name='registrar_penalidade'),
+    path('registrar_penalidades_eliminatorias/<int:campeonato_id>/', views.registrar_penalidades_eliminatorias, name='registrar_penalidades_eliminatorias'),
 ]

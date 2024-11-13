@@ -100,23 +100,50 @@
         <h3 class="mt-4">Rodada {{ rodada.numero }} - {{ rodada.data|date:"d/m/Y" }}</h3>
         <ul class="list-group mb-3">
             {% for jogo in rodada.jogos.all %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        {{ jogo.time_casa.equipe }} vs {{ jogo.time_fora.equipe }}  
-                        <small>({{ jogo.data_horario|date:"d/m/Y H:i" }})</small>
+                <li class="list-group-item">
+                    <!-- Informações do Jogo -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            {{ jogo.time_casa.equipe }} vs {{ jogo.time_fora.equipe }}
+                            <small>({{ jogo.data_horario|date:"d/m/Y H:i" }})</small>
+                        </div>
+                        <div>
+                            {% if jogo.resultado_jogo and jogo.resultado_jogo.gols_time_casa is not None and jogo.resultado_jogo.gols_time_fora is not None %}
+                                <span class="badge bg-success rounded-pill">Resultado: {{ jogo.resultado_jogo.gols_time_casa }} - {{ jogo.resultado_jogo.gols_time_fora }}</span>
+                            {% else %}
+                                <span class="badge bg-secondary rounded-pill">Resultado: Não disponível</span>
+                            {% endif %}
+                        </div>
                     </div>
-                    <div>
-                        {% if jogo.resultado_jogo and jogo.resultado_jogo.gols_time_casa is not None and jogo.resultado_jogo.gols_time_fora is not None %}
-                            <span class="badge bg-success rounded-pill">Resultado: {{ jogo.resultado_jogo.gols_time_casa }} - {{ jogo.resultado_jogo.gols_time_fora }}</span>
-                        {% else %}
-                            <span class="badge bg-secondary rounded-pill">Resultado: Não disponível</span>
-                        {% endif %}
-                    </div>
+
+                    <!-- Penalidades do Jogo com fonte reduzida -->
+                    {% if jogo.penalidades.exists %}
+                        <div class="mt-2 ms-4" style="font-size: 0.8em;">
+                            <strong>Penalidades:</strong>
+                            <ul class="list-group list-group-flush">
+                                {% for penalidade in jogo.penalidades.all %}
+                                    <li class="list-group-item">
+                                        <strong>{{ penalidade.tipo_penalidade|title }}:</strong> 
+                                        {% if penalidade.participante %}
+                                            {{ penalidade.participante.nome }}
+                                        {% else %}
+                                            Equipe
+                                        {% endif %}
+                                        - {{ penalidade.motivo }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% else %}
+                        <div class="text-muted mt-2 ms-4" style="font-size: 0.8em;">Nenhuma penalidade registrada para este jogo.</div>
+                    {% endif %}
                 </li>
             {% endfor %}
         </ul>
         {% endfor %}
     </div>
+
+
 </div>
 
     <!-- JavaScript para alterar o texto e estilo do botão -->
