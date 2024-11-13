@@ -118,25 +118,30 @@
 
                     <!-- Penalidades do Jogo com fonte reduzida -->
                     {% if jogo.penalidades.exists %}
-                        <div class="mt-2 ms-4" style="font-size: 0.8em;">
-                            <strong>Penalidades:</strong>
-                            <ul class="list-group list-group-flush">
-                                {% for penalidade in jogo.penalidades.all %}
-                                    <li class="list-group-item">
-                                        <strong>{{ penalidade.tipo_penalidade|title }}:</strong> 
-                                        {% if penalidade.participante %}
-                                            {{ penalidade.participante.nome }}
-                                        {% else %}
-                                            Equipe
-                                        {% endif %}
-                                        - {{ penalidade.motivo }}
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
+                    <div class="mt-2 ms-4" style="font-size: 0.8em;">
+                        <strong>Penalidades:</strong>
+                        <ul class="list-group list-group-flush">
+                            {% for penalidade in jogo.penalidades.all %}
+                                <li class="list-group-item">
+                                    <strong>{{ penalidade.tipo_penalidade|title }}:</strong> 
+                                    {% if penalidade.participante %}
+                                        {{ penalidade.participante.nome }}
+                                    {% elif penalidade.equipe == 'casa' %}
+                                        {{ jogo.time_casa.equipe }}
+                                    {% elif penalidade.equipe == 'fora' %}
+                                        {{ jogo.time_fora.equipe }}
+                                    {% else %}
+                                        Equipe
+                                    {% endif %}
+                                    - {{ penalidade.motivo }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                     {% else %}
-                        <div class="text-muted mt-2 ms-4" style="font-size: 0.8em;">Nenhuma penalidade registrada para este jogo.</div>
+                    <div class="text-muted mt-2 ms-4" style="font-size: 0.8em;">Nenhuma penalidade registrada para este jogo.</div>
                     {% endif %}
+
                 </li>
             {% endfor %}
         </ul>

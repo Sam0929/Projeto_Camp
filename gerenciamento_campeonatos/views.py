@@ -238,7 +238,8 @@ def registrar_penalidades(request, campeonato_id):
         tipo_penalidade = request.POST.get('tipo_cartao')
         alvo_penalidade = request.POST.get('tipo_penalidade')
         participante_id = request.POST.get('participante_id') if alvo_penalidade == 'participante' else None
-        motivo = request.POST.get('motivo')  # Novo campo para o motivo
+        equipe = request.POST.get('equipe') if alvo_penalidade == 'equipe' else None
+        motivo = request.POST.get('motivo')
 
         jogo = get_object_or_404(Jogo, id=jogo_id)
         participante = get_object_or_404(Participante, id=participante_id) if participante_id else None
@@ -248,7 +249,8 @@ def registrar_penalidades(request, campeonato_id):
             jogo=jogo,
             tipo_penalidade=tipo_penalidade,
             participante=participante,
-            motivo=motivo  # Salva o motivo da penalidade
+            equipe=equipe,
+            motivo=motivo
         )
         penalidade.save()
 
@@ -259,6 +261,7 @@ def registrar_penalidades(request, campeonato_id):
         'jogos': jogos,
         'participantes': participantes,
     })
+
 
 
 

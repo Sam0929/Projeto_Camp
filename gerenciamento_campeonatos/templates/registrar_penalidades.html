@@ -12,10 +12,12 @@
         <!-- Seção de Seleção de Jogo -->
         <div class="mb-4">
             <label for="jogo_selecionado" class="form-label">Selecione um Jogo:</label>
-            <select id="jogo_selecionado" name="jogo_id" class="form-select" required>
+            <select id="jogo_selecionado" name="jogo_id" class="form-select" required onchange="atualizarEquipes()">
                 <option value="">Escolha um jogo...</option>
                 {% for jogo in jogos %}
-                    <option value="{{ jogo.id }}">
+                    <option value="{{ jogo.id }}"
+                            data-time-casa="{{ jogo.time_casa.equipe }}"
+                            data-time-fora="{{ jogo.time_fora.equipe }}">
                         Rodada {{ jogo.rodada.numero }}: {{ jogo.time_casa.equipe }} vs {{ jogo.time_fora.equipe }} ({{ jogo.data_horario|date:"d/m/Y H:i" }})
                     </option>
                 {% endfor %}
@@ -29,6 +31,15 @@
                 <option value="">Selecione o tipo de penalidade...</option>
                 <option value="participante">Por Participante</option>
                 <option value="equipe">Por Equipe</option>
+            </select>
+        </div>
+
+        <!-- Seção de Seleção de Equipe -->
+        <div class="mb-3" id="equipe_selecao" style="display: none;">
+            <label for="equipe" class="form-label">Selecione a Equipe:</label>
+            <select id="equipe" name="equipe" class="form-select">
+                <option value="">Escolha uma equipe...</option>
+                <!-- As opções serão adicionadas dinamicamente pelo JavaScript -->
             </select>
         </div>
 
@@ -66,25 +77,44 @@
 </div>
 
 <script>
+    // Função para exibir a seleção de equipe ou participante com base no tipo de penalidade
     document.getElementById('tipo_penalidade').addEventListener('change', function() {
         const participanteSelecao = document.getElementById('participante_selecao');
+        const equipeSelecao = document.getElementById('equipe_selecao');
         const tipoCartaoSelecao = document.getElementById('tipo_cartao_selecao');
         const tipoCartaoSelect = document.getElementById('tipo_cartao');
 
-        participanteSelecao.style.display = this.value === 'participante' ? 'block' : 'none';
-        tipoCartaoSelect.innerHTML = '';
-
         if (this.value === 'participante') {
+            participanteSelecao.style.display = 'block';
+            equipeSelecao.style.display = 'none';
             tipoCartaoSelecao.style.display = 'block';
-            tipoCartaoSelect.options.add(new Option('Cartão Amarelo', 'amarelo'));
-            tipoCartaoSelect.options.add(new Option('Cartão Vermelho', 'vermelho'));
+            tipoCartaoSelect.innerHTML = '<option value="amarelo">Cartão Amarelo</option><option value="vermelho">Cartão Vermelho</option>';
         } else if (this.value === 'equipe') {
+            participanteSelecao.style.display = 'none';
+            equipeSelecao.style.display = 'block';
             tipoCartaoSelecao.style.display = 'block';
-            tipoCartaoSelect.options.add(new Option('Expulsão', 'expulsao'));
-            tipoCartaoSelect.options.add(new Option('Outro', 'outro'));
+            tipoCartaoSelect.innerHTML = '<option value="expulsao">Expulsão</option><option value="outro">Outro</option>';
         } else {
+            participanteSelecao.style.display = 'none';
+            equipeSelecao.style.display = 'none';
             tipoCartaoSelecao.style.display = 'none';
         }
     });
+
+    // Função para atualizar as equipes com base no jogo selecionado
+    function atualizarEquipes() {
+        const jogoSelecionado = document.getElementById('jogo_selecionado');
+        const equipeSelecao = document.getElementById('equipe');
+        equipeSelecao.innerHTML = ''; // Limpa as opções anteriores
+
+        if (jogoSelecionado.value) {
+            const timeCasa = jogoSelecionado.options[jogoSelecionado.selectedIndex].getAttribute('data-time-casa');
+            const timeFora = jogoSelecionado.options[jogoSelecionado.selectedIndex].getAttribute('data-time-fora');
+
+            // Adiciona as equipes do jogo selecionado
+            equipeSelecao.options.add(new Option(timeCasa, 'casa'));
+            equipeSelecao.options.add(new Option(timeFora, 'fora'));
+        }
+    }
 </script>
 {% endblock %}
