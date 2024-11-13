@@ -12,15 +12,16 @@
     </form>
     
     {% if desempenho_dados %}
+        <!-- Gráfico de Desempenho -->
         <div class="mt-5">
             <canvas id="desempenhoGrafico"></canvas>
         </div>
-        
+
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
             const ctx = document.getElementById('desempenhoGrafico').getContext('2d');
             const data = {
-                labels: {{ rodadas|safe }},
+                labels: {{ rodadas|safe }},  // Rodadas/Fases no eixo X
                 datasets: [
                     {
                         label: 'Pontos Marcados',
@@ -42,7 +43,7 @@
                 options: {
                     responsive: true,
                     scales: {
-                        x: { title: { display: true, text: 'Rodadas' } },
+                        x: { title: { display: true, text: 'Rodadas/Fases' } },
                         y: { title: { display: true, text: 'Pontos' } }
                     }
                 }
@@ -50,6 +51,46 @@
             new Chart(ctx, config);
         </script>
 
+        <!-- Resumo do Desempenho -->
+        <div class="mt-4">
+            <h3>Resumo do Desempenho</h3>
+            <ul>
+                <li><strong>Saldo de Pontos:</strong> {{ saldo_pontos }}</li>
+                <li><strong>Vitórias:</strong> {{ vitorias }}</li>
+                <li><strong>Empates:</strong> {{ empates }}</li>
+                <li><strong>Derrotas:</strong> {{ derrotas }}</li>
+                <li><strong>Classificado para Eliminatórias:</strong> 
+                    {% if classificado_eliminatorias %} Sim {% else %} Não {% endif %}
+                </li>
+            </ul>
+        </div>
+
+        <!-- Histórico de Jogos -->
+        <div class="mt-4">
+            <h3>Histórico de Jogos</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Rodada/Fase</th>
+                        <th>Adversário</th>
+                        <th>Pontos Marcados</th>
+                        <th>Pontos Sofridos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for jogo in historico_jogos %}
+                        <tr>
+                            <!-- Verificando se a rodada ou fase está presente -->
+                            <td>{{ jogo.rodada|default:jogo.fase }}</td>
+                            <td>{{ jogo.adversario }}</td>
+                            <td>{{ jogo.pontos_pro }}</td>
+                            <td>{{ jogo.pontos_contra }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    
     {% elif equipe_selecionada %}
         <div class="alert alert-info text-center">Nenhum desempenho registrado para esta equipe.</div>
     {% endif %}
