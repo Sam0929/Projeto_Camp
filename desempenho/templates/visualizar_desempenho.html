@@ -23,13 +23,13 @@
                 labels: {{ rodadas|safe }},
                 datasets: [
                     {
-                        label: 'Gols Pró',
+                        label: 'Pontos Marcados',
                         data: {{ gols_pro|safe }},
                         borderColor: 'green',
                         fill: false,
                     },
                     {
-                        label: 'Gols Contra',
+                        label: 'Pontos Sofridos',
                         data: {{ gols_contra|safe }},
                         borderColor: 'red',
                         fill: false,
@@ -43,7 +43,7 @@
                     responsive: true,
                     scales: {
                         x: { title: { display: true, text: 'Rodadas' } },
-                        y: { title: { display: true, text: 'Gols' } }
+                        y: { title: { display: true, text: 'Pontos' } }
                     }
                 }
             };

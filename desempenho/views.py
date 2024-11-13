@@ -75,7 +75,10 @@ def visualizar_desempenho(request, campeonato_id):
                 gols_contra.append(0)
 
         # Processar as rodadas eliminatórias
-        for eliminatoria in todas_eliminatorias:
+        fase_order = {'oitavas_de_final': 0, 'quartas_de_final': 1, 'semi_finais': 2, 'final': 3}
+        eliminatorias_ordenadas = sorted(todas_eliminatorias, key=lambda e: fase_order.get(e.fase, 4))
+
+        for eliminatoria in eliminatorias_ordenadas:
             rodadas.append(f'{eliminatoria.get_fase_display()}')
             jogo_eliminatorio = JogoEliminatorio.objects.filter(
                 rodada=eliminatoria,
