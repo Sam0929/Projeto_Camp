@@ -7,7 +7,9 @@ from collections import defaultdict
 from .models import Participante
 from .forms import ParticipanteForm
 from django.db import connection
+from sistema_campeonatos.middleware import admin_required
 
+@admin_required
 def campeonatos(request):
     campeonatos = Campeonato.objects.all()
     
