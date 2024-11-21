@@ -3,13 +3,11 @@ from pyexpat.errors import messages
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import EliminatoriasForm
 from campeonatos.models import Campeonato, Participante
+from .models import Jogo, Resultado, Penalidade, JogoEliminatorio, ResultadoEliminatorio, RodadaEliminatoria, PenalidadeEliminatoria
 from .utils import gerar_jogos
 from campeonatos.models import Inscricao  # Importar o modelo de Inscrição
 from django.urls import reverse
 from campeonatos.models import Campeonato
-from gerenciamento_campeonatos.models import Jogo, Resultado, Rodada
-from datetime import timedelta
-from collections import defaultdict
 
 
 def index(request):
@@ -108,8 +106,6 @@ def visualizar_tabela(request, campeonato_id):
     })
 
 
-from django.db.models import Q
-
 def calcular_pontuacao(campeonato):
     pontuacao = {}
 
@@ -181,8 +177,6 @@ def calcular_pontuacao(campeonato):
 
 
 
-
-
 def registrar_resultados(request, campeonato_id):
     # Obter o campeonato ou retornar 404
     campeonato = get_object_or_404(Campeonato, id=campeonato_id)
@@ -223,11 +217,6 @@ def registrar_resultados(request, campeonato_id):
         'jogos': jogos,
     })
 
-
-from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
-from .models import Campeonato, Jogo, Penalidade, Participante
-
 def registrar_penalidades(request, campeonato_id):
     campeonato = get_object_or_404(Campeonato, id=campeonato_id)
     jogos = Jogo.objects.filter(rodada__campeonato=campeonato)
@@ -261,13 +250,6 @@ def registrar_penalidades(request, campeonato_id):
         'jogos': jogos,
         'participantes': participantes,
     })
-
-
-
-
-from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse
-from .models import Campeonato, Jogo, JogoEliminatorio, ResultadoEliminatorio, RodadaEliminatoria  # Certifique-se de que o modelo Jogo está importado
 
 def confirmar_classificacao(request, campeonato_id):
     campeonato = get_object_or_404(Campeonato, id=campeonato_id)
@@ -444,14 +426,6 @@ def gerar_fases_eliminatorias(campeonato, tipo_eliminatoria, datas_horas_fases):
                         placeholder=True if not time_casa or not time_fora else False
                     )
 
-
-
-
-
-
-
-
-
 def visualizar_chave_confrontos(request, campeonato_id):
     campeonato = get_object_or_404(Campeonato, id=campeonato_id)
     rodadas_eliminatorias = RodadaEliminatoria.objects.filter(campeonato=campeonato).order_by('fase')
@@ -482,9 +456,6 @@ def visualizar_chave_confrontos(request, campeonato_id):
         'vencedor_final': vencedor_final,
         'premiacao': campeonato.premiação,
     })
-
-
-
 
 
 def visualizar_ganhador_unico(request, campeonato_id):
@@ -564,10 +535,6 @@ def alocar_vencedor_para_proxima_fase(campeonato, fase, vencedor):
         if jogo:
             jogo.time_fora = vencedor
     jogo.save()
-
-from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
-from .models import Campeonato, JogoEliminatorio, PenalidadeEliminatoria, Participante
 
 def registrar_penalidades_eliminatorias(request, campeonato_id):
     campeonato = get_object_or_404(Campeonato, id=campeonato_id)

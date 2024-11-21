@@ -49,5 +49,5 @@ build/
 
 # Arquivos de segurança
 *.env
-*.env.*
+
 *.secret

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Página Inicial{% endblock %}
+
+{% block content %}
+
+<style>
+    .hero {
+        background: linear-gradient(135deg, #1277dd, #5fff50);
+        color: white;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        min-height: 90vh; /* Ocupa 90% da altura da tela */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 3rem;
+        border-radius: 1rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-primary {
+        color:rgb(255, 255, 255);
+        background-color: #1968c2;
+        border: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #0a0064;
+    }
+</style>
+
+<div class="position-relative overflow-hidden hero">
+    <div class="col-md-8 mx-auto text-center">
+        <h1 class="display-3 fw-bold">Bem-vindo ao Sistema</h1>
+        <p class="lead fw-normal">
+            Gerencie seus campeonatos e torneios de forma fácil e prática com o nosso sistema.
+        </p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4">
+            {% if user.is_authenticated %}
+                <button class="btn btn-primary btn-lg px-4 " onclick="window.location.href='/campeonatos'">Visualizar campeonatos</button>
+                
+            {% else %}
+                <button class="btn btn-primary btn-lg px-4 " onclick="window.location.href='/login'">Login </button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
