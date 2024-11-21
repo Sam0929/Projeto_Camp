@@ -1,20 +1,33 @@
 {% extends "base.html" %}
+
 {% block title %}Profile Page{% endblock title %}
+
 {% block content %}
 <div class="container mt-4">
     <div class="row">
         <!-- Imagem do perfil -->
-        <div class="col-md-3 text-center">
+        <div class="col-md-3 text-center mb-5">
             <img 
                 class="rounded-circle account-img img-fluid" 
                 src="{{ user.profile.avatar.url }}" 
                 alt="User Avatar" 
-                style="cursor: pointer; max-width: 150px;"
+                style="cursor: pointer; width: 120px; height: 120px; object-fit: cover;"
             />
         </div>
         
         <!-- Formulário -->
         <div class="col-md-9">
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>{{ message }}</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        
+
             {% if user_form.errors %}
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <strong>Erro ao salvar mudanças:</strong>
@@ -26,41 +39,52 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             {% endif %}
-            
+
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                <div class="row g-3">
+                <div class="row g-4"> <!-- Aumentando o espaçamento entre as colunas -->
                     <!-- Username e Email -->
-                    <div class="col-md-6">
+                    <div class="col-md-6 mb-4"> <!-- Aumentando a margem inferior -->
                         <label for="username" class="form-label">Username:</label>
                         {{ user_form.username }}
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 mb-4"> <!-- Aumentando a margem inferior -->
                         <label for="email" class="form-label">Email:</label>
                         {{ user_form.email }}
                     </div>
 
-                    <!-- Change Password e Avatar -->
-                    <div class="col-md-12">
-                        <a href="{% url 'password_change' %}" class="btn btn-link p-0">Change Password</a>
-                    </div>
+                    
+                    <div class="col-md-12 mb-4">
+                        <div class="row d-flex justify-content-between align-items-center">
+                            {% if not user.social_auth.exists %}
+                            <div class="col-md-6">
+                                <a href="{% url 'password_change' %}" class="btn btn-primary w-50">Alterar Senha</a>
+                            </div>
 
-                    <div class="col-md-12 mt-3">
-                        <label for="avatar" class="form-label">Change Avatar:</label>
-                        {{ profile_form.avatar }}
+                            {% endif %}
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center w-100">
+                                    <label for="avatar" class="form-label me-2">Alterar Avatar:</label>
+                                    <input type="file" class="form-control w-70" id="avatar" name="avatar">
+                                </div>
+                            </div>
+
+                            
+                            
+                        </div>
                     </div>
 
                     <!-- Bio -->
-                    <div class="col-md-12">
+                    <div class="col-md-12 mb-4"> <!-- Aumentando a margem inferior -->
                         <label for="bio" class="form-label">Bio:</label>
                         {{ profile_form.bio }}
                     </div>
                 </div>
 
                 <!-- Botões -->
-                <div class="d-flex justify-content-end mt-3">
-                    <button type="submit" class="btn btn-primary me-2">Save Changes</button>
-                    <button type="reset" class="btn btn-secondary">Reset</button>
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn btn-primary me-3">Salvar alterações</button>
+                    <button type="reset" class="btn btn-secondary">Resetar</button>
                 </div>
             </form>
         </div>

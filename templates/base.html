@@ -23,9 +23,12 @@
         }
 
         main {
-            flex-grow: 1; /* Faz o main ocupar o espaço restante */
-            margin-bottom: 50px; /* Espaço entre o conteúdo e o footer */
+            flex-grow: 1; /* Permite que o conteúdo cresça para ocupar o espaço */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Centraliza o conteúdo quando menor que a tela */
         }
+
 
         .description {
             overflow-y: auto;  
@@ -52,7 +55,12 @@
 
                     
                     <a href="/home" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
-                        <i class="bi bi-bootstrap-fill me-2" style="font-size: 2rem;"></i>
+                        <img 
+                                class="rounded-2 account-img img-fluid" 
+                                src="/media/logo.png" 
+                               
+                                style="cursor: pointer; width: 38px; height: 38px; object-fit: cover; margin-right: 10px;"
+                            />
                     </a>
 
                     <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
@@ -65,7 +73,12 @@
 
                     <div class="dropdown text-end">
                         <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="https://static.vecteezy.com/system/resources/previews/034/616/630/non_2x/ai-generated-gold-trophy-cup-free-png.png" alt="mdo" width="32" height="32" class="rounded-circle">
+                            <img 
+                                class="rounded-circle account-img img-fluid" 
+                                src="{{ user.profile.avatar.url }}" 
+                                alt="User Avatar" 
+                                style="cursor: pointer; width: 38px; height: 38px; object-fit: cover;"
+                            />
                         </a>
                         <ul class="dropdown-menu text-small">
                             <li><a class="dropdown-item" href="{% url 'users-profile' %}">Profile</a></li>
@@ -98,8 +111,10 @@
     
     <style>
         .footer-bottom {
-            background: black ;
-            color: white;
+            background: rgb(247, 247, 247);
+        color: rgb(0, 0, 0);
+        border-top: 1px solid #ebebeb; /* Linha separadora sutil */
+        padding-top: 10px; /* Espaçamento superior */
         }
     </style>
       

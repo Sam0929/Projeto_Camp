@@ -1,81 +1,109 @@
 {% extends "base.html" %}
 
-{% block title %} Login Page {% endblock %}
+{% block title %}Login - Sistema de Campeonatos{% endblock %}
 
 {% block content %}
-    <div class="form-content my-3 p-3">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-5">
-                    <div class="card shadow-lg border-0 rounded-lg mt-0 mb-3">
-                        <div class="card-header justify-content-center">
-                          <h3 class="font-weight-light my-1 text-center">Sign In</h3>
+<div class="hero d-flex justify-content-center align-items-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5">
+                <div class="card shadow-lg border-0 rounded-lg">
+                    <div class="card-header text-center">
+                        <h3 class="font-weight-light my-2">Login</h3>
+                    </div>
+
+                    {% if form.errors %}
+                        <div class="alert alert-danger alert-dismissible mt-2" role="alert">
+                            <div id="form_errors">
+                                {% for key, value in form.errors.items %}
+                                    <strong>{{ value }}</strong>
+                                {% endfor %}
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endif %}
+
+                    <div class="card-body">
+                        <div class="d-flex flex-column mb-3">
+                            <a href="{% url 'social:begin' 'github' %}" class="btn btn-dark btn-lg mb-2 d-flex align-items-center justify-content-center">
+                                <i class="bi bi-github me-2"></i> Continue com o GitHub
+                            </a>
+                            <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-danger btn-lg d-flex align-items-center justify-content-center">
+                                <i class="bi bi-google me-2"></i> Continue com o Google
+                            </a>
                         </div>
 
-                        {% if form.errors %}
-                            <div class="alert alert-danger alert-dismissible" role="alert">
-                                <div id="form_errors">
-                                    {% for key, value in form.errors.items %}
-                                        <strong>{{ value }}</strong>
-                                    {% endfor %}
-                                </div>
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                        {% endif %}
+                        <hr>
+                        <p class="text-center"><strong>OU</strong></p>
+                        <hr>
 
-                        <div class="card-body">
-                            <!-- Login with social buttons -->
-                            <div class="d-flex flex-column mb-3">
-                                <a href="{% url 'social:begin' 'github' %}" class="btn btn-dark btn-lg mb-2 d-flex align-items-center justify-content-center">
-                                    <i class="bi bi-github me-2"></i> Sign in with GitHub
-                                </a>
-                                <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-danger btn-lg d-flex align-items-center justify-content-center">
-                                    <i class="bi bi-google me-2"></i> Sign in with Google
-                                </a>
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="form-group mb-3">
+                                <label class="small mb-1">Usuário</label>
+                                {{ form.username }}
                             </div>
 
-                            <hr>
-                            <p class="text-center"><strong>OR</strong></p>
-                            <hr>
-
-                            <form method="POST">
-                                {% csrf_token %}
-                                <div class="form-group mb-3">
-                                    <label class="small mb-1">Username</label>
-                                    {{ form.username }}
-                                </div>
-
-                                <div class="form-group mb-3">
-                                    <label class="small mb-1">Password</label>
-                                    {{ form.password }}
-                                </div>
-
-                                <div class="form-group mb-3">
-                                    <div class="form-check">
-                                        {{ form.remember_me }}
-                                        <label class="form-check-label" for="remember_me">
-                                            Remember me
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div class="form-group mt-4">
-                                    <button type="submit" name="login" class="col-md-12 btn btn-dark" id="login">Sign in</button>
-                                </div>
-                            </form>
-                        </div>
-
-                        <div class="card-footer text-center">
-                            <div class="small">
-                                <a href="{% url 'users-register' %}">Don't have an account yet? Go to signup</a><br>
-                                <a href="{% url 'password_reset' %}"><i>Forgot Password?</i></a>
+                            <div class="form-group mb-3">
+                                <label class="small mb-1">Senha</label>
+                                {{ form.password }}
                             </div>
+
+                            <div class="form-group mb-3">
+                                <div class="form-check">
+                                    {{ form.remember_me }}
+                                    <label class="form-check-label" for="remember_me">Lembrar senha</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group mt-4">
+                                <button type="submit" name="login" class="col-md-12 btn btn-dark" id="login">Entrar</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card-footer text-center">
+                        <div class="small">
+                            <a href="{% url 'users-register' %}">Não tem uma conta? Vá para o registro</a><br>
+                            <a href="{% url 'password_reset' %}"><i>Esqueceu sua senha?</i></a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-{% endblock content %}
+</div>
+
+<style>
+    .hero {
+        background: linear-gradient(135deg, #1277dd, #5fff50);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+        color: white;
+    }
+
+    .card {
+        border-radius: 15px;
+        background: #ffffff;
+    }
+
+    .card-header {
+        background-color: #051e3b;
+        color: #fff;
+        border-radius: 15px 15px 0 0;
+    }
+
+    .btn-dark {
+        background-color: #051e3b;
+        border: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-dark:hover {
+        background-color: #0a0064;
+    }
+</style>
+{% endblock %}

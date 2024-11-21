@@ -9,9 +9,19 @@ from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm, LoginForm, UpdateUserForm, UpdateProfileForm
 
 
-def home(request):
-    return render(request, 'users/home.html')
+class HomeView(View):
+    template_name = 'users/home.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        # Redireciona para a página de perfil se o usuário já estiver autenticado
+        if request.user.is_authenticated:
+            return redirect(to='/home')  # Ou qualquer outra página que você queira redirecionar
+
+        # Caso contrário, processa o método normalmente
+        return super(HomeView, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
 
 class RegisterView(View):
     form_class = RegisterForm
@@ -66,18 +76,26 @@ class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
     template_name = 'users/password_reset.html'
     email_template_name = 'users/password_reset_email.html'
     subject_template_name = 'users/password_reset_subject'
-    success_message = "We've emailed you instructions for setting your password, " \
-                      "if an account exists with the email you entered. You should receive them shortly." \
-                      " If you don't receive an email, " \
-                      "please make sure you've entered the address you registered with, and check your spam folder."
-    success_url = reverse_lazy('users-home')
+    success_message = "Nós enviamos um e-mail com as instruções para Redefinir sua senha, " \
+                        "caso exista uma conta com o e-mail que você inseriu. Você deve recebê-las em breve." \
+                        " Se não receber o e-mail, " \
+                        "por favor, verifique se o endereço inserido é o que você usou para se registrar e verifique sua pasta de spam."
 
+    success_url = reverse_lazy('home')
 
 class ChangePasswordView(SuccessMessageMixin, PasswordChangeView):
     template_name = 'users/change_password.html'
-    success_message = "Successfully Changed Your Password"
-    success_url = reverse_lazy('users-home')
+    success_message = "Senha alterada com sucesso!"
+    success_url = reverse_lazy('users-profile')
 
+    def dispatch(self, request, *args, **kwargs):
+        # Verificar se o usuário tem autenticação social (Google, GitHub, etc.)
+        if request.user.social_auth.exists():
+            # Redirecionar se o usuário tem autenticação social
+            return redirect('/home')  # Ou qualquer outra URL para redirecionar
+
+        # Se não for autenticado via provedor social, continuar normalmente
+        return super().dispatch(request, *args, **kwargs)
 
 @login_required
 def profile(request):
@@ -88,7 +106,7 @@ def profile(request):
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
-            messages.success(request, 'Your profile is updated successfully')
+            messages.success(request, 'Perfil atualizado com sucesso')
             return redirect(to='users-profile')
     else:
         user_form = UpdateUserForm(instance=request.user)

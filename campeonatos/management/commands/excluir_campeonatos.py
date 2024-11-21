@@ -12,3 +12,4 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(f'{count} campeonatos foram excluídos com sucesso.'))
         else:
             self.stdout.write(self.style.WARNING('Nenhum campeonato encontrado no banco de dados.'))
+        
