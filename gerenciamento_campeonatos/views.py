@@ -9,21 +9,39 @@ from .utils import gerar_jogos
 from campeonatos.models import Inscricao  # Importar o modelo de Inscrição
 from django.urls import reverse
 from campeonatos.models import Campeonato
-
+from django.db.models import Q
 
 def index(request):
+    # Obtém os parâmetros de busca e filtro
+    pesquisa = request.GET.get('pesquisa', '')
+    data_inicio = request.GET.get('data_inicio', '')
+
+    # Filtra os campeonatos
     campeonatos = Campeonato.objects.all()
+
+    if pesquisa:
+        campeonatos = campeonatos.filter(nome__icontains=pesquisa)
+
+    if data_inicio:
+        campeonatos = campeonatos.filter(data_inicio__gte=data_inicio)
 
     # Adiciona um campo para verificar se a tabela já foi gerada
     campeonatos_com_estado = []
     for campeonato in campeonatos:
-        tabela_gerada = campeonato.rodadas.exists()  # Verifica se o campeonato tem rodadas
+        tabela_gerada = campeonato.rodadas.exists()
         campeonatos_com_estado.append({
             'campeonato': campeonato,
             'tabela_gerada': tabela_gerada
         })
-    
-    return render(request, 'gerenciamento_campeonato.html', {'campeonatos_com_estado': campeonatos_com_estado})
+
+    return render(request, 'gerenciamento_campeonato.html', {
+        'campeonatos_com_estado': campeonatos_com_estado,
+        'pesquisa': pesquisa,
+        'data_inicio': data_inicio
+    })
+
+
+
 
 @admin_required
 def gerar_tabela(request, campeonato_id):
@@ -342,17 +360,13 @@ from .forms import EliminatoriasForm
 @admin_required
 def configurar_eliminatorias(request, campeonato_id):
     campeonato = get_object_or_404(Campeonato, id=campeonato_id)
-    
-    # Verifica se as eliminatórias já foram geradas
+
     if campeonato.eliminatorias_geradas:
-        # Se já foram geradas, redireciona para visualizar as eliminatórias
         return redirect('visualizar_chave_confrontos', campeonato_id=campeonato.id)
 
-    # Obtém a última rodada para definir a data do último jogo
     ultima_rodada = campeonato.rodadas.order_by('-data').first()
     data_ultimo_jogo = ultima_rodada.data if ultima_rodada else None
 
-    # Determina o número de classificados para as eliminatórias
     num_classificados = int(request.session.get('num_classificados', 4))
     if 'num_classificados' not in request.session:
         pontuacao = calcular_pontuacao(campeonato)
@@ -360,7 +374,6 @@ def configurar_eliminatorias(request, campeonato_id):
         request.session['num_classificados'] = num_classificados
 
     if request.method == 'POST':
-        # Gera as eliminatórias apenas se elas ainda não foram geradas
         tipo = request.POST.get('tipo_eliminatoria')
         datas_horas_fases = {
             'oitavas_de_final': f"{request.POST.get('data_oitavas')} {request.POST.get('hora_oitavas')}",
@@ -368,13 +381,25 @@ def configurar_eliminatorias(request, campeonato_id):
             'semi_finais': f"{request.POST.get('data_semi')} {request.POST.get('hora_semi')}",
             'final': f"{request.POST.get('data_final')} {request.POST.get('hora_final')}",
         }
-        gerar_fases_eliminatorias(campeonato, tipo, datas_horas_fases)
-        
-        # Marca as eliminatórias como geradas
-        campeonato.eliminatorias_geradas = True
-        campeonato.save()
 
-        return redirect('visualizar_chave_confrontos', campeonato_id=campeonato.id)
+        try:
+            if tipo == 'ganhador_unico':
+                vencedora = gerar_fases_eliminatorias(campeonato, tipo, datas_horas_fases)
+                return render(request, 'ganhador_unico.html', {
+                    'vencedor': vencedora,  # Nome da equipe vencedora
+                    'premiacao': campeonato.premiação,      # Exemplo de valor da premiação
+                    'campeonato': campeonato
+                })
+
+            gerar_fases_eliminatorias(campeonato, tipo, datas_horas_fases)
+
+            campeonato.eliminatorias_geradas = True
+            campeonato.save()
+
+            return redirect('visualizar_chave_confrontos', campeonato_id=campeonato.id)
+
+        except ValueError as e:
+            return render(request, 'erro.html', {'mensagem': str(e)})
 
     context = {
         'campeonato': campeonato,
@@ -382,6 +407,7 @@ def configurar_eliminatorias(request, campeonato_id):
         'num_classificados': num_classificados,
     }
     return render(request, 'configurar_eliminatorias.html', context)
+
 
 
 
@@ -394,6 +420,13 @@ def gerar_fases_eliminatorias(campeonato, tipo_eliminatoria, datas_horas_fases):
             reverse=True
         )[:16]
     ]
+
+    if tipo_eliminatoria == 'ganhador_unico':
+        if not classificados:
+            raise ValueError("Nenhuma equipe está disponível para determinar o vencedor.")
+
+        vencedora = classificados[0]
+        return vencedora 
 
     min_classificados = {
         'oitavas_de_final': 16,

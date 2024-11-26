@@ -21,6 +21,58 @@
             </div>
         </div>
 
+        <!-- Botão de Filtros e Limpar -->
+        <div class="row mb-4">
+            <div class="col-12 d-flex justify-content-between">
+                <!-- Botão para abrir modal de filtros -->
+                <button type="button" class="btn" style="background-color: #87ceeb; color: #FFFFFF;" data-bs-toggle="modal" data-bs-target="#filtrosModal">
+                    <i class="bi bi-filter"></i> Filtros
+                </button>
+                
+                <!-- Botão Limpar Filtros -->
+                <a href="{% url 'index' %}" class="btn" style="background-color: #87ceeb; color: #FFFFFF;">
+                    <i class="bi bi-x-circle"></i> Limpar Filtros
+                </a>
+            </div>
+        </div>
+
+        <!-- Modal de Filtros -->
+        <div class="modal fade" id="filtrosModal" tabindex="-1" aria-labelledby="filtrosModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="filtrosModalLabel">Filtros</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="get" action="{% url 'index' %}">
+                        <div class="modal-body">
+                            <!-- Campo de pesquisa por nome -->
+                            <div class="mb-3">
+                                <label for="pesquisa" class="form-label">Pesquisar por Nome</label>
+                                <input type="text" name="pesquisa" id="pesquisa" class="form-control" placeholder="Digite o nome do campeonato" value="{{ request.GET.pesquisa }}">
+                            </div>
+                            
+                            <!-- Filtro por Data de Início -->
+                            <div class="mb-3">
+                                <label for="data_inicio" class="form-label">Data de Início</label>
+                                <input type="date" name="data_inicio" id="data_inicio" class="form-control" value="{{ request.GET.data_inicio }}">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn" style="background-color: #87ceeb; color: #FFFFFF;">
+                                Aplicar Filtros
+                            </button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                Fechar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+
         <!-- Lista de Campeonatos -->
         {% if campeonatos_com_estado %}
             <div class="row">

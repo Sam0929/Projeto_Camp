@@ -2,7 +2,20 @@ from django.shortcuts import render
 from campeonatos.models import Campeonato
 
 def listar_campeonatos(request):
+    # Obtém os parâmetros de busca e filtro
+    pesquisa = request.GET.get('pesquisa', '')
+    data_inicio = request.GET.get('data_inicio', '')
+
+    # Filtra os campeonatos
     campeonatos = Campeonato.objects.all()
+
+    if pesquisa:
+        campeonatos = campeonatos.filter(nome__icontains=pesquisa)
+
+    if data_inicio:
+        campeonatos = campeonatos.filter(data_inicio__gte=data_inicio)
+
+    # Adiciona um campo para verificar se a tabela já foi gerada
     campeonatos_com_estado = []
     for campeonato in campeonatos:
         tabela_gerada = campeonato.rodadas.exists()
@@ -11,7 +24,12 @@ def listar_campeonatos(request):
             'tabela_gerada': tabela_gerada
         })
 
-    return render(request, 'listar_campeonatos.html', {'campeonatos_com_estado': campeonatos_com_estado})
+    return render(request, 'listar_campeonatos.html', {
+        'campeonatos_com_estado': campeonatos_com_estado,
+        'pesquisa': pesquisa,
+        'data_inicio': data_inicio
+    })
+
 
 from django.shortcuts import render, get_object_or_404
 from campeonatos.models import Campeonato, Participante

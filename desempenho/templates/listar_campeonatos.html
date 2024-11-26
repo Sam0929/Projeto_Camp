@@ -10,13 +10,63 @@
             <div class="col-12">
                 <div class="card text-center" style="background-color: #160840; border: none;">
                     <div class="card-body">
-                        <h1 class="display-4 fw-bold" style="color: #FFFFFF; text-shadow: 2px 1px 1px #87ceeb;">
+                        <h1 class="display-4 fw-bold text-light" style="text-shadow: 2px 1px 1px #87ceeb;">
                             Desempenho em Campeonatos
                         </h1>
                         <p class="lead text-light">
                             Escolha um campeonato para visualizar o gráfico de desempenho.
                         </p>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botão de Filtros e Limpar -->
+        <div class="row mb-4">
+            <div class="col-12 d-flex justify-content-between">
+                <!-- Botão para abrir modal de filtros -->
+                <button type="button" class="btn" style="background-color: #87ceeb; color: #FFFFFF;" data-bs-toggle="modal" data-bs-target="#filtrosModal">
+                    <i class="bi bi-filter"></i> Filtros
+                </button>
+                
+                <!-- Botão Limpar Filtros -->
+                <a href="{% url 'listar_campeonatos' %}" class="btn" style="background-color: #87ceeb; color: #FFFFFF;">
+                    <i class="bi bi-x-circle"></i> Limpar Filtros
+                </a>
+            </div>
+        </div>
+
+        <!-- Modal de Filtros -->
+        <div class="modal fade" id="filtrosModal" tabindex="-1" aria-labelledby="filtrosModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="filtrosModalLabel">Filtros</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="get" action="{% url 'listar_campeonatos' %}">
+                        <div class="modal-body">
+                            <!-- Campo de pesquisa por nome -->
+                            <div class="mb-3">
+                                <label for="pesquisa" class="form-label">Pesquisar por Nome</label>
+                                <input type="text" name="pesquisa" id="pesquisa" class="form-control" placeholder="Digite o nome do campeonato" value="{{ pesquisa }}">
+                            </div>
+                            
+                            <!-- Filtro por Data de Início -->
+                            <div class="mb-3">
+                                <label for="data_inicio" class="form-label">Data de Início</label>
+                                <input type="date" name="data_inicio" id="data_inicio" class="form-control" value="{{ data_inicio }}">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn" style="background-color: #87ceeb; color: #FFFFFF;">
+                                Aplicar Filtros
+                            </button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                Fechar
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -28,7 +78,7 @@
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card h-100" style="background-color: #f0faf9; border: 1px solid #191970; border-radius: 10px;">
                         <div class="card-body d-flex flex-column">
-                            <h2 class="card-title text-center" style="
+                            <h2 class="card-title text-center text-dark fw-bold" style="
                                 color: #160840;
                                 text-shadow: -1px -1px 1 #1E3A8A, 1px -1px 1 #1E3A8A, -1px 1px 1 #1E3A8A, 1px 1px 1 #1E3A8A;
                                 font-weight: bold;">
@@ -37,11 +87,11 @@
                             <table class="table table-borderless text-dark mt-3">
                                 <tbody>
                                     <tr>
-                                        <th>Data e Hora de Início</th>
+                                        <th>Data de Início</th>
                                         <td>{{ item.campeonato.data_inicio|date:"d/m/Y H:i" }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Data e Hora de Fim</th>
+                                        <th>Data de Fim</th>
                                         <td>{{ item.campeonato.data_fim|date:"d/m/Y H:i" }}</td>
                                     </tr>
                                     <tr>
@@ -51,7 +101,9 @@
                                 </tbody>
                             </table>
                             <div class="text-center mt-auto">
-                                <a href="{% url 'visualizar_desempenho' item.campeonato.id %}" class="btn btn-primary w-100" style="background-color: #160840; border-color: #160840;">
+                                <a href="{% url 'visualizar_desempenho' item.campeonato.id %}" 
+                                   class="btn btn-primary w-100" 
+                                   style="background-color: #160840; border-color: #160840;">
                                     Visualizar Gráfico de Desempenho
                                 </a>
                             </div>

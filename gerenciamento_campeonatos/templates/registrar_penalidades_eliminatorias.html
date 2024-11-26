@@ -4,61 +4,57 @@
 
 {% block content %}
 <div class="container mt-5">
-    <div class="card shadow-lg p-4" style="border-radius: 10px; background-color: #f8f9fa; border: 1px solid #191970;">
-        <h1 class="text-center mb-4" style="color: #160840;">Registrar Penalidades</h1>
-        <p class="text-center mb-4" style="color: #555;">Campeonato: <strong>{{ campeonato.nome }}</strong></p>
+    <h1 class="text-center">Registrar Penalidades para {{ campeonato.nome }}</h1>
 
-        <form method="post">
-            {% csrf_token %}
-            <div class="mb-4">
-                <label for="jogo_id" class="form-label fw-bold" style="color: #160840;">Selecione um Jogo:</label>
-                <select id="jogo_id" name="jogo_id" class="form-select border-primary" required>
-                    <option value="" disabled selected>Escolha um jogo...</option>
-                    {% for jogo in jogos %}
-                        <option value="{{ jogo.id }}">{{ jogo.time_casa.equipe }} vs {{ jogo.time_fora.equipe }} - Fase {{ jogo.rodada.fase }}</option>
-                    {% endfor %}
-                </select>
-            </div>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-4">
+            <label for="jogo_id" class="form-label">Selecione um Jogo:</label>
+            <select id="jogo_id" name="jogo_id" class="form-select" required>
+                <option value="">Escolha um jogo...</option>
+                {% for jogo in jogos %}
+                    <option value="{{ jogo.id }}">{{ jogo.time_casa.equipe }} vs {{ jogo.time_fora.equipe }} - Fase {{ jogo.rodada.fase }}</option>
+                {% endfor %}
+            </select>
+        </div>
 
-            <div class="mb-3">
-                <label for="tipo_cartao" class="form-label fw-bold" style="color: #160840;">Tipo de Penalidade:</label>
-                <select id="tipo_cartao" name="tipo_cartao" class="form-select border-primary" required>
-                    <option value="amarelo">Cartão Amarelo</option>
-                    <option value="vermelho">Cartão Vermelho</option>
-                    <option value="expulsao">Expulsão</option>
-                    <option value="outro">Outro</option>
-                </select>
-            </div>
+        <div class="mb-3">
+            <label for="tipo_cartao" class="form-label">Tipo de Penalidade:</label>
+            <select id="tipo_cartao" name="tipo_cartao" class="form-select" required>
+                <option value="amarelo">Cartão Amarelo</option>
+                <option value="vermelho">Cartão Vermelho</option>
+                <option value="expulsao">Expulsão</option>
+                <option value="outro">Outro</option>
+            </select>
+        </div>
 
-            <div class="mb-3">
-                <label for="tipo_penalidade" class="form-label fw-bold" style="color: #160840;">Penalidade Por:</label>
-                <select id="tipo_penalidade" name="tipo_penalidade" class="form-select border-primary" required>
-                    <option value="participante">Por Participante</option>
-                    <option value="equipe">Por Equipe</option>
-                </select>
-            </div>
+        <div class="mb-3">
+            <label for="tipo_penalidade" class="form-label">Penalidade Por:</label>
+            <select id="tipo_penalidade" name="tipo_penalidade" class="form-select" required>
+                <option value="participante">Por Participante</option>
+                <option value="equipe">Por Equipe</option>
+            </select>
+        </div>
 
-            <div class="mb-3">
-                <label for="participante_id" class="form-label fw-bold" style="color: #160840;">Selecione um Participante:</label>
-                <select id="participante_id" name="participante_id" class="form-select border-primary">
-                    <option value="" disabled selected>Escolha um participante...</option>
-                    {% for participante in participantes %}
-                        <option value="{{ participante.id }}">{{ participante.nome }}</option>
-                    {% endfor %}
-                </select>
-            </div>
+        <div class="mb-3">
+            <label for="participante_id" class="form-label">Selecione um Participante:</label>
+            <select id="participante_id" name="participante_id" class="form-select">
+                <option value="">Escolha um participante...</option>
+                {% for participante in participantes %}
+                    <option value="{{ participante.id }}">{{ participante.nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
 
-            <div class="mb-3">
-                <label for="motivo" class="form-label fw-bold" style="color: #160840;">Motivo da Penalidade:</label>
-                <textarea id="motivo" name="motivo" class="form-control border-primary" rows="3" required></textarea>
-            </div>
+        <!-- Novo campo para o motivo da penalidade -->
+        <div class="mb-3">
+            <label for="motivo" class="form-label">Motivo da Penalidade:</label>
+            <textarea id="motivo" name="motivo" class="form-control" rows="3" required></textarea>
+        </div>
 
-            <div class="text-center">
-                <button type="submit" class="btn btn-success w-50" style="background-color: #28a745; border-color: #28a745;">
-                    Salvar Penalidade
-                </button>
-            </div>
-        </form>
-    </div>
+        <div class="text-center">
+            <button type="submit" class="btn btn-success">Salvar Penalidade</button>
+        </div>
+    </form>
 </div>
 {% endblock %}

@@ -11,22 +11,27 @@ from sistema_campeonatos.middleware import admin_required
 from django.contrib.auth.decorators import login_required
 
 
+from django.db.models import Q
+
 def campeonatos(request):
+    query = request.GET.get('q', '')  # Pesquisa por texto
+    data_inicio = request.GET.get('data_inicio')  # Filtro por data de início
     campeonatos = Campeonato.objects.all()
     
-    # Para cada campeonato, agrupamos os participantes por equipe
-    for campeonato in campeonatos:
-        # Cria um dicionário onde a chave será a equipe (normalizada) e o valor será uma lista de participantes
-        equipes_participantes = defaultdict(list)
-        for inscricao in campeonato.inscricao_set.all():
-            # Normaliza o nome da equipe (sem espaços extras e com letras minúsculas)
-            equipe_normalizada = inscricao.participante.equipe.strip().lower()
-            equipes_participantes[equipe_normalizada].append(inscricao)
-        
-        # Anexa o dicionário ao objeto campeonato para ser usado no template
-        campeonato.equipes_participantes = equipes_participantes
+    # Filtro por texto
+    if query:
+        campeonatos = campeonatos.filter(
+            Q(nome__icontains=query) | 
+            Q(descricao__icontains=query)
+        )
+    
+    # Filtro por data de início
+    if data_inicio:
+        campeonatos = campeonatos.filter(data_inicio__date=data_inicio)
+    
+    return render(request, 'campeonatos.html', {'campeonatos': campeonatos, 'query': query})
 
-    return render(request, 'campeonatos.html', {'campeonatos': campeonatos})
+
 
 def criar_campeonato(request):
     if request.method == 'POST':

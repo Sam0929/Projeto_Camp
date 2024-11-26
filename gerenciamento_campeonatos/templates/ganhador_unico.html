@@ -1,9 +1,41 @@
 {% extends "base.html" %}
 
+{% block title %}Ganhador Único{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-    <h2>Vencedor do Campeonato - {{ campeonato.nome }}</h2>
-    <p>Parabéns ao vencedor!</p>
-    <h3>{{ vencedor }}</h3>
-</div>
+<main class="container my-7" style="max-width: 75%;">
+    <section class="chave-confrontos-section">
+        <!-- Cabeçalho -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card text-center" style="background-color: #160840; border: none;">
+                    <div class="card-body">
+                        <h1 class="display-4 fw-bold" style="color: #FFFFFF; text-shadow: 2px 1px 1px #87ceeb;">
+                            Resultado Final
+                        </h1>
+                        <p class="lead text-light">
+                            Vencedor Definido Por Pontuação . Numero de pontos: 
+                        </p>
+                        <p class="text-light mb-0"><strong>Campeonato:</strong> {{ campeonato.nome }}</p>
+                        <p class="text-light">
+                            <strong>Data de início:</strong> {{ campeonato.data_inicio|date:"d/m/Y" }} |
+                            <strong>Data de fim:</strong> {{ campeonato.data_fim|date:"d/m/Y" }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vencedor Final -->
+        <div class="card mb-4" style="background-color: #f0faf9; border: 1px solid #191970; border-radius: 10px;">
+            <div class="card-body text-center">
+                <h2 class="display-6 text-success">Equipe Campeã</h2>
+                <p class="h4 text-dark">{{ vencedor }}</p>
+                <p class="h5 text-primary">Prêmio: R$ {{ premiacao }}</p>
+                <span class="badge bg-light text-success p-2 mt-2">🏆 Parabéns aos campeões! 🏆</span>
+            </div>
+        </div>
+
+    </section>
+</main>
 {% endblock %}
