@@ -612,18 +612,26 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from .models import Jogo, Comentario
 
+from django.conf import settings
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+
 def obter_comentarios(request, jogo_id):
     jogo = get_object_or_404(Jogo, id=jogo_id)
-    comentarios = jogo.comentarios_jogo.all().order_by('-data_criacao')  # Use o related_name diretamente
+    comentarios = jogo.comentarios_jogo.all().order_by('-data_criacao')
+
     comentarios_data = [
         {
             'usuario': comentario.usuario.username,
             'texto': comentario.texto,
             'data_criacao': comentario.data_criacao.strftime('%d/%m/%Y %H:%M'),
+            'profilepic': comentario.usuario.profile.avatar.url if comentario.usuario.profile.avatar else f'{settings.STATIC_URL}images/default_profile.jpg'
         }
         for comentario in comentarios
     ]
+
     return JsonResponse({'success': True, 'comentarios': comentarios_data})
+
 
 
 
@@ -655,20 +663,21 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from .models import JogoEliminatorio, ComentarioEliminatorio
 
+from django.conf import settings
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+
 def obter_comentarios_eliminatorios(request, jogo_id):
     try:
-        # Obtém o jogo eliminatório pelo ID
         jogo = get_object_or_404(JogoEliminatorio, id=jogo_id)
-        
-        # Obtém os comentários relacionados ao jogo, ordenados pela data de criação
-        comentarios = jogo.comentarioseliminatorios.all().order_by('-data_criacao')  # Usando o 'related_name'
-        
-        # Formata os dados dos comentários
+        comentarios = jogo.comentarioseliminatorios.all().order_by('-data_criacao')
+
         comentarios_data = [
             {
                 'usuario': comentario.usuario.username,
                 'texto': comentario.texto,
                 'data_criacao': comentario.data_criacao.strftime('%d/%m/%Y %H:%M'),
+                'profilepic': comentario.usuario.profile.avatar.url if comentario.usuario.profile.avatar else f'{settings.STATIC_URL}images/default_profile.jpg'
             }
             for comentario in comentarios
         ]
@@ -676,6 +685,7 @@ def obter_comentarios_eliminatorios(request, jogo_id):
 
     except JogoEliminatorio.DoesNotExist:
         return JsonResponse({'success': False, 'message': 'Jogo não encontrado.'}, status=404)
+
 
 
 from django.contrib.auth.decorators import login_required

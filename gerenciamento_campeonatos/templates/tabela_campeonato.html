@@ -186,23 +186,26 @@
         // Define o título do modal
         const modalLabel = document.getElementById('chatModalLabel');
         modalLabel.textContent = `Chat do Jogo: ${timeCasa} vs ${timeFora}`;
-
+    
         // Define o ID do jogo no formulário
         const jogoIdInput = document.getElementById('jogoIdInput');
         jogoIdInput.value = jogoId;
-
+    
         // Limpa os comentários e carrega do servidor
         const comentariosContainer = document.getElementById('comentariosContainer');
         comentariosContainer.innerHTML = '<p class="text-muted">Carregando comentários...</p>';
-
+    
         fetch(`/gerenciamento/obter_comentarios/${jogoId}/`)
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
                     const comentariosHtml = data.comentarios.map(comentario => `
-                        <div class="list-group-item">
-                            <strong>${comentario.usuario}</strong>: ${comentario.texto}
-                            <small class="text-muted d-block">${comentario.data_criacao}</small>
+                        <div class="list-group-item d-flex align-items-start">
+                            <img src="${comentario.profilepic}" alt="Foto de ${comentario.usuario}" class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover; border: 1px solid #ddd;">
+                            <div>
+                                <strong>${comentario.usuario}</strong>: ${comentario.texto}
+                                <small class="text-muted d-block">${comentario.data_criacao}</small>
+                            </div>
                         </div>
                     `).join('');
                     comentariosContainer.innerHTML = comentariosHtml || '<p class="text-muted">Nenhum comentário ainda.</p>';
@@ -215,6 +218,7 @@
                 comentariosContainer.innerHTML = '<p class="text-danger">Erro ao carregar os comentários.</p>';
             });
     }
+    
 
     function enviarComentario(event) {
         event.preventDefault();

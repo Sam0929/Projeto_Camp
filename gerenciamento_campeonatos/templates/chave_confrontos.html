@@ -174,9 +174,12 @@
                 .then(data => {
                     if (data.success) {
                         const comentariosHtml = data.comentarios.map(comentario => `
-                            <div class="list-group-item">
-                                <strong>${comentario.usuario}</strong>: ${comentario.texto}
-                                <small class="text-muted d-block">${comentario.data_criacao}</small>
+                            <div class="list-group-item d-flex align-items-start">
+                                <img src="${comentario.profilepic}" alt="Foto de ${comentario.usuario}" class="rounded-circle me-3" style="width: 40px; height: 40px; object-fit: cover; border: 1px solid #ddd;">
+                                <div>
+                                    <strong>${comentario.usuario}</strong>: ${comentario.texto}
+                                    <small class="text-muted d-block">${comentario.data_criacao}</small>
+                                </div>
                             </div>
                         `).join('');
                         comentariosContainer.innerHTML = comentariosHtml || '<p class="text-muted text-center">Nenhum comentário ainda.</p>';
@@ -189,6 +192,7 @@
                     comentariosContainer.innerHTML = '<p class="text-danger text-center">Erro ao carregar os comentários.</p>';
                 });
         }        
+        
     
         function enviarComentarioEliminatorio(event) {
             event.preventDefault();
