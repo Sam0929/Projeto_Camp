@@ -607,3 +607,117 @@ def registrar_penalidades_eliminatorias(request, campeonato_id):
         'participantes': participantes,
     })
 
+
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from .models import Jogo, Comentario
+
+def obter_comentarios(request, jogo_id):
+    jogo = get_object_or_404(Jogo, id=jogo_id)
+    comentarios = jogo.comentarios_jogo.all().order_by('-data_criacao')  # Use o related_name diretamente
+    comentarios_data = [
+        {
+            'usuario': comentario.usuario.username,
+            'texto': comentario.texto,
+            'data_criacao': comentario.data_criacao.strftime('%d/%m/%Y %H:%M'),
+        }
+        for comentario in comentarios
+    ]
+    return JsonResponse({'success': True, 'comentarios': comentarios_data})
+
+
+
+from django.contrib.auth.decorators import login_required
+import json
+
+@login_required
+def adicionar_comentario(request, jogo_id):
+    if request.method == 'POST':
+        jogo = get_object_or_404(Jogo, id=jogo_id)
+        dados = json.loads(request.body)
+        texto = dados.get('comentario', '').strip()
+
+        if not texto:
+            return JsonResponse({'success': False, 'message': 'O comentário não pode estar vazio.'}, status=400)
+
+        comentario = Comentario.objects.create(
+            jogo=jogo,
+            usuario=request.user,
+            texto=texto
+        )
+
+        return JsonResponse({'success': True, 'message': 'Comentário adicionado com sucesso!'})
+
+    return JsonResponse({'success': False, 'message': 'Requisição inválida.'}, status=400)
+
+
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from .models import JogoEliminatorio, ComentarioEliminatorio
+
+def obter_comentarios_eliminatorios(request, jogo_id):
+    try:
+        # Obtém o jogo eliminatório pelo ID
+        jogo = get_object_or_404(JogoEliminatorio, id=jogo_id)
+        
+        # Obtém os comentários relacionados ao jogo, ordenados pela data de criação
+        comentarios = jogo.comentarioseliminatorios.all().order_by('-data_criacao')  # Usando o 'related_name'
+        
+        # Formata os dados dos comentários
+        comentarios_data = [
+            {
+                'usuario': comentario.usuario.username,
+                'texto': comentario.texto,
+                'data_criacao': comentario.data_criacao.strftime('%d/%m/%Y %H:%M'),
+            }
+            for comentario in comentarios
+        ]
+        return JsonResponse({'success': True, 'comentarios': comentarios_data})
+
+    except JogoEliminatorio.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Jogo não encontrado.'}, status=404)
+
+
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+import json
+from .models import JogoEliminatorio, ComentarioEliminatorio
+
+@login_required
+def adicionar_comentario_eliminatorio(request, jogo_id):
+    if request.method == 'POST':
+        # Obtém o jogo eliminatório correspondente
+        jogo = get_object_or_404(JogoEliminatorio, id=jogo_id)
+
+        # Lê os dados JSON enviados na requisição
+        try:
+            dados = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'message': 'Dados inválidos.'}, status=400)
+
+        texto = dados.get('comentario', '').strip()
+
+        # Valida se o texto do comentário não está vazio
+        if not texto:
+            return JsonResponse({'success': False, 'message': 'O comentário não pode estar vazio.'}, status=400)
+
+        # Cria o comentário no banco de dados
+        comentario = ComentarioEliminatorio.objects.create(
+            jogo=jogo,
+            usuario=request.user,
+            texto=texto
+        )
+
+        # Retorna a resposta com os dados do comentário recém-criado
+        return JsonResponse({
+            'success': True,
+            'message': 'Comentário adicionado com sucesso!',
+            'comentario': {
+                'usuario': comentario.usuario.username,
+                'texto': comentario.texto,
+                'data_criacao': comentario.data_criacao.strftime('%d/%m/%Y %H:%M'),
+            }
+        })
+
+    return JsonResponse({'success': False, 'message': 'Requisição inválida.'}, status=400)

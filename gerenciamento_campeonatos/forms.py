@@ -18,3 +18,19 @@ class EliminatoriasForm(forms.Form):
     data_quartas = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}), required=False)
     data_semi = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}), required=False)
     data_final = forms.DateTimeField(widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}), required=False)
+
+
+from .models import Comentario
+
+class ComentarioForm(forms.ModelForm):
+    class Meta:
+        model = Comentario
+        fields = ['texto']  # Apenas o campo 'texto' será exibido no formulário
+
+from django import forms
+from .models import ComentarioEliminatorio
+
+class ComentarioEliminatorioForm(forms.ModelForm):
+    class Meta:
+        model = ComentarioEliminatorio
+        fields = ['texto']  # Apenas o campo 'texto' será exibido no formulário

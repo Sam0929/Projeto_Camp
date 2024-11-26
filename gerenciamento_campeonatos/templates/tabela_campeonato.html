@@ -93,14 +93,12 @@
     <!-- Seção de Jogos por Rodada -->
     <div class="collapse mt-3" id="tabelaJogos">
         {% for rodada in campeonato.rodadas.all %}
-        <h3 class="mt-4" style="color: #160820; text-shadow: 2px 1px 1px #87ceeb; background-color: #f0faf9; border: 1px solid #191970; border-radius: 5px;">Rodada {{ rodada.numero }} - {{ rodada.data|date:"d/m/Y" }}</h3>
+        <h3 class="mt-4" style="color: #160820; text-shadow: 2px 1px 1px #87ceeb; background-color: #f0faf9; border: 1px solid #191970; border-radius: 5px;">
+            Rodada {{ rodada.numero }} - {{ rodada.data|date:"d/m/Y" }}
+        </h3>
         <ul class="list-group mb-1">
             {% for jogo in rodada.jogos.all %}
-                <li class="list-group-item">
-                <li class="list-group-item">
-                    <!-- Informações do Jogo -->
             <li class="list-group-item">
-                    <!-- Informações do Jogo -->
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         {{ jogo.time_casa.equipe }} vs {{ jogo.time_fora.equipe }}
@@ -113,37 +111,59 @@
                         <span class="badge bg-secondary rounded-pill">Resultado: Não disponível</span>
                         {% endif %}
                     </div>
+                    <!-- Ícone de Chat -->
+                    <button 
+                        class="btn btn-link text-primary" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#chatModal" 
+                        onclick="abrirChat({{ jogo.id }}, '{{ jogo.time_casa.equipe }}', '{{ jogo.time_fora.equipe }}')"
+                    >
+                        <i class="bi bi-chat-dots"></i>
+                    </button>
                 </div>
-
-                {% if jogo.penalidades.exists %}
-                <div class="mt-2 ms-4" style="font-size: 0.8em;">
-                    <strong>Penalidades:</strong>
-                    <ul class="list-group list-group-flush">
-                        {% for penalidade in jogo.penalidades.all %}
-                        <li class="list-group-item">
-                            <strong>{{ penalidade.tipo_penalidade|title }}:</strong> 
-                            {% if penalidade.participante %}
-                                {{ penalidade.participante.nome }}
-                            {% elif penalidade.equipe == 'casa' %}
-                                {{ jogo.time_casa.equipe }}
-                            {% elif penalidade.equipe == 'fora' %}
-                                {{ jogo.time_fora.equipe }}
-                            {% else %}
-                                Equipe
-                            {% endif %}
-                            - {{ penalidade.motivo }}
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                {% else %}
-                <div class="text-muted mt-2 ms-4" style="font-size: 0.8em;">Nenhuma penalidade registrada para este jogo.</div>
-                {% endif %}
             </li>
             {% endfor %}
         </ul>
         {% endfor %}
     </div>
+
+    <!-- Modal para comentários -->
+    <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <!-- Cabeçalho do Modal -->
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="chatModalLabel">Chat do Jogo</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <!-- Corpo do Modal -->
+                <div class="modal-body">
+                    <!-- Lista de Comentários -->
+                    <div id="comentariosContainer" class="mb-4" style="max-height: 400px; overflow-y: auto;">
+                        <p class="text-muted text-center">Carregando comentários...</p>
+                    </div>
+
+                    <!-- Formulário para Adicionar Comentário -->
+                    {% if user.is_authenticated %}
+                    <form id="comentarioForm" onsubmit="enviarComentario(event)">
+                        {% csrf_token %}
+                        <input type="hidden" id="jogoIdInput" name="jogo_id">
+                        <div class="mb-3">
+                            <label for="comentarioTexto" class="form-label fw-bold">Adicionar Comentário</label>
+                            <textarea id="comentarioTexto" name="comentario" class="form-control" rows="3" placeholder="Digite seu comentário aqui..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">Enviar</button>
+                    </form>
+                    {% else %}
+                    <p class="text-muted text-center">Faça login para adicionar comentários.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </div>
 
     <!-- JavaScript para alterar o texto e estilo do botão -->
@@ -160,4 +180,78 @@
         }
     });
 </script>
+
+<script>
+    function abrirChat(jogoId, timeCasa, timeFora) {
+        // Define o título do modal
+        const modalLabel = document.getElementById('chatModalLabel');
+        modalLabel.textContent = `Chat do Jogo: ${timeCasa} vs ${timeFora}`;
+
+        // Define o ID do jogo no formulário
+        const jogoIdInput = document.getElementById('jogoIdInput');
+        jogoIdInput.value = jogoId;
+
+        // Limpa os comentários e carrega do servidor
+        const comentariosContainer = document.getElementById('comentariosContainer');
+        comentariosContainer.innerHTML = '<p class="text-muted">Carregando comentários...</p>';
+
+        fetch(`/gerenciamento/obter_comentarios/${jogoId}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const comentariosHtml = data.comentarios.map(comentario => `
+                        <div class="list-group-item">
+                            <strong>${comentario.usuario}</strong>: ${comentario.texto}
+                            <small class="text-muted d-block">${comentario.data_criacao}</small>
+                        </div>
+                    `).join('');
+                    comentariosContainer.innerHTML = comentariosHtml || '<p class="text-muted">Nenhum comentário ainda.</p>';
+                } else {
+                    comentariosContainer.innerHTML = '<p class="text-danger">Erro ao carregar os comentários.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao carregar comentários:', error);
+                comentariosContainer.innerHTML = '<p class="text-danger">Erro ao carregar os comentários.</p>';
+            });
+    }
+
+    function enviarComentario(event) {
+        event.preventDefault();
+
+        const jogoId = document.getElementById('jogoIdInput').value;
+        const texto = document.getElementById('comentarioTexto').value.trim();
+        const csrfToken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+
+        if (!texto) {
+            alert('O comentário não pode estar vazio.');
+            return;
+        }
+
+        fetch(`/gerenciamento/adicionar_comentario/${jogoId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+            },
+            body: JSON.stringify({ comentario: texto }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Comentário adicionado com sucesso!');
+                abrirChat(jogoId); // Recarrega os comentários
+                document.getElementById('comentarioForm').reset();
+            } else {
+                alert(data.message || 'Erro ao adicionar o comentário.');
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao adicionar comentário:', error);
+            alert('Erro ao adicionar o comentário.');
+        });
+    }
+</script>
+
+
 {% endblock %}

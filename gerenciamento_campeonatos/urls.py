@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from .views import obter_comentarios, adicionar_comentario, obter_comentarios_eliminatorios, adicionar_comentario_eliminatorio
+
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -16,4 +18,8 @@ urlpatterns = [
     path('registrar_resultados_eliminatorias/<int:campeonato_id>/', views.registrar_resultados_eliminatorias, name='registrar_resultados_eliminatorias'),
     path('registrar_penalidades/<int:campeonato_id>/', views.registrar_penalidades, name='registrar_penalidade'),
     path('registrar_penalidades_eliminatorias/<int:campeonato_id>/', views.registrar_penalidades_eliminatorias, name='registrar_penalidades_eliminatorias'),
+    path('obter_comentarios/<int:jogo_id>/', obter_comentarios, name='obter_comentarios'),
+    path('adicionar_comentario/<int:jogo_id>/', adicionar_comentario, name='adicionar_comentario'),
+    path('obter_comentarios_eliminatorios/<int:jogo_id>/', views.obter_comentarios_eliminatorios, name='obter_comentarios_eliminatorios'),
+    path('adicionar_comentario_eliminatorio/<int:jogo_id>/', views.adicionar_comentario_eliminatorio, name='adicionar_comentario_eliminatorio'),
 ]

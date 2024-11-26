@@ -1,6 +1,6 @@
 from django.db import models
 from campeonatos.models import Campeonato, Participante  # Importando os modelos da aplicação campeonatos
-
+from django.contrib.auth.models import User
 
 class Rodada(models.Model):
     campeonato = models.ForeignKey(Campeonato, on_delete=models.CASCADE, related_name='rodadas')
@@ -20,6 +20,15 @@ class Jogo(models.Model):
 
     def __str__(self):
         return f'{self.time_casa.nome} vs {self.time_fora.nome} - Rodada {self.rodada.numero}'
+
+class Comentario(models.Model):
+    jogo = models.ForeignKey(Jogo, on_delete=models.CASCADE, related_name='comentarios_jogo')
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    texto = models.TextField()
+    data_criacao = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Comentário de {self.usuario.username} no jogo {self.jogo}'
 
 
 class Resultado(models.Model):
@@ -63,6 +72,17 @@ class JogoEliminatorio(models.Model):
 
     def __str__(self):
         return f'{self.time_casa.nome if self.time_casa else "TBD"} vs {self.time_fora.nome if self.time_fora else "TBD"} - {self.rodada.fase}'
+
+class ComentarioEliminatorio(models.Model):
+    jogo = models.ForeignKey(
+        JogoEliminatorio, 
+        on_delete=models.CASCADE, 
+        related_name='comentarioseliminatorios'  # Esse é o related_name que usamos na função de obtenção de comentários
+    )
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    texto = models.TextField()
+    data_criacao = models.DateTimeField(auto_now_add=True)
+
 
 class ResultadoEliminatorio(models.Model):
     jogo = models.OneToOneField('JogoEliminatorio', on_delete=models.CASCADE, related_name='resultado_eliminatorio')

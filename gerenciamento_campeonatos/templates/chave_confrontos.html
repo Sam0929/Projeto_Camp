@@ -76,6 +76,16 @@
                                         {% else %}
                                             <span class="badge bg-secondary rounded-pill">Resultado: Pendente</span>
                                         {% endif %}
+
+                                        <button type="button" class="btn btn-light btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#chatModalEliminatorio" 
+                                            onclick="abrirChatEliminatorio(
+                                                {{ jogo.id }}, 
+                                                {% if jogo.time_casa %}'{{ jogo.time_casa.equipe }}'{% else %}'TBD'{% endif %}, 
+                                                {% if jogo.time_fora %}'{{ jogo.time_fora.equipe }}'{% else %}'TBD'{% endif %}
+                                            )">
+                                            <i class="bi bi-chat-dots" style="color: #160840;"></i>
+                                        </button>
+
                                     </div>
                                 </div>
 
@@ -123,5 +133,114 @@
         </div>
         {% endif %}
     </section>
+
+
+    <!-- Modal para Chat -->
+    <div class="modal fade" id="chatModalEliminatorio" tabindex="-1" aria-labelledby="chatModalEliminatorioLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="chatModalEliminatorioLabel">Chat do Jogo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="comentariosContainerEliminatorio" class="mb-4">
+                        <p class="text-muted text-center">Carregando comentários...</p>
+                    </div>
+                    <form id="comentarioFormEliminatorio" onsubmit="enviarComentarioEliminatorio(event)">
+                        {% csrf_token %}
+                        <input type="hidden" id="jogoIdInputEliminatorio">
+                        <div class="mb-3">
+                            <textarea id="comentarioTextoEliminatorio" class="form-control" placeholder="Escreva seu comentário..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Enviar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        function abrirChatEliminatorio(jogoId, timeCasa, timeFora) {
+            document.getElementById('chatModalEliminatorioLabel').textContent = `Chat do Jogo: ${timeCasa || 'TBD'} vs ${timeFora || 'TBD'}`;
+            document.getElementById('jogoIdInputEliminatorio').value = jogoId;
+        
+            const comentariosContainer = document.getElementById('comentariosContainerEliminatorio');
+            comentariosContainer.innerHTML = '<p class="text-muted text-center">Carregando comentários...</p>';
+        
+            fetch(`/gerenciamento/obter_comentarios_eliminatorios/${jogoId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const comentariosHtml = data.comentarios.map(comentario => `
+                            <div class="list-group-item">
+                                <strong>${comentario.usuario}</strong>: ${comentario.texto}
+                                <small class="text-muted d-block">${comentario.data_criacao}</small>
+                            </div>
+                        `).join('');
+                        comentariosContainer.innerHTML = comentariosHtml || '<p class="text-muted text-center">Nenhum comentário ainda.</p>';
+                    } else {
+                        comentariosContainer.innerHTML = '<p class="text-danger text-center">Erro ao carregar os comentários.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar comentários:', error);
+                    comentariosContainer.innerHTML = '<p class="text-danger text-center">Erro ao carregar os comentários.</p>';
+                });
+        }        
+    
+        function enviarComentarioEliminatorio(event) {
+            event.preventDefault();
+        
+            const jogoId = document.getElementById('jogoIdInputEliminatorio').value;
+            const texto = document.getElementById('comentarioTextoEliminatorio').value.trim();
+            const csrfToken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+        
+            if (!texto) {
+                alert('O comentário não pode estar vazio.');
+                return;
+            }
+        
+            // Feedback visual
+            document.getElementById('comentarioTextoEliminatorio').disabled = true;
+            document.querySelector('#comentarioFormEliminatorio button[type="submit"]').textContent = 'Enviando...';
+        
+            fetch(`/gerenciamento/adicionar_comentario_eliminatorio/${jogoId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({ comentario: texto }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const comentariosContainer = document.getElementById('comentariosContainerEliminatorio');
+                    const novoComentarioHtml = `
+                        <div class="list-group-item">
+                            <strong>${data.comentario.usuario}</strong>: ${data.comentario.texto}
+                            <small class="text-muted d-block">${data.comentario.data_criacao}</small>
+                        </div>
+                    `;
+                    comentariosContainer.insertAdjacentHTML('afterbegin', novoComentarioHtml);
+                    document.getElementById('comentarioFormEliminatorio').reset();
+                } else {
+                    alert(data.message || 'Erro ao adicionar o comentário.');
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao adicionar comentário:', error);
+                alert('Erro ao adicionar o comentário.');
+            })
+            .finally(() => {
+                // Reset feedback visual
+                document.getElementById('comentarioTextoEliminatorio').disabled = false;
+                document.querySelector('#comentarioFormEliminatorio button[type="submit"]').textContent = 'Enviar';
+            });
+        }        
+    </script>
+    
 </main>
 {% endblock %}
