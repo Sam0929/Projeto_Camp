@@ -4,68 +4,72 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="text-center">Gerar Tabela para {{ campeonato.nome }}</h1>
+    <div class="card shadow-lg p-4" style="border-radius: 10px; background-color: #f8f9fa; border: 1px solid #191970;">
+        <h1 class="text-center mb-4" style="color: #160840;">Gerar Tabela para {{ campeonato.nome }}</h1>
 
-    <!-- Informações sobre o campeonato -->
-    <div class="alert alert-info">
-        <p><strong>Data de Início do Campeonato:</strong> {{ campeonato.data_inicio|date:"d/m/Y" }}</p>
-        <p><strong>Data de Fim do Campeonato:</strong> {{ campeonato.data_fim|date:"d/m/Y" }}</p>
-        <p><strong>Horário de Início do Campeonato:</strong> {{ campeonato.data_inicio|time:"H:i" }}</p> <!-- Acessa a hora -->
-        <p><strong>Horário de Fim do Campeonato:</strong> {{ campeonato.data_fim|time:"H:i" }}</p> <!-- Acessa a hora -->
-        <p><strong>Duração do Campeonato:</strong> {{ duracao_campeonato }} dias</p>
-        <p><strong>Recomendação de Rodadas:</strong> <span id="recomendacao-rodadas" style="color: lightcoral;"> Digite um intervalo entre rodadas!</span></p>
+        <!-- Informações sobre o campeonato -->
+        <div class="alert alert-info">
+            <p><strong>Data de Início do Campeonato:</strong> {{ campeonato.data_inicio|date:"d/m/Y" }}</p>
+            <p><strong>Data de Fim do Campeonato:</strong> {{ campeonato.data_fim|date:"d/m/Y" }}</p>
+            <p><strong>Horário de Início do Campeonato:</strong> {{ campeonato.data_inicio|time:"H:i" }}</p>
+            <p><strong>Horário de Fim do Campeonato:</strong> {{ campeonato.data_fim|time:"H:i" }}</p>
+            <p><strong>Duração do Campeonato:</strong> {{ duracao_campeonato }} dias</p>
+            <p><strong>Recomendação de Rodadas:</strong> <span id="recomendacao-rodadas" style="color: lightcoral;">Digite um intervalo entre rodadas!</span></p>
+        </div>
+
+        <form method="POST" action="{% url 'gerar_tabela' campeonato.id %}">
+            {% csrf_token %}
+            
+            <div class="mb-4">
+                <label for="numero_rodadas" class="form-label fw-bold" style="color: #160840;">Número de Rodadas:</label>
+                <input type="number" class="form-control border-primary" id="numero_rodadas" name="numero_rodadas" min="1" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="intervalo_dias" class="form-label fw-bold" style="color: #160840;">Intervalo entre Rodadas (dias):</label>
+                <input type="number" class="form-control border-primary" id="intervalo_dias" name="intervalo_dias" min="1" required oninput="atualizarRodadasRecomendadas()">
+            </div>
+
+            <div class="mb-4">
+                <label for="horario_inicio" class="form-label fw-bold" style="color: #160840;">Horário de Início (apenas horas):</label>
+                <input type="time" class="form-control border-primary" id="horario_inicio" name="horario_inicio" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="horario_final" class="form-label fw-bold" style="color: #160840;">Horário Final (apenas horas):</label>
+                <input type="time" class="form-control border-primary" id="horario_final" name="horario_final" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="duracao_partida" class="form-label fw-bold" style="color: #160840;">Duração de Cada Partida (minutos):</label>
+                <input type="number" class="form-control border-primary" id="duracao_partida" name="duracao_partida" min="1" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="intervalo_jogos" class="form-label fw-bold" style="color: #160840;">Intervalo entre Jogos (minutos):</label>
+                <input type="number" class="form-control border-primary" id="intervalo_jogos" name="intervalo_jogos" min="1" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="dias_preferencia" class="form-label fw-bold" style="color: #160840;">Dias de Preferência:</label>
+                <select multiple class="form-control border-primary" id="dias_preferencia" name="dias_preferencia">
+                    <option value="0">Domingo</option>
+                    <option value="1">Segunda-feira</option>
+                    <option value="2">Terça-feira</option>
+                    <option value="3">Quarta-feira</option>
+                    <option value="4">Quinta-feira</option>
+                    <option value="5">Sexta-feira</option>
+                    <option value="6">Sábado</option>
+                    <option value="nenhuma" selected>Sem preferência</option>
+                </select>
+                <small class="form-text text-muted">Segure Ctrl (ou Cmd no Mac) para selecionar vários dias</small>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-success w-50" style="background-color: #28a745; border-color: #28a745;">Gerar Tabela</button>
+            </div>
+        </form>
     </div>
-
-    <form method="POST" action="{% url 'gerar_tabela' campeonato.id %}">
-        {% csrf_token %}
-        
-        <div class="form-group">
-            <label for="numero_rodadas">Número de Rodadas</label>
-            <input type="number" class="form-control" id="numero_rodadas" name="numero_rodadas" min="1" required>
-        </div>
-
-        <div class="form-group">
-            <label for="intervalo_dias">Intervalo entre Rodadas (dias)</label>
-            <input type="number" class="form-control" id="intervalo_dias" name="intervalo_dias" min="1" required oninput="atualizarRodadasRecomendadas()">
-        </div>
-
-        <div class="form-group">
-            <label for="horario_inicio">Horário de Início (apenas horas)</label>
-            <input type="time" class="form-control" id="horario_inicio" name="horario_inicio" required>
-        </div>
-
-        <div class="form-group">
-            <label for="horario_final">Horário Final (apenas horas)</label>
-            <input type="time" class="form-control" id="horario_final" name="horario_final" required>
-        </div>
-
-        <div class="form-group">
-            <label for="duracao_partida">Duração de Cada Partida (minutos)</label>
-            <input type="number" class="form-control" id="duracao_partida" name="duracao_partida" min="1" required>
-        </div>
-
-        <div class="form-group">
-            <label for="intervalo_jogos">Intervalo entre Jogos (minutos)</label>
-            <input type="number" class="form-control" id="intervalo_jogos" name="intervalo_jogos" min="1" required>
-        </div>
-
-        <div class="form-group">
-            <label for="dias_preferencia">Dias de Preferência</label>
-            <select multiple class="form-control" id="dias_preferencia" name="dias_preferencia">
-                <option value="0">Domingo</option>
-                <option value="1">Segunda-feira</option>
-                <option value="2">Terça-feira</option>
-                <option value="3">Quarta-feira</option>
-                <option value="4">Quinta-feira</option>
-                <option value="5">Sexta-feira</option>
-                <option value="6">Sábado</option>
-                <option value="nenhuma" selected>Sem preferência</option>
-            </select>
-            <small class="form-text text-muted">Segure Ctrl (ou Cmd no Mac) para selecionar vários dias</small>
-        </div>
-
-        <button type="submit" class="btn btn-primary mt-3">Gerar Tabela</button>
-    </form>
 </div>
 
 <script>
@@ -77,7 +81,7 @@
             const recomendacaoRodadas = Math.floor(duracaoCampeonato / intervaloDias);
             document.getElementById('recomendacao-rodadas').innerText = Math.max(recomendacaoRodadas, 1); // Não permitir menos de 1 rodada
         } else {
-            document.getElementById('recomendacao-rodadas').innerText = "digite um intervalo entre rodadas"; // Mensagem padrão
+            document.getElementById('recomendacao-rodadas').innerText = "Digite um intervalo entre rodadas"; // Mensagem padrão
         }
     }
 </script>

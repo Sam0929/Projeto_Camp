@@ -3,66 +3,89 @@
 {% block title %}Chave de Confrontos{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="text-center">
-        <h1 class="display-4">Chave de Confrontos</h1>
-        <p class="lead">Confira os jogos das fases eliminatórias do campeonato!</p>
-        <hr class="my-4">
-        <p>Campeonato: {{ campeonato.nome }}</p>
-        <p>Data de início: {{ campeonato.data_inicio|date:"d/m/Y" }}</p>
-        <p>Data de fim: {{ campeonato.data_fim|date:"d/m/Y" }}</p>
-    </div>
+<main class="container my-7" style="max-width: 75%;">
+    <section class="chave-confrontos-section">
+        <!-- Cabeçalho -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card text-center" style="background-color: #160840; border: none;">
+                    <div class="card-body">
+                        <h1 class="display-4 fw-bold" style="color: #FFFFFF; text-shadow: 2px 1px 1px #87ceeb;">
+                            Chave de Confrontos
+                        </h1>
+                        <p class="lead text-light">
+                            Confira os jogos das fases eliminatórias do campeonato!
+                        </p>
+                        <p class="text-light mb-0"><strong>Campeonato:</strong> {{ campeonato.nome }}</p>
+                        <p class="text-light">
+                            <strong>Data de início:</strong> {{ campeonato.data_inicio|date:"d/m/Y" }} |
+                            <strong>Data de fim:</strong> {{ campeonato.data_fim|date:"d/m/Y" }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    {% if vencedor_final %}
-    <div class="mt-5 p-4 bg-success text-white text-center rounded">
-        <h2 class="display-6">Equipe Vencedora</h2>
-        <p class="h4">{{ vencedor_final }}</p>
-        <p class="h5">Prêmio: R$ {{ premiacao }}</p>
-        <span class="badge bg-light text-success p-2 mt-2">🏆 Parabéns aos campeões! 🏆</span>
-    </div>
-    {% endif %}
+        <!-- Vencedor Final -->
+        {% if vencedor_final %}
+        <div class="card mb-4" style="background-color: #f0faf9; border: 1px solid #191970; border-radius: 10px;">
+            <div class="card-body text-center">
+                <h2 class="display-6 text-success">Equipe Vencedora</h2>
+                <p class="h4 text-dark">{{ vencedor_final }}</p>
+                <p class="h5 text-primary">Prêmio: R$ {{ premiacao }}</p>
+                <span class="badge bg-light text-success p-2 mt-2">🏆 Parabéns aos campeões! 🏆</span>
+            </div>
+        </div>
+        {% endif %}
 
-    <div class="mt-4">
-        {% for fase, jogos in jogos_por_rodada.items %}
-            <h3 class="mt-4 text-center text-primary">{{ fase|title }}</h3>
-            <ul class="list-group mb-3">
-                {% for jogo in jogos %}
-                    <li class="list-group-item">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                {% if jogo.time_casa %}
-                                    <strong>{{ jogo.time_casa.equipe }}</strong>
-                                {% else %}
-                                    <span class="text-primary">À definir</span>
-                                {% endif %}
-                                vs
-                                {% if jogo.time_fora %}
-                                    <strong>{{ jogo.time_fora.equipe }}</strong>
-                                {% else %}
-                                    <span class="text-primary">À definir</span>
-                                {% endif %}
-                                <small class="text-muted">
-                                    {{ jogo.rodada.data|date:"d/m/Y" }} {{ jogo.rodada.data|time:"H:i" }}
-                                </small>
-                            </div>
-                            <div>
-                                {% if jogo.resultado_eliminatorio %}
-                                    <span class="badge bg-success rounded-pill">
-                                        Resultado: {{ jogo.resultado_eliminatorio.gols_time_casa }} - {{ jogo.resultado_eliminatorio.gols_time_fora }}
-                                    </span>
-                                {% else %}
-                                    <span class="badge bg-secondary rounded-pill">Resultado: Pendente</span>
-                                {% endif %}
-                            </div>
-                        </div>
+        <!-- Fases e Jogos -->
+        <div class="row">
+            {% for fase, jogos in jogos_por_rodada.items %}
+            <div class="col-12 mb-4">
+                <div class="card" style="border: 1px solid #191970; border-radius: 10px;">
+                    <div class="card-header text-center" style="background-color: #160840; color: #FFFFFF;">
+                        <h3 class="fw-bold">{{ fase|title }}</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if jogos %}
+                        <ul class="list-group">
+                            {% for jogo in jogos %}
+                            <li class="list-group-item" style="border: none;">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        {% if jogo.time_casa %}
+                                            <strong style="color: #160840;">{{ jogo.time_casa.equipe }}</strong>
+                                        {% else %}
+                                            <span class="text-primary">À definir</span>
+                                        {% endif %}
+                                        <span style="color: #555;">vs</span>
+                                        {% if jogo.time_fora %}
+                                            <strong style="color: #160840;">{{ jogo.time_fora.equipe }}</strong>
+                                        {% else %}
+                                            <span class="text-primary">À definir</span>
+                                        {% endif %}
+                                        <small class="text-muted">
+                                            {{ jogo.rodada.data|date:"d/m/Y" }} {{ jogo.rodada.data|time:"H:i" }}
+                                        </small>
+                                    </div>
+                                    <div>
+                                        {% if jogo.resultado_eliminatorio %}
+                                            <span class="badge bg-success rounded-pill">
+                                                Resultado: {{ jogo.resultado_eliminatorio.gols_time_casa }} - {{ jogo.resultado_eliminatorio.gols_time_fora }}
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-secondary rounded-pill">Resultado: Pendente</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
 
-                        <!-- Exibição de Penalidades do Jogo com fonte reduzida -->
-                        {% if jogo.penalidades_eliminatorias.exists %}
-                            <div class="mt-2 ms-3" style="font-size: 0.85em;">
-                                <h6>Penalidades:</h6>
-                                <ul class="list-group list-group-flush">
-                                    {% for penalidade in jogo.penalidades_eliminatorias.all %}
-                                        <li class="list-group-item">
+                                <!-- Penalidades -->
+                                {% if jogo.penalidades_eliminatorias.exists %}
+                                <div class="mt-2 ms-3" style="font-size: 0.85em; color: #555;">
+                                    <h6>Penalidades:</h6>
+                                    <ul class="list-group list-group-flush">
+                                        {% for penalidade in jogo.penalidades_eliminatorias.all %}
+                                        <li class="list-group-item" style="font-size: 0.9em; background-color: #f8f9fa;">
                                             <strong>{{ penalidade.tipo_penalidade|title }}:</strong>
                                             {% if penalidade.participante %}
                                                 {{ penalidade.participante.nome }}
@@ -72,21 +95,33 @@
                                             - {{ penalidade.motivo }}
                                             <small class="text-muted">{{ penalidade.data|date:"d/m/Y H:i" }}</small>
                                         </li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                {% endif %}
+                            </li>
+                            {% endfor %}
+                        </ul>
                         {% else %}
-                            <div class="text-muted mt-2 ms-3" style="font-size: 0.85em;">Nenhuma penalidade registrada.</div>
+                        <p class="text-center text-muted">Nenhum jogo registrado para esta fase.</p>
                         {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endfor %}
-    </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
 
-    <div class="mt-4 text-center">
-        <a href="{% url 'registrar_resultados_eliminatorias' campeonato_id=campeonato.id %}" class="btn btn-warning w-100 mt-2">Registrar Resultados Eliminatórias</a>
-        <a href="{% url 'registrar_penalidades_eliminatorias' campeonato_id=campeonato.id %}" class="btn btn-danger w-100 mt-2">Registrar Penalidades Eliminatórias</a>
-    </div>
-</div>
+        <!-- Ações Administrativas -->
+        {% if user.is_authenticated and user.is_superuser %}
+        <div class="text-center mt-4">
+            <a href="{% url 'registrar_resultados_eliminatorias' campeonato_id=campeonato.id %}" class="btn btn-warning w-100 mb-2">
+                Registrar Resultados Eliminatórias
+            </a>
+            <a href="{% url 'registrar_penalidades_eliminatorias' campeonato_id=campeonato.id %}" class="btn btn-danger w-100">
+                Registrar Penalidades Eliminatórias
+            </a>
+        </div>
+        {% endif %}
+    </section>
+</main>
 {% endblock %}

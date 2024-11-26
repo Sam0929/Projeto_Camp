@@ -3,55 +3,73 @@
 {% block title %}Configurar Fases Eliminatórias{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2>Configurar Fases Eliminatórias - {{ campeonato.nome }}</h2>
-
-    <!-- Observações: Data do último jogo e número de classificados -->
-    <p><strong>Observação:</strong> Data do último jogo da última rodada: {{ data_ultimo_jogo|date:"d/m/Y" }}</p>
-    <p><strong>Número de Classificados:</strong> {{ num_classificados }}</p>
-
-    <form method="post">
-        {% csrf_token %}
-
-        <!-- Seleção do Tipo de Eliminatória -->
-        <div class="form-group">
-            <label for="tipo_eliminatoria">Escolha o tipo de eliminatória:</label>
-            <select id="id_tipo_eliminatoria" name="tipo_eliminatoria" class="form-control">
-                <option value="ganhador_unico">Ganhador Único</option>
-                <option value="oitavas_de_final">Oitavas de Final</option>
-                <option value="quartas_de_final">Quartas de Final</option>
-                <option value="semi_finais">Semi-finais</option>
-                <option value="final">Final</option>
-            </select>
+<div class="container my-7" style="max-width: 75%;">
+    <section class="eliminatorias-section">
+        <!-- Cabeçalho -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card text-center" style="background-color: #160840; border: none;">
+                    <div class="card-body">
+                        <h1 class="display-4 fw-bold" style="color: #FFFFFF; text-shadow: 2px 1px 1px #87ceeb;">
+                            Configurar Fases Eliminatórias
+                        </h1>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Seleção das Datas das Rodadas para cada Fase -->
-        <div id="data-oitavas" class="form-group mt-3" style="display: none;">
-            <label for="data_oitavas">Data e Hora - Oitavas de Final:</label>
-                <input type="date" id="data_oitavas" name="data_oitavas" class="form-control">
-                <input type="time" id="hora_oitavas" name="hora_oitavas" class="form-control mt-1">
-        </div>
-        
-        <div id="data-quartas" class="form-group mt-3" style="display: none;">
-            <label for="data_quartas">Data e Hora - Quartas de Final:</label>
-                <input type="date" id="data_quartas" name="data_quartas" class="form-control">
-                <input type="time" id="hora_quartas" name="hora_quartas" class="form-control mt-1">
-        </div>
-        
-        <div id="data-semi" class="form-group mt-3" style="display: none;">
-            <label for="data_semi">Data e Hora - Semi-finais:</label>
-                <input type="date" id="data_semi" name="data_semi" class="form-control">
-                <input type="time" id="hora_semi" name="hora_semi" class="form-control mt-1">
-        </div>
-        
-        <div id="data-final" class="form-group mt-3" style="display: none;">
-            <label for="data_final">Data e Hora - Final:</label>
-                <input type="date" id="data_final" name="data_final" class="form-control">
-                <input type="time" id="hora_final" name="hora_final" class="form-control mt-1">
+        <!-- Informações -->
+        <div class="card mb-4" style="background-color: #f0faf9; border: 1px solid #191970; border-radius: 10px;">
+            <div class="card-body">
+                <p class="fw-bold" style="color: #160840;">Data do último jogo da última rodada: <span class="fw-normal">{{ data_ultimo_jogo|date:"d/m/Y" }}</span></p>
+                <p class="fw-bold" style="color: #160840;">Número de Classificados: <span class="fw-normal">{{ num_classificados }}</span></p>
+            </div>
         </div>
 
-        <button type="submit" class="btn btn-primary mt-3">Gerar Eliminatórias</button>
-    </form>
+        <!-- Formulário -->
+        <form method="post" class="card" style="background-color: #f0faf9; border: 1px solid #191970; border-radius: 10px;">
+            {% csrf_token %}
+            <div class="card-body">
+                <div class="form-group mb-3">
+                    <label for="tipo_eliminatoria" class="fw-bold" style="color: #160840;">Escolha o tipo de eliminatória:</label>
+                    <select id="id_tipo_eliminatoria" name="tipo_eliminatoria" class="form-control">
+                        <option value="ganhador_unico">Ganhador Único</option>
+                        <option value="oitavas_de_final">Oitavas de Final</option>
+                        <option value="quartas_de_final">Quartas de Final</option>
+                        <option value="semi_finais">Semi-finais</option>
+                        <option value="final">Final</option>
+                    </select>
+                </div>
+
+                <div id="data-oitavas" class="form-group mb-3" style="display: none;">
+                    <label for="data_oitavas" class="fw-bold" style="color: #160840;">Data e Hora - Oitavas de Final:</label>
+                    <input type="date" id="data_oitavas" name="data_oitavas" class="form-control">
+                    <input type="time" id="hora_oitavas" name="hora_oitavas" class="form-control mt-1">
+                </div>
+
+                <div id="data-quartas" class="form-group mb-3" style="display: none;">
+                    <label for="data_quartas" class="fw-bold" style="color: #160840;">Data e Hora - Quartas de Final:</label>
+                    <input type="date" id="data_quartas" name="data_quartas" class="form-control">
+                    <input type="time" id="hora_quartas" name="hora_quartas" class="form-control mt-1">
+                </div>
+
+                <div id="data-semi" class="form-group mb-3" style="display: none;">
+                    <label for="data_semi" class="fw-bold" style="color: #160840;">Data e Hora - Semi-finais:</label>
+                    <input type="date" id="data_semi" name="data_semi" class="form-control">
+                    <input type="time" id="hora_semi" name="hora_semi" class="form-control mt-1">
+                </div>
+
+                <div id="data-final" class="form-group mb-3" style="display: none;">
+                    <label for="data_final" class="fw-bold" style="color: #160840;">Data e Hora - Final:</label>
+                    <input type="date" id="data_final" name="data_final" class="form-control">
+                    <input type="time" id="hora_final" name="hora_final" class="form-control mt-1">
+                </div>
+            </div>
+            <div class="card-footer text-center">
+                <button type="submit" class="btn btn-primary" style="background-color: #160840; border: none;">Gerar Eliminatórias</button>
+            </div>
+        </form>
+    </section>
 </div>
 
 <script>

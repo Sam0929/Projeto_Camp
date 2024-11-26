@@ -5,12 +5,12 @@
 {% block content %}
 <main class="container my-7" style="max-width: 75%;">
     <section class="campeonatos-section">
-        
+        <!-- Cabeçalho -->
         <div class="row mb-4">
             <div class="col-12">
-                <div class="card text-center">
+                <div class="card text-center" style="background-color: #160840; border: none;">
                     <div class="card-body">
-                        <h1 class="display-4 fw-bold" style="color: #333; text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);">
+                        <h1 class="display-4 fw-bold" style="color: #FFFFFF; text-shadow: 2px 1px 1px #87ceeb;">
                             Campeonatos Disponíveis
                         </h1>
                     </div>
@@ -18,14 +18,20 @@
             </div>
         </div>
 
+        <!-- Lista de Campeonatos -->
         {% if campeonatos %}
             <div class="row">
                 {% for campeonato in campeonatos %}
                 <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100 d-flex flex-column">
-                        <div class="card-body flex-grow-1 d-flex flex-column">
-                            <h2 class="card-title font-weight-bold text-primary text-center">{{ campeonato.nome }}</h2>
-                            <table class="table table-bordered mt-3">
+                    <div class="card h-100" style="background-color: #f0faf9; border: 1px solid #191970; border-radius: 10px;">
+                        <div class="card-body d-flex flex-column">
+                            <h2 class="card-title text-center" style="
+                                color: #160840;
+                                text-shadow: -1px -1px 1 #1E3A8A, 1px -1px 1 #1E3A8A, -1px 1px 1 #1E3A8A, 1px 1px 1 #1E3A8A;
+                                font-weight: bold;">
+                                {{ campeonato.nome }}
+                            </h2>
+                            <table class="table table-borderless text-light mt-3">
                                 <tbody>
                                     <tr>
                                         <th>Data e Hora de Início</th>
@@ -37,9 +43,7 @@
                                     </tr>
                                     <tr>
                                         <th>Descrição</th>
-                                        <td class="description">
-                                            <p class="text-break">{{ campeonato.descricao }}</p>
-                                        </td>
+                                        <td>{{ campeonato.descricao }}</td>
                                     </tr>
                                     <tr>
                                         <th>Premiação</th>
@@ -59,19 +63,18 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <div class="text-center mt-auto d-grid gap-2">
-                                <a href="{% url 'inscrever_participante' campeonato.pk %}" class="btn btn-primary">Inscrever-se</a>
-                                
+                            <div class="text-center mt-auto">
+                                <a href="{% url 'inscrever_participante' campeonato.pk %}" class="btn btn-success">Inscrever-se</a>
                             </div>
                         </div>
+                        {% if user.is_authenticated and user.is_superuser %}
                         <div class="card-footer d-flex justify-content-between">
-                            <a href="{% url 'editar_campeonato' campeonato.pk %}" class="btn btn-warning btn-sm w-45">Editar <i class="bi bi-pencil-square"></i></a>
-                            <a href="{% url 'deletar_campeonato' campeonato.pk %}" class="btn btn-danger btn-sm w-45">Deletar <i class="bi bi-trash3"></i></a>
+                            <a href="{% url 'editar_campeonato' campeonato.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                            <a href="{% url 'deletar_campeonato' campeonato.pk %}" class="btn btn-danger btn-sm">Deletar</a>
                         </div>
+                        {% endif %}
                     </div>
                 </div>
-                
-                
 
                 <!-- Modal de Participantes -->
                 <div class="modal fade" id="modalParticipantes{{ campeonato.pk }}" tabindex="-1" aria-labelledby="modalParticipantesLabel{{ campeonato.pk }}" aria-hidden="true">
@@ -110,18 +113,17 @@
                         </div>
                     </div>
                 </div>
-                <!-- Fim do Modal -->
-
                 {% endfor %}
             </div>
         {% else %}
-            <p class="text-center no-campeonatos">Nenhum campeonato disponível no momento.</p>
+            <p class="text-center text-light no-campeonatos">Nenhum campeonato disponível no momento.</p>
         {% endif %}
     </section>
 
+    <!-- Botão de Criar Campeonato -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card text-center">
+            <div class="card text-center" style="background-color: #160840; border: none;">
                 <div class="card-body">
                     <a href="{% url 'criar_campeonato' %}" class="btn btn-success mt-3">Criar Campeonato</a>
                 </div>

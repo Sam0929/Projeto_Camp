@@ -2,10 +2,10 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2>Classificação - {{ campeonato.nome }}</h2>
+    <h2 style="color: #FFFFFF; background-color: #160840; text-shadow: 1px 1px 2px #87CEEB; padding: 10px; border-radius: 5px;">Classificação - {{ campeonato.nome }}</h2>
     
     <table class="table">
-        <thead>
+        <thead style="background-color: #191970; color: #FFFFFF;">
             <tr>
                 <th>Posição</th>
                 <th>Equipe</th>
@@ -20,62 +20,108 @@
         </thead>
         <tbody>
             {% for equipe, stats in classificados %}
-            <tr style="background-color: {% if forloop.counter <= num_classificados %} #d4f8d4 {% else %} #f8d4d4 {% endif %};">
-                <td>
+            <tr style="background-color: {% if forloop.counter <= num_classificados %} #D4F8D4 {% else %} #F8D4D4 {% endif %};">
+                <td style="background-color: #FFFFFF;">
                     <span style="display: inline-block; width: 10px; height: 10px; background-color: {% if forloop.counter <= num_classificados %} #4CAF50 {% else %} #FF6B6B {% endif %}; margin-right: 8px;"></span>
                     {{ forloop.counter }}
                 </td>
-                <td>{{ equipe }}</td>
-                <td>{{ stats.pontos }}</td>
-                <td>{{ stats.vitorias }}</td>
-                <td>{{ stats.empates }}</td>
-                <td>{{ stats.derrotas }}</td>
-                <td>{{ stats.gols_marcados }}</td>
-                <td>{{ stats.gols_sofridos }}</td>
-                <td>{{ stats.saldo_gols }}</td>
+                <td style="background-color: #FFFFFF;">{{ equipe }}</td>
+                <td style="background-color: #FFFFFF;">{{ stats.pontos }}</td>
+                <td style="background-color: #FFFFFF;">{{ stats.vitorias }}</td>
+                <td style="background-color: #FFFFFF;">{{ stats.empates }}</td>
+                <td style="background-color: #FFFFFF;">{{ stats.derrotas }}</td>
+                <td style="background-color: #FFFFFF;">{{ stats.gols_marcados }}</td>
+                <td style="background-color: #FFFFFF;">{{ stats.gols_sofridos }}</td>
+                <td style="background-color: #FFFFFF;">{{ stats.saldo_gols }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
+    {% if user.is_authenticated and user.is_superuser %}
     <!-- Botão para editar a classificação -->
     <div class="mt-4">
-        <a href="{% url 'editar_classificacao' campeonato.id %}" class="btn btn-secondary">
+        <a href="{% url 'editar_classificacao' campeonato.id %}" class="btn btn-secondary" style="background-color: #191970; color: #FFFFFF; border: none;">
             Editar Classificação
         </a>
     </div>
-
+    {% endif %}
+    
     <!-- Botão para gerar ou visualizar eliminatórias -->
     <div class="mt-4">
         {% if campeonato.eliminatorias_geradas %}
-            <a href="{% url 'visualizar_chave_confrontos' campeonato.id %}" class="btn btn-success">
+            <!-- Botão para Visualizar Eliminatórias -->
+            <a href="{% url 'visualizar_chave_confrontos' campeonato.id %}" class="btn btn-success" id="btnVisualizarEliminatorias" style="background-color: #4CAF50; color: #FFFFFF; border: none;">
                 Visualizar Eliminatórias
             </a>
         {% else %}
-            <a href="{% url 'configurar_eliminatorias' campeonato.id %}" class="btn btn-primary">
-                Gerar Eliminatórias
-            </a>
+            {% if user.is_authenticated and user.is_superuser %}
+                <!-- Botão para Gerar Eliminatórias (apenas para superusuário) -->
+                <a href="{% url 'configurar_eliminatorias' campeonato.id %}" class="btn btn-primary" style="background-color: #191970; color: #FFFFFF; border: none;">
+                    Gerar Eliminatórias
+                </a>
+            {% else %}
+                <!-- Botão Visualizar Eliminatórias com alerta -->
+                <button class="btn btn-warning" id="btnVisualizarEliminatorias" style="background-color: #FFC107; color: #160840; border: none;">
+                    Visualizar Eliminatórias
+                </button>
+            {% endif %}
         {% endif %}
     </div>
 
     <!-- Exibe as listas de classificados e desclassificados -->
     <div class="row mt-4">
         <div class="col-md-6">
-            <h4>Classificados</h4>
+            <h4 style="color: #FFFFFF; background-color: #160840; padding: 5px; border-radius: 3px;">Classificados</h4>
             <ul class="list-group">
                 {% for equipe, stats in equipes_classificadas %}
-                <li class="list-group-item" style="background-color: #d4f8d4;">{{ equipe }}</li>
+                <li class="list-group-item" style="background-color: #D4F8D4; color: #160840;">{{ equipe }}</li>
                 {% endfor %}
             </ul>
         </div>
         <div class="col-md-6">
-            <h4>Desclassificados</h4>
+            <h4 style="color: #FFFFFF; background-color: #160840; padding: 5px; border-radius: 3px;">Desclassificados</h4>
             <ul class="list-group">
                 {% for equipe, stats in equipes_desclassificadas %}
-                <li class="list-group-item" style="background-color: #f8d4d4;">{{ equipe }}</li>
+                <li class="list-group-item" style="background-color: #F8D4D4; color: #160840;">{{ equipe }}</li>
                 {% endfor %}
             </ul>
         </div>
     </div>
 </div>
+
+<!-- Modal para aviso -->
+<div class="modal fade" id="alertEliminatoriasModal" tabindex="-1" aria-labelledby="alertEliminatoriasModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #191970; color: #FFFFFF;">
+                <h5 class="modal-title" id="alertEliminatoriasModalLabel">Aviso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="background-color: #F0FAF9; color: #160840;">
+                As eliminatórias ainda não foram geradas para este campeonato.
+            </div>
+            <div class="modal-footer" style="background-color: #F0FAF9;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background-color: #191970; color: #FFFFFF; border: none;">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const eliminatoriasGeradas = {{ campeonato.eliminatorias_geradas|yesno:"true,false" }};
+        const btnEliminatorias = document.getElementById('btnVisualizarEliminatorias');
+        
+        if (!eliminatoriasGeradas) {
+            btnEliminatorias.addEventListener('click', function (event) {
+                event.preventDefault(); // Impede a navegação
+                const modal = new bootstrap.Modal(document.getElementById('alertEliminatoriasModal'));
+                modal.show(); // Exibe o modal
+            });
+        }
+    });
+</script>
+
 {% endblock %}

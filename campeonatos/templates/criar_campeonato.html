@@ -1,80 +1,85 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="container mt-5">
+<div class="container mt-5">
     <div class="row justify-content-center">
-      <div class="col-md-6">
-        <div class="card shadow-sm">
-          <div class="card-header bg-success text-white">
-            <h2 class="card-title">Criar Novo Campeonato</h2>
-          </div>
-          <div class="card-body">
-            <form method="POST">
-              {% csrf_token %}
-              <div class="mb-3">
-                  <label for="id_nome" class="form-label">Nome</label>
-                  <input type="text" name="nome" class="form-control" maxlength="100" required="" id="id_nome">
-              </div>
-          
-              <div class="mb-3">
-                <label for="id_data_inicio" class="form-label">Data e Hora Início</label>
-                <input type="datetime-local" name="data_inicio" class="form-control" required="" id="id_data_inicio">
-              </div>
-              
-              <div class="mb-3">
-                <label for="id_data_fim" class="form-label">Data e Hora Fim</label>
-                <input type="datetime-local" name="data_fim" class="form-control" required="" id="id_data_fim">
-              </div>
-          
-              <div class="mb-3">
-                  <label for="id_descricao" class="form-label">Descrição</label>
-                  <textarea name="descricao" class="form-control" cols="40" rows="10" required="" id="id_descricao"></textarea>
-              </div>
-          
-              <div class="mb-3">
-                  <label for="id_premiação" class="form-label">Premiação</label>
-                  <input type="number" name="premiação" class="form-control" step="0.01" required="" id="id_premiação">
-              </div>
-              
-              <!-- Campo para o número máximo de participantes -->
-              <div class="mb-3">
-                  <label for="id_numero_maximo_participantes" class="form-label">Número Máximo de Participantes</label>
-                  <input type="number" name="numero_maximo_participantes" class="form-control" required="" id="id_numero_maximo_participantes">
-              </div>
-          
-              <button type="submit" class="btn btn-success">Criar Campeonato</button>
-            </form>
-          </div>
+        <div class="col-md-6">
+            <div class="card shadow-lg" style="border-radius: 10px; border: 1px solid #0056b3;">
+                <div class="card-header bg-primary text-white" style="border-top-left-radius: 10px; border-top-right-radius: 10px;">
+                    <h2 class="card-title mb-0">Criar Novo Campeonato</h2>
+                </div>
+                <div class="card-body" style="background-color: #f8f9fa;">
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <!-- Nome -->
+                        <div class="mb-3">
+                            <label for="id_nome" class="form-label fw-bold" style="color: #0056b3;">Nome:</label>
+                            <input type="text" name="nome" class="form-control border-primary" maxlength="100" required id="id_nome">
+                        </div>
+                        
+                        <!-- Data e Hora de Início -->
+                        <div class="mb-3">
+                            <label for="id_data_inicio" class="form-label fw-bold" style="color: #0056b3;">Data e Hora de Início:</label>
+                            <input type="datetime-local" name="data_inicio" class="form-control border-primary" required id="id_data_inicio">
+                        </div>
+                        
+                        <!-- Data e Hora de Fim -->
+                        <div class="mb-3">
+                            <label for="id_data_fim" class="form-label fw-bold" style="color: #0056b3;">Data e Hora de Fim:</label>
+                            <input type="datetime-local" name="data_fim" class="form-control border-primary" required id="id_data_fim">
+                        </div>
+                        
+                        <!-- Descrição -->
+                        <div class="mb-3">
+                            <label for="id_descricao" class="form-label fw-bold" style="color: #0056b3;">Descrição:</label>
+                            <textarea name="descricao" class="form-control border-primary" cols="40" rows="5" required id="id_descricao"></textarea>
+                        </div>
+                        
+                        <!-- Premiação -->
+                        <div class="mb-3">
+                            <label for="id_premiação" class="form-label fw-bold" style="color: #0056b3;">Premiação:</label>
+                            <input type="number" name="premiação" class="form-control border-primary" step="0.01" required id="id_premiação">
+                        </div>
+                        
+                        <!-- Número Máximo de Participantes -->
+                        <div class="mb-3">
+                            <label for="id_numero_maximo_participantes" class="form-label fw-bold" style="color: #0056b3;">Número Máximo de Participantes:</label>
+                            <input type="number" name="numero_maximo_participantes" class="form-control border-primary" required id="id_numero_maximo_participantes">
+                        </div>
+                        
+                        <!-- Botão de Submissão -->
+                        <button type="submit" class="btn btn-primary w-100" style="background-color: #0056b3; border-color: #0056b3;">Criar Campeonato</button>
+                    </form>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>
 
-  <!-- Aqui vem o script para a validação das datas -->
-  <script>
+<!-- Validação de datas -->
+<script>
     document.addEventListener('DOMContentLoaded', function() {
-      const form = document.querySelector('form');
-      const dataInicioInput = document.getElementById('id_data_inicio');
-      const dataFimInput = document.getElementById('id_data_fim');
-  
-      form.addEventListener('submit', function(event) {
-          const dataInicio = new Date(dataInicioInput.value);
-          const dataFim = new Date(dataFimInput.value);
-          const agora = new Date();
-  
-          if (dataInicio < agora) {
-              alert('A data e hora de início devem ser maiores ou iguais ao momento atual.');
-              event.preventDefault();
-              return;
-          }
-  
-          if (dataFim < dataInicio) {
-              alert('A data e hora de fim devem ser maiores ou iguais à data e hora de início.');
-              event.preventDefault();
-          }
-      });
-  });
-    </script>
-    
+        const form = document.querySelector('form');
+        const dataInicioInput = document.getElementById('id_data_inicio');
+        const dataFimInput = document.getElementById('id_data_fim');
 
+        form.addEventListener('submit', function(event) {
+            const dataInicio = new Date(dataInicioInput.value);
+            const dataFim = new Date(dataFimInput.value);
+            const agora = new Date();
+
+            if (dataInicio < agora) {
+                alert('A data e hora de início devem ser maiores ou iguais ao momento atual.');
+                event.preventDefault();
+                return;
+            }
+
+            if (dataFim < dataInicio) {
+                alert('A data e hora de fim devem ser maiores ou iguais à data e hora de início.');
+                event.preventDefault();
+            }
+        });
+    });
+</script>
 {% endblock %}

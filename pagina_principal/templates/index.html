@@ -1,49 +1,58 @@
-
 {% extends "base.html" %}
 
 {% block title %}Página Inicial{% endblock %}
 
 {% block content %}
-
 <div>
-    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-body-tertiary">
+    <div class="position-relative overflow-hidden p-1 p-md-1 m-md-1 text-center" style="background-color: #160840;">
         <div class="col-md-6 p-lg-5 mx-auto my-5">
-        <h1 class="display-3 fw-bold">Sistema de campeonatos</h1>
-        <h3 class="fw-normal text-muted mb-3">O melhor gerenciador de campeonatos do mercado!</h3>
-        <div class="d-flex gap-3 justify-content-center lead fw-normal">
-            
-            <a class="icon-link" href="/campeonatos">
-            Gerencie campeonatos
-            <svg class="bi"><use xlink:href="#chevron-right"/></svg>
-            </a>
+            <h1 class="display-3 fw-bold" style="color: #FFFFFF; text-shadow: 2px 2px 4px rgba(135, 206, 235, 0.8);">
+                Sistema de Campeonatos
+            </h1>
+            <h3 class="fw-normal text-light mb-3" style="text-shadow: 1px 1px 2px #87ceeb;">
+                O melhor gerenciador de campeonatos do mercado!
+            </h3>
+            <div class="d-flex gap-3 justify-content-center lead fw-normal">
+                <a class="icon-link" href="/campeonatos" style="color: #87ceeb; font-weight: bold; text-decoration: none;">
+                    Gerencie campeonatos
+                    <svg class="bi" style="fill: #87ceeb;">
+                        <use xlink:href="#chevron-right" />
+                    </svg>
+                </a>
+            </div>
         </div>
-        </div>
-        <div class="product-device shadow-sm d-none d-md-block"></div>
-        <div class="product-device product-device-2 shadow-sm d-none d-md-block"></div>
     </div>
 
     <div class="d-md-flex flex-md-equal w-100 my-md-3">
-        <div class="text-bg-dark pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden" style="width: 50%;">
-          <div class="my-3 py-3">
-            <h2 class="display-5">Gerencie campeonatos!</h2>
-            <p class="lead">Moderno e simples</p>
-          </div>
-          <div class="bg-body-tertiary shadow-sm mx-auto" style="background-image: url('https://images.unsplash.com/photo-1675064276064-a6c5f50c4cb7?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-size: cover; background-position: center; width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
+        <div
+            class="text-bg-dark pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden"
+            style="width: 50%; background-color: #1E3A8A; border-radius: 15px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);">
+            <div class="my-3 py-3">
+                <h2 class="display-5" style="color: #FFFFFF; text-shadow: 1px 1px 3px rgba(135, 206, 235, 0.8);">
+                    Gerencie campeonatos!
+                </h2>
+                <p class="lead" style="color: #E0E0E0;">Moderno e simples</p>
+            </div>
+            <div
+                class="bg-body-tertiary shadow-sm mx-auto"
+                style="background-image: url('https://images.unsplash.com/photo-1675064276064-a6c5f50c4cb7?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-size: cover; background-position: center; width: 80%; height: 300px; border-radius: 21px;">
+            </div>
         </div>
-        <div class="bg-body-tertiary pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden" style="width: 50%;">
-          <div class="my-3 p-3">
-            <h2 class="display-5">Crie tabelas de jogos!</h2>
-            <p class="lead">Visualmente impressionante</p>
-          </div>
-          <div class="bg-dark shadow-sm mx-auto" style="background-image: url('https://images.unsplash.com/photo-1682536777488-a3fccba5b551?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-size: cover; background-position: center; width: 80%; height: 300px; border-radius: 21px 21px 0 0;"></div>
-        </div>
-      </div>
-      
-</div> 
-   
-  
 
-  
+        <div
+            class="bg-body-tertiary pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden"
+            style="width: 50%; background-color: #F0F0F0; border-radius: 15px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);">
+            <div class="my-3 py-3">
+                <h2 class="display-5" style="color: #160840; text-shadow: 1px 1px 3px #1E3A8A;">
+                    Crie tabelas de jogos!
+                </h2>
+                <p class="lead" style="color: #333;">Visualmente impressionante</p>
+            </div>
+            <div
+                class="bg-dark shadow-sm mx-auto"
+                style="background-image: url('https://images.unsplash.com/photo-1682536777488-a3fccba5b551?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-size: cover; background-position: center; width: 80%; height: 300px; border-radius: 21px;">
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
-
-

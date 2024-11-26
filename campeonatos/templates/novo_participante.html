@@ -1,41 +1,74 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="container mt-5">
+<div class="container mt-5">
     <div class="row justify-content-center">
-      <div class="col-md-6">
-        <div class="card shadow-sm">
-          <div class="card-header bg-primary text-white">
-            <h2 class="card-title">Inscrição de Novo Participante</h2>
-          </div>
-          <div class="card-body">
-            <form method="POST">
-              {% csrf_token %}
-              
-              <!-- Campo para nome do participante -->
-              <div class="mb-3">
-                <label for="id_nome" class="form-label">Nome do Participante</label>
-                <input type="text" name="nome" class="form-control" maxlength="100" required id="id_nome">
-              </div>                                                                                                                      
-          
-              <!-- Campo para email do participante -->
-              <div class="mb-3">
-                <label for="id_email" class="form-label">Email do Participante</label>
-                <input type="email" name="email" class="form-control" maxlength="100" required id="id_email">
-              </div>
-          
-              <!-- Campo para equipe do participante -->
-              <div class="mb-3">
-                <label for="id_equipe" class="form-label">Equipe do Participante</label>
-                <input type="text" name="equipe" class="form-control" maxlength="100" required id="id_equipe">
-              </div>
+        <div class="col-md-6">
+            <div class="card shadow-lg" style="border-radius: 10px; border: 1px solid #0056b3;">
+                <div class="card-header bg-primary text-white" style="border-top-left-radius: 10px; border-top-right-radius: 10px;">
+                    <h2 class="card-title mb-0">Inscrição de Novo Participante</h2>
+                </div>
+                <div class="card-body" style="background-color: #f8f9fa;">
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <!-- Opção para usar informações do login -->
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" id="usar_dados_login" onclick="preencherDados()" class="form-check-input">
+                            <label for="usar_dados_login" class="form-check-label text-secondary">Usar informações do login atual</label>
+                        </div>
 
-              <!-- Botão de submissão -->
-              <button type="submit" class="btn btn-primary">Confirmar Inscrição</button>
-            </form>
-          </div>
+                        <!-- Campo para nome do participante -->
+                        <div class="mb-3">
+                            <label for="id_nome" class="form-label fw-bold" style="color: #0056b3;">Nome do Participante:</label>
+                            <input type="text" name="nome" class="form-control border-primary" maxlength="100" required id="id_nome">
+                        </div>
+
+                        <!-- Campo para email do participante -->
+                        <div class="mb-3">
+                            <label for="id_email" class="form-label fw-bold" style="color: #0056b3;">Email do Participante:</label>
+                            <input type="email" name="email" class="form-control border-primary" maxlength="100" required id="id_email">
+                        </div>
+
+                        <!-- Campo para equipe do participante -->
+                        <div class="mb-3">
+                            <label for="id_equipe" class="form-label fw-bold" style="color: #0056b3;">Equipe do Participante:</label>
+                            <input type="text" name="equipe" class="form-control border-primary" maxlength="100" required id="id_equipe">
+                        </div>
+
+                        <!-- Botão de submissão -->
+                        <button type="submit" class="btn btn-success w-100" style="background-color: #28a745; border-color: #28a745;">Confirmar Inscrição</button>
+                    </form>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>
+
+<!-- Script para preencher os dados do login -->
+<script>
+    function preencherDados() {
+        const usarDadosLogin = document.getElementById('usar_dados_login').checked;
+        const nomeField = document.getElementById('id_nome');
+        const emailField = document.getElementById('id_email');
+        const equipeField = document.getElementById('id_equipe');
+
+        if (usarDadosLogin) {
+            // Dados vindos do back-end via template context
+            nomeField.value = "{{ user.first_name }}";
+            emailField.value = "{{ user.email }}";
+            equipeField.value = "{{ user.equipe|default_if_none:'' }}"; // Suporte para equipe, caso exista
+            nomeField.readOnly = true;
+            emailField.readOnly = true;
+            equipeField.readOnly = true;
+        } else {
+            nomeField.value = "";
+            emailField.value = "";
+            equipeField.value = "";
+            nomeField.readOnly = false;
+            emailField.readOnly = false;
+            equipeField.readOnly = false;
+        }
+    }
+</script>
 {% endblock %}

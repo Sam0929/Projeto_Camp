@@ -1,6 +1,7 @@
 import datetime
 from pyexpat.errors import messages
 from django.shortcuts import render, get_object_or_404, redirect
+from sistema_campeonatos.middleware import admin_required
 from .forms import EliminatoriasForm
 from campeonatos.models import Campeonato, Participante
 from .models import Jogo, Resultado, Penalidade, JogoEliminatorio, ResultadoEliminatorio, RodadaEliminatoria, PenalidadeEliminatoria
@@ -24,7 +25,7 @@ def index(request):
     
     return render(request, 'gerenciamento_campeonato.html', {'campeonatos_com_estado': campeonatos_com_estado})
 
-
+@admin_required
 def gerar_tabela(request, campeonato_id):
     campeonato = get_object_or_404(Campeonato, id=campeonato_id)
 
@@ -176,7 +177,7 @@ def calcular_pontuacao(campeonato):
     return dict(pontuacao_ordenada)
 
 
-
+@admin_required
 def registrar_resultados(request, campeonato_id):
     # Obter o campeonato ou retornar 404
     campeonato = get_object_or_404(Campeonato, id=campeonato_id)
@@ -217,6 +218,7 @@ def registrar_resultados(request, campeonato_id):
         'jogos': jogos,
     })
 
+@admin_required
 def registrar_penalidades(request, campeonato_id):
     campeonato = get_object_or_404(Campeonato, id=campeonato_id)
     jogos = Jogo.objects.filter(rodada__campeonato=campeonato)
@@ -251,6 +253,7 @@ def registrar_penalidades(request, campeonato_id):
         'participantes': participantes,
     })
 
+@admin_required
 def confirmar_classificacao(request, campeonato_id):
     campeonato = get_object_or_404(Campeonato, id=campeonato_id)
 
@@ -273,6 +276,7 @@ def confirmar_classificacao(request, campeonato_id):
     # Renderiza a página de confirmação inicialmente
     return render(request, 'confirmar_classificacao.html', {'campeonato': campeonato, 'jogos_sem_resultado': jogos_sem_resultado})
 
+@admin_required
 def gerar_classificacao(request, campeonato_id):
     campeonato = get_object_or_404(Campeonato, id=campeonato_id)
 
@@ -316,6 +320,7 @@ def visualizar_classificacao(request, campeonato_id):
         'num_classificados': num_classificados
     })
 
+@admin_required
 def editar_classificacao(request, campeonato_id):
     campeonato = get_object_or_404(Campeonato, id=campeonato_id)
 
@@ -334,6 +339,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Campeonato, RodadasClassificatorias, Rodada, Jogo
 from .forms import EliminatoriasForm
 
+@admin_required
 def configurar_eliminatorias(request, campeonato_id):
     campeonato = get_object_or_404(Campeonato, id=campeonato_id)
     
@@ -376,7 +382,6 @@ def configurar_eliminatorias(request, campeonato_id):
         'num_classificados': num_classificados,
     }
     return render(request, 'configurar_eliminatorias.html', context)
-
 
 
 
@@ -470,7 +475,7 @@ def visualizar_ganhador_unico(request, campeonato_id):
     
     return render(request, 'ganhador_unico.html', {'vencedor': vencedor, 'campeonato': campeonato})
 
-
+@admin_required
 def registrar_resultados_eliminatorias(request, campeonato_id):
     campeonato = get_object_or_404(Campeonato, id=campeonato_id)
     jogos = JogoEliminatorio.objects.filter(rodada__campeonato=campeonato)
@@ -536,6 +541,7 @@ def alocar_vencedor_para_proxima_fase(campeonato, fase, vencedor):
             jogo.time_fora = vencedor
     jogo.save()
 
+@admin_required
 def registrar_penalidades_eliminatorias(request, campeonato_id):
     campeonato = get_object_or_404(Campeonato, id=campeonato_id)
     jogos = JogoEliminatorio.objects.filter(rodada__campeonato=campeonato)

@@ -1,26 +1,27 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="container mt-5">
+<div class="container mt-5">
     <div class="row justify-content-center">
-      <div class="col-md-6">
-        <div class="card shadow-sm">
-          <div class="card-header bg-danger text-white d-flex align-items-center">
-      
-                <h2 class="card-title">Deletar Campeonato</h2>
-                <i class="bi bi-trash3 ms-auto fs-4"></i>
-          </div>
-
-          <div class="card-body">
-            <p>Você tem certeza que deseja deletar o campeonato "<strong>{{ campeonato.nome }}</strong>"?</p>
-            <form method="POST">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-danger">Deletar</button>
-              <a href="{% url 'campeonatos' %}" class="btn btn-secondary">Cancelar</a>
-            </form>
-          </div>
+        <div class="col-md-6">
+            <div class="card shadow-lg" style="border-radius: 10px; border: 1px solid #dc3545;">
+                <div class="card-header bg-danger text-white d-flex align-items-center" style="border-top-left-radius: 10px; border-top-right-radius: 10px;">
+                    <h2 class="card-title mb-0">Deletar Campeonato</h2>
+                    <i class="bi bi-trash3 ms-auto fs-4"></i>
+                </div>
+                <div class="card-body" style="background-color: #f8f9fa;">
+                    <p class="text-center">
+                        Você tem certeza que deseja deletar o campeonato 
+                        <strong>"{{ campeonato.nome }}"</strong>?
+                    </p>
+                    <form method="POST" class="text-center">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger me-2" style="background-color: #dc3545; border-color: #dc3545;">Deletar</button>
+                        <a href="{% url 'campeonatos' %}" class="btn btn-secondary" style="background-color: #6c757d; border-color: #6c757d;">Cancelar</a>
+                    </form>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>
 {% endblock %}

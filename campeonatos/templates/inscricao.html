@@ -4,11 +4,11 @@
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h2 class="card-title">Inscrição no Campeonato</h2>
+            <div class="card shadow-lg" style="border-radius: 10px; border: 1px solid #0056b3;">
+                <div class="card-header bg-primary text-white" style="border-top-left-radius: 10px; border-top-right-radius: 10px;">
+                    <h2 class="card-title mb-0">Inscrição no Campeonato</h2>
                 </div>
-                <div class="card-body">
+                <div class="card-body" style="background-color: #f8f9fa;">
                     {% if messages %}
                     <div class="alert alert-light border border-danger text-danger" style="font-size: 0.9em; background-color: #f8d7da;">
                         {% for message in messages %}
@@ -21,30 +21,30 @@
                         {% csrf_token %}
                         
                         <!-- Campo de pesquisa -->
-                        <div class="mb-3">
-                            <label for="search" class="form-label">Pesquisar Participante</label>
-                            <input type="text" id="search" class="form-control" placeholder="Digite o nome do participante" onkeyup="filterParticipants()">
+                        <div class="mb-4">
+                            <label for="search" class="form-label fw-bold" style="color: #0056b3;">Pesquisar Participante:</label>
+                            <input type="text" id="search" class="form-control border-primary" placeholder="Digite o nome do participante" onkeyup="filterParticipants()">
                         </div>
 
                         <!-- Renderiza o campo de seleção de participantes -->
-                        <div class="mb-3">
-                            <label for="id_participante" class="form-label">Selecione um Participante</label>
-                            <select id="id_participante" name="participante" class="form-select">
-                                <option value="" disabled selected>----------</option> <!-- Opção nula -->
+                        <div class="mb-4">
+                            <label for="id_participante" class="form-label fw-bold" style="color: #0056b3;">Selecione um Participante:</label>
+                            <select id="id_participante" name="participante" class="form-select border-primary">
+                                <option value="" disabled selected>----------</option>
                                 {% for participante in form.participante.field.queryset|dictsort:"nome" %}
                                 <option value="{{ participante.pk }}">{{ participante.nome }}</option>
                                 {% endfor %}
                             </select>
                         </div>
                         
-                        <button type="submit" class="btn btn-primary">Confirmar Inscrição</button>
+                        <button type="submit" class="btn btn-success w-100" style="background-color: #28a745; border-color: #28a745;">Confirmar Inscrição</button>
                     </form>
 
                     <hr>
 
                     <!-- Botão para redirecionar à página de inscrição de novo participante -->
                     <div class="text-center mt-3">
-                        <a href="{% url 'novo_participante' campeonato.id %}" class="btn btn-secondary">Inscrever Novo Participante</a>
+                        <a href="{% url 'novo_participante' campeonato.id %}" class="btn btn-secondary w-100">Inscrever Novo Participante</a>
                     </div>
                 </div>
             </div>

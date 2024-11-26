@@ -1,112 +1,95 @@
 {% extends "base.html" %}
 
+{% block title %}Editar Campeonato{% endblock %}
+
 {% block content %}
-  <div class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-6">
-        <div class="card shadow-sm">
-          <div class="card-header bg-success text-white">
-            <h2 class="card-title">Editar Campeonato</h2>
-          </div>
-          <div class="card-body">
-            <form method="POST">
-              {% csrf_token %}
+<main class="container my-7" style="max-width: 75%;">
+    <section class="edit-campeonato-section">
+        <!-- Cabeçalho -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card text-center" style="background-color: #160840; border: none;">
+                    <div class="card-body">
+                        <h1 class="display-4 fw-bold" style="color: #FFFFFF; text-shadow: 2px 1px 1px #87ceeb;">
+                            Editar Campeonato
+                        </h1>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-              <!-- Campos do formulário -->
-              <div class="mb-3">
-                <label for="id_nome" class="form-label">Nome</label>
-                <input type="text" name="nome" class="form-control" maxlength="100" required="" id="id_nome" value="{{ form.nome.value }}">
-              </div>
-
-              <div class="mb-3">
-                <label for="id_data_inicio" class="form-label">Data Início</label>
-                <input type="datetime-local" name="data_inicio" class="form-control" required="" id="id_data_inicio" 
-                       value="{{ form.data_inicio.value|date:'Y-m-d\\TH:i' }}">
-              </div>
-
-              <div class="mb-3">
-                <label for="id_data_fim" class="form-label">Data Fim</label>
-                <input type="datetime-local" name="data_fim" class="form-control" required="" id="id_data_fim" 
-                       value="{{ form.data_fim.value|date:'Y-m-d\\TH:i' }}">
-              </div>
-
-              <div class="mb-3">
-                <label for="id_descricao" class="form-label">Descrição</label>
-                <textarea name="descricao" class="form-control" cols="40" rows="10" required="" id="id_descricao">{{ form.descricao.value }}</textarea>
-              </div>
-
-              <div class="mb-3">
-                <label for="id_premiação" class="form-label">Premiação</label>
-                <input type="number" name="premiação" class="form-control" step="0.01" required="" id="id_premiação" value="{{ form.premiação.value }}">
-              </div>
-
-              <div class="mb-3">
-                <label for="id_numero_maximo_participantes" class="form-label">Número Máximo de Participantes</label>
-                <input type="number" name="numero_maximo_participantes" class="form-control" required="" id="id_numero_maximo_participantes" value="{{ form.numero_maximo_participantes.value }}">
-              </div>
-
-              <button type="submit" class="btn btn-success">Salvar Alterações</button>
-            </form>
-          </div>
+        <!-- Formulário -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card" style="background-color: #f0faf9; border: 1px solid #191970; border-radius: 10px;">
+                    <div class="card-body">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="id_nome" class="form-label fw-bold" style="color: #160840;">Nome</label>
+                                <input type="text" name="nome" class="form-control" maxlength="100" required id="id_nome" value="{{ form.nome.value }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="id_data_inicio" class="form-label fw-bold" style="color: #160840;">Data Início</label>
+                                <input type="datetime-local" name="data_inicio" class="form-control" required id="id_data_inicio" value="{{ form.data_inicio.value|date:'Y-m-d\\TH:i' }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="id_data_fim" class="form-label fw-bold" style="color: #160840;">Data Fim</label>
+                                <input type="datetime-local" name="data_fim" class="form-control" required id="id_data_fim" value="{{ form.data_fim.value|date:'Y-m-d\\TH:i' }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="id_descricao" class="form-label fw-bold" style="color: #160840;">Descrição</label>
+                                <textarea name="descricao" class="form-control" rows="4" required id="id_descricao">{{ form.descricao.value }}</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="id_premiação" class="form-label fw-bold" style="color: #160840;">Premiação</label>
+                                <input type="number" name="premiação" class="form-control" step="0.01" required id="id_premiação" value="{{ form.premiação.value }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="id_numero_maximo_participantes" class="form-label fw-bold" style="color: #160840;">Número Máximo de Participantes</label>
+                                <input type="number" name="numero_maximo_participantes" class="form-control" required id="id_numero_maximo_participantes" value="{{ form.numero_maximo_participantes.value }}">
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-success w-50">Salvar Alterações</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Lista de Participantes -->
-        <div class="card mt-4 shadow-sm">
-          <div class="card-header bg-primary text-white">
-            <h2 class="card-title">Participantes</h2>
-          </div>
-          <div class="card-body">
-            <ul class="list-group">
-              {% for inscricao in inscricoes %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                  {{ forloop.counter }}. {{ inscricao.participante.nome }} ({{ inscricao.participante.equipe }}) - {{ inscricao.participante.email }}
-                  <div>
-                    <!-- Ícone de Edição -->
-                    <a href="{% url 'editar_participante' inscricao.pk %}" class="btn btn-warning btn-sm me-2">
-                      <i class="bi bi-pencil-square"></i>
-                    </a>
-                    <!-- Ícone de Exclusão -->
-                    <form method="POST" action="{% url 'excluir_participante' inscricao.pk %}" class="d-inline">
-                      {% csrf_token %}
-                      <button type="submit" class="btn btn-danger btn-sm">
-                        <i class="bi bi-trash3"></i>
-                      </button>
-                    </form>
-                  </div>
-                </li>
-              {% empty %}
-                <li class="list-group-item">Nenhum participante inscrito.</li>
-              {% endfor %}
-            </ul>
-          </div>
+        <div class="row justify-content-center mt-5">
+            <div class="col-lg-8">
+                <div class="card" style="background-color: #f0faf9; border: 1px solid #191970; border-radius: 10px;">
+                    <div class="card-header text-center" style="background-color: #191970; color: #FFFFFF;">
+                        <h3 class="fw-bold">Participantes</h3>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group" style="max-height: 300px; overflow-y: auto;">
+                            {% for inscricao in inscricoes %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{ forloop.counter }}. {{ inscricao.participante.nome }} ({{ inscricao.participante.equipe }}) - {{ inscricao.participante.email }}
+                                    <div>
+                                        <a href="{% url 'editar_participante' inscricao.pk %}" class="btn btn-warning btn-sm me-2">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <form method="POST" action="{% url 'excluir_participante' inscricao.pk %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="bi bi-trash3"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </li>
+                            {% empty %}
+                                <li class="list-group-item text-center">Nenhum participante inscrito.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Script para validação das datas -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const form = document.querySelector('form');
-      const dataInicioInput = document.getElementById('id_data_inicio');
-      const dataFimInput = document.getElementById('id_data_fim');
-
-      form.addEventListener('submit', function(event) {
-          const dataInicio = new Date(dataInicioInput.value);
-          const dataFim = new Date(dataFimInput.value);
-          const agora = new Date();
-
-          if (dataInicio < agora) {
-              alert('A data e hora de início devem ser maiores ou iguais ao momento atual.');
-              event.preventDefault();
-              return;
-          }
-
-          if (dataFim < dataInicio) {
-              alert('A data e hora de fim devem ser maiores ou iguais à data e hora de início.');
-              event.preventDefault();
-          }
-      });
-    });
-  </script>
+    </section>
+</main>
 {% endblock %}

@@ -3,20 +3,22 @@
 {% block title %}Confirmar Classificação{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="text-center">Confirmação de Classificação</h2>
+<div class="container mt-5" style="max-width: 60%; background-color: #f0faf9; border: 1px solid #191970; border-radius: 10px; padding: 30px;">
+    <h2 class="text-center fw-bold" style="color: #160840; text-shadow: 1px 1px 2px #87ceeb;">Confirmação de Classificação</h2>
+
     {% if jogos_sem_resultado %}
-        <p class="text-center">Nem todos os jogos possuem resultados.</p>
-        <p class="text-center">Deseja continuar com a geração da classificação mesmo assim?</p>
+        <p class="text-center fw-bold" style="color: #8B0000;">Nem todos os jogos possuem resultados.</p>
+        <p class="text-center" style="color: #160840;">Deseja continuar com a geração da classificação mesmo assim?</p>
     {% else %}
-        <p class="text-center">Todos os jogos possuem resultados. Deseja prosseguir?</p>
+        <p class="text-center fw-bold" style="color: #006400;">Todos os jogos possuem resultados.</p>
+        <p class="text-center" style="color: #160840;">Deseja prosseguir?</p>
     {% endif %}
 
     <div class="text-center mt-4">
         <form method="post">
             {% csrf_token %}
-            <button type="submit" name="confirmar" class="btn btn-success">Confirmar</button>
-            <button type="submit" name="cancelar" class="btn btn-danger">Cancelar</button>
+            <button type="submit" name="confirmar" class="btn btn-success mx-2" style="width: 120px;">Confirmar</button>
+            <button type="submit" name="cancelar" class="btn btn-danger mx-2" style="width: 120px;">Cancelar</button>
         </form>
     </div>
 </div>

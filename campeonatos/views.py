@@ -8,8 +8,9 @@ from .models import Participante
 from .forms import ParticipanteForm
 from django.db import connection
 from sistema_campeonatos.middleware import admin_required
+from django.contrib.auth.decorators import login_required
 
-@admin_required
+
 def campeonatos(request):
     campeonatos = Campeonato.objects.all()
     
@@ -46,6 +47,7 @@ def criar_campeonato(request):
 
     return render(request, 'criar_campeonato.html', {'form': form})
 
+@admin_required
 def editar_campeonato(request, pk):
     campeonato = get_object_or_404(Campeonato, pk=pk)
     if request.method == 'POST':
@@ -74,6 +76,7 @@ def editar_campeonato(request, pk):
         'inscricoes': inscricoes,  # Passa as inscrições para o template
     })
 
+@admin_required
 def deletar_campeonato(request, pk):
     campeonato = get_object_or_404(Campeonato, pk=pk)
     if request.method == 'POST':
@@ -81,6 +84,7 @@ def deletar_campeonato(request, pk):
         return redirect('campeonatos')
 
     return render(request, 'deletar_campeonato.html', {'campeonato': campeonato})
+
 
 def inscrever_participante(request, campeonato_id):
     campeonato = get_object_or_404(Campeonato, id=campeonato_id)
@@ -106,6 +110,8 @@ def inscrever_participante(request, campeonato_id):
 
     return render(request, 'inscricao.html', {'campeonato': campeonato, 'form': form})
 
+
+@admin_required
 def excluir_participante(request, pk):
     inscricao = get_object_or_404(Inscricao, pk=pk)
     
@@ -121,6 +127,8 @@ def excluir_participante(request, pk):
     # Redireciona de volta para a página de edição do campeonato, mesmo que o método não seja POST
     return redirect('editar_campeonato', pk=inscricao.campeonato.pk)
 
+
+@admin_required
 def editar_participante(request, pk):
     inscricao = get_object_or_404(Inscricao, pk=pk)  # Pega a inscrição
     participante = inscricao.participante  # Obtém o participante associado
@@ -136,7 +144,7 @@ def editar_participante(request, pk):
 
     return render(request, 'editar_participante.html', {'form': form, 'participante': participante})
 
-
+@login_required
 def novo_participante(request, campeonato_id):
     campeonato = get_object_or_404(Campeonato, id=campeonato_id)
 
@@ -146,10 +154,12 @@ def novo_participante(request, campeonato_id):
             participante = form.save(commit=False)
             participante.campeonato = campeonato
             participante.save()
-
-            # Redireciona para a página de inscrição após salvar o participante
             return redirect('inscrever_participante', campeonato_id=campeonato_id)
     else:
         form = ParticipanteForm()
 
-    return render(request, 'novo_participante.html', {'form': form, 'campeonato': campeonato})
+    return render(request, 'novo_participante.html', {
+        'form': form,
+        'campeonato': campeonato,
+        'user': request.user,  # Passa os dados do usuário logado
+    })

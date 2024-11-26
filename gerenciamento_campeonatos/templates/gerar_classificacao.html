@@ -4,14 +4,18 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2 class="text-center">Insira o Número de Classificados</h2>
-    <form method="post" action="{% url 'gerar_classificacao' campeonato.id %}">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="num_classificados">Número de equipes classificadas:</label>
-            <input type="number" name="num_classificados" id="num_classificados" class="form-control" min="1" required>
-        </div>
-        <button type="submit" class="btn btn-primary mt-3">Gerar Classificação</button>
-    </form>
+    <div class="card shadow-lg p-4" style="border-radius: 10px; background-color: #f8f9fa; border: 1px solid #191970;">
+        <h2 class="text-center mb-4" style="color: #160840;">Insira o Número de Classificados</h2>
+        <form method="post" action="{% url 'gerar_classificacao' campeonato.id %}">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label for="num_classificados" class="form-label fw-bold" style="color: #160840;">Número de equipes classificadas:</label>
+                <input type="number" name="num_classificados" id="num_classificados" class="form-control border-primary" min="1" required>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-success w-50" style="background-color: #28a745; border-color: #28a745;">Gerar Classificação</button>
+            </div>
+        </form>
+    </div>
 </div>
 {% endblock %}

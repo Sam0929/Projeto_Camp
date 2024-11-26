@@ -4,36 +4,39 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="text-center">Registrar Resultados para {{ campeonato.nome }}</h1>
+    <div class="card shadow-lg p-4" style="border-radius: 10px; background-color: #f8f9fa; border: 1px solid #191970;">
+        <h1 class="text-center mb-4" style="color: #160840;">Registrar Resultados</h1>
+        <p class="text-center mb-4" style="color: #555;">Campeonato: <strong>{{ campeonato.nome }}</strong></p>
 
-    <form method="post">
-        {% csrf_token %}
-        <div class="mb-4">
-            <label for="jogo_selecionado" class="form-label">Selecione um Jogo:</label>
-            <select id="jogo_selecionado" name="jogo_selecionado" class="form-select" required onchange="atualizarPontos()">
-                <option value="">Escolha um jogo...</option>
-                {% for jogo in jogos %}
-                    <option value="{{ jogo.id }}" data-equipe-casa="{{ jogo.time_casa.equipe }}" data-equipe-fora="{{ jogo.time_fora.equipe }}">
-                        Fase {{ jogo.rodada.fase }}: {{ jogo.time_casa.equipe }} vs {{ jogo.time_fora.equipe }} ({{ jogo.rodada.data|date:"d/m/Y" }} {{ jogo.rodada.data|time:"H:i" }})
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label for="jogo_selecionado" class="form-label fw-bold" style="color: #160840;">Selecione um Jogo:</label>
+                <select id="jogo_selecionado" name="jogo_selecionado" class="form-select border-primary" required onchange="atualizarPontos()">
+                    <option value="" disabled selected>Escolha um jogo...</option>
+                    {% for jogo in jogos %}
+                        <option value="{{ jogo.id }}" data-equipe-casa="{{ jogo.time_casa.equipe }}" data-equipe-fora="{{ jogo.time_fora.equipe }}">
+                            Fase {{ jogo.rodada.fase }}: {{ jogo.time_casa.equipe }} vs {{ jogo.time_fora.equipe }} ({{ jogo.rodada.data|date:"d/m/Y" }} {{ jogo.rodada.data|time:"H:i" }})
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
 
-        <div class="mb-3">
-            <label id="label_gols_time_casa" for="gols_time_casa" class="form-label">Pontos Equipe de Casa:</label>
-            <input type="number" class="form-control" id="gols_time_casa" name="gols_time_casa" required>
-        </div>
+            <div class="mb-3">
+                <label id="label_gols_time_casa" for="gols_time_casa" class="form-label fw-bold" style="color: #160840;">Pontos Equipe de Casa:</label>
+                <input type="number" class="form-control border-primary" id="gols_time_casa" name="gols_time_casa" required>
+            </div>
 
-        <div class="mb-3">
-            <label id="label_gols_time_fora" for="gols_time_fora" class="form-label">Pontos Equipe de Fora:</label>
-            <input type="number" class="form-control" id="gols_time_fora" name="gols_time_fora" required>
-        </div>
+            <div class="mb-3">
+                <label id="label_gols_time_fora" for="gols_time_fora" class="form-label fw-bold" style="color: #160840;">Pontos Equipe de Fora:</label>
+                <input type="number" class="form-control border-primary" id="gols_time_fora" name="gols_time_fora" required>
+            </div>
 
-        <div class="text-center">
-            <button type="submit" class="btn btn-success">Salvar Resultado</button>
-        </div>
-    </form>
+            <div class="text-center">
+                <button type="submit" class="btn btn-success w-50" style="background-color: #28a745; border-color: #28a745;">Salvar Resultado</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <script>
